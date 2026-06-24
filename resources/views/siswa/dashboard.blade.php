@@ -7,11 +7,11 @@
 {{-- Greeting Section --}}
 <section class="bg-surface-container rounded-xl p-5 border border-outline-variant/30 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
     <div>
-        <h2 class="font-bold text-xl text-primary mb-1" style="font-family: var(--font-serif)">Selamat datang kembali, {{ Auth::user()->name ?? 'Budi' }}!</h2>
+        <h2 class="font-bold text-xl text-primary mb-1" style="font-family: var(--font-serif)">Selamat datang kembali, {{ $user->name ?? 'Siswa' }}!</h2>
         <div class="flex items-center gap-2">
             <span class="bg-primary-fixed text-primary px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider">Semester Ganjil 2024/2025</span>
             <span class="text-on-surface-variant text-xs">•</span>
-            <span class="text-on-surface-variant text-xs">Kelas XI TKJ 1</span>
+            <span class="text-on-surface-variant text-xs">{{ $user->kelas->first()->nama_kelas ?? 'Belum ada kelas' }}</span>
         </div>
     </div>
 </section>
@@ -59,45 +59,32 @@
                 <h3 class="font-bold text-lg text-primary" style="font-family: var(--font-serif)">Tugas Mendekati Deadline</h3>
             </div>
             <div class="space-y-3">
-                <!-- Task 1 (Tugas) -->
+                @forelse($tugasMendatang as $t)
                 <div class="bg-surface-container-lowest p-3 rounded-lg border border-outline-variant/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 group hover:border-secondary transition-soft">
                     <div class="flex items-start gap-3">
-                        <div class="bg-surface-container-high p-2 rounded-lg text-primary"><span class="material-symbols-outlined text-sm">computer</span></div>
+                        <div class="bg-surface-container-high p-2 rounded-lg text-primary"><span class="material-symbols-outlined text-sm">assignment</span></div>
                         <div>
                             <div class="flex items-center gap-2 mb-0.5">
                                 <span class="bg-tertiary-fixed text-on-tertiary-fixed px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider">Tugas</span>
-                                <h4 class="font-bold text-sm text-on-surface">Instalasi Jaringan LAN</h4>
+                                <h4 class="font-bold text-sm text-on-surface">{{ $t->judul }}</h4>
                             </div>
-                            <p class="text-on-surface-variant text-xs">Administrasi Infrastruktur Jaringan</p>
+                            <p class="text-on-surface-variant text-xs">{{ $t->kelas->mata_pelajaran ?? 'Umum' }}</p>
                         </div>
                     </div>
                     <div class="flex sm:flex-col items-center sm:items-end gap-3 sm:gap-1">
-                        <div class="text-error font-semibold text-[10px] flex items-center gap-1 bg-error-container/30 px-1.5 py-0.5 rounded">
-                            <span class="material-symbols-outlined text-xs">timer</span><span>Hari ini, 23:59</span>
+                        <div class="{{ $t->deadline && \Carbon\Carbon::parse($t->deadline)->isPast() ? 'text-error bg-error-container/30' : 'text-secondary bg-secondary-container/30' }} font-semibold text-[10px] flex items-center gap-1 px-1.5 py-0.5 rounded">
+                            <span class="material-symbols-outlined text-xs">timer</span>
+                            <span>{{ $t->deadline ? \Carbon\Carbon::parse($t->deadline)->diffForHumans() : 'Tanpa Tenggat' }}</span>
                         </div>
-                        <a href="{{ route('siswa.pengerjaan-tugas') }}" class="bg-secondary-container hover:bg-secondary text-on-secondary-container hover:text-white font-semibold px-4 py-1.5 rounded transition-soft text-xs">Kerjakan</a>
+                        <a href="{{ route('siswa.pengerjaan-tugas', $t->id) }}" class="bg-secondary-container hover:bg-secondary text-on-secondary-container hover:text-white font-semibold px-4 py-1.5 rounded transition-soft text-xs">Kerjakan</a>
                     </div>
                 </div>
-
-                <!-- Task 2 (Kuis) -->
-                <div class="bg-surface-container-lowest p-3 rounded-lg border border-outline-variant/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 group hover:border-secondary transition-soft">
-                    <div class="flex items-start gap-3">
-                        <div class="bg-surface-container-high p-2 rounded-lg text-primary"><span class="material-symbols-outlined text-sm">calculate</span></div>
-                        <div>
-                            <div class="flex items-center gap-2 mb-0.5">
-                                <span class="bg-secondary-fixed text-on-secondary-fixed px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider">Kuis</span>
-                                <h4 class="font-bold text-sm text-on-surface">Latihan Soal Matriks</h4>
-                            </div>
-                            <p class="text-on-surface-variant text-xs">Matematika Terapan</p>
-                        </div>
-                    </div>
-                    <div class="flex sm:flex-col items-center sm:items-end gap-3 sm:gap-1">
-                        <div class="text-secondary font-semibold text-[10px] flex items-center gap-1 bg-secondary-fixed/30 px-1.5 py-0.5 rounded">
-                            <span class="material-symbols-outlined text-xs">calendar_today</span><span>Besok, 12:00</span>
-                        </div>
-                        <a href="{{ route('siswa.pengerjaan-kuis') }}" class="bg-secondary-container hover:bg-secondary text-on-secondary-container hover:text-white font-semibold px-4 py-1.5 rounded transition-soft text-xs">Kerjakan</a>
-                    </div>
+                @empty
+                <div class="text-center py-8 bg-surface-container-lowest rounded-lg border border-outline-variant/30">
+                    <span class="material-symbols-outlined text-on-surface-variant text-3xl mb-2 opacity-50">task</span>
+                    <p class="text-sm text-on-surface-variant">Belum ada tugas yang mendekati deadline.</p>
                 </div>
+                @endforelse
         </section>
 
         {{-- Materi Terbaru --}}
@@ -106,28 +93,25 @@
                 <h3 class="font-bold text-lg text-primary" style="font-family: var(--font-serif)">Materi Terbaru</h3>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <a href="{{ route('siswa.lihat-materi') }}" class="bg-surface-container-lowest rounded-lg border border-outline-variant/30 overflow-hidden group hover:shadow-md transition-soft">
-                    <div class="h-24 relative bg-primary-container">
+                @forelse($materiBaru as $m)
+                <a href="{{ route('siswa.lihat-materi', $m->id) }}" class="bg-surface-container-lowest rounded-lg border border-outline-variant/30 overflow-hidden group hover:shadow-md transition-soft flex flex-col">
+                    <div class="h-24 relative {{ $m->link_video ? 'bg-secondary-container' : 'bg-primary-container' }}">
                         <div class="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-soft"></div>
-                        <span class="absolute top-2 left-2 bg-primary/80 text-on-primary text-[8px] px-1.5 py-0.5 rounded uppercase tracking-widest font-bold">PDF</span>
-                        <span class="absolute bottom-2 left-2 text-on-primary text-[10px] bg-black/40 px-1.5 py-0.5 rounded backdrop-blur-sm">Modul 4</span>
+                        <span class="absolute top-2 left-2 {{ $m->link_video ? 'bg-secondary/80 text-on-secondary' : 'bg-primary/80 text-on-primary' }} text-[8px] px-1.5 py-0.5 rounded uppercase tracking-widest font-bold">
+                            {{ $m->link_video ? 'Video' : 'PDF' }}
+                        </span>
                     </div>
                     <div class="p-3">
-                        <h4 class="font-bold text-sm text-on-surface mb-0.5 group-hover:text-secondary transition-soft">Konfigurasi Routing Dinamis</h4>
-                        <p class="text-[10px] text-on-surface-variant">Bpk. Hendra • AIJ</p>
+                        <h4 class="font-bold text-sm text-on-surface mb-0.5 group-hover:text-secondary transition-soft">{{ $m->judul }}</h4>
+                        <p class="text-[10px] text-on-surface-variant">{{ $m->kelas->mata_pelajaran ?? 'Umum' }}</p>
                     </div>
                 </a>
-                <a href="{{ route('siswa.lihat-materi') }}" class="bg-surface-container-lowest rounded-lg border border-outline-variant/30 overflow-hidden group hover:shadow-md transition-soft">
-                    <div class="h-24 relative bg-secondary-container">
-                        <div class="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-soft"></div>
-                        <span class="absolute top-2 left-2 bg-secondary/80 text-on-secondary text-[8px] px-1.5 py-0.5 rounded uppercase tracking-widest font-bold">Video</span>
-                        <span class="absolute bottom-2 left-2 text-on-primary text-[10px] bg-black/40 px-1.5 py-0.5 rounded backdrop-blur-sm">Video Tutorial</span>
-                    </div>
-                    <div class="p-3">
-                        <h4 class="font-bold text-sm text-on-surface mb-0.5 group-hover:text-secondary transition-soft">Sejarah Kemerdekaan RI</h4>
-                        <p class="text-[10px] text-on-surface-variant">Ibu Siska • Sejarah</p>
-                    </div>
-                </a>
+                @empty
+                <div class="col-span-1 sm:col-span-2 text-center py-6 bg-surface-container-lowest rounded-lg border border-outline-variant/30">
+                    <span class="material-symbols-outlined text-on-surface-variant text-3xl mb-2 opacity-50">folder_open</span>
+                    <p class="text-sm text-on-surface-variant">Belum ada materi baru.</p>
+                </div>
+                @endforelse
             </div>
         </section>
     </div>

@@ -29,4 +29,12 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+    /**
+     * Get the classes the student is enrolled in.
+     */
+    public function kelas()
+    {
+        return $this->belongsToMany(Kelas::class, 'kelas_siswa', 'siswa_id', 'kelas_id')
+                    ->withPivot('joined_at');
+    }
 }

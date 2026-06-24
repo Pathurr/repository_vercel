@@ -168,11 +168,12 @@
                 <a href="{{ route('dev.siswa') }}" class="link-item"><span class="link-dot-siswa"></span>Siswa: Dashboard</a>
                 <a href="{{ route('siswa.mapel') }}" class="link-item"><span class="link-dot-siswa"></span>Siswa: Mata Pelajaran</a>
                 <a href="{{ route('siswa.materi') }}" class="link-item"><span class="link-dot-siswa"></span>Siswa: Materi</a>
-                <a href="{{ route('siswa.lihat-materi') }}" class="link-item"><span class="link-dot-siswa"></span>Siswa: Lihat Materi</a>
+                <a href="{{ route('siswa.lihat-materi', 1) }}" class="link-item"><span class="link-dot-siswa"></span>Siswa: Lihat Materi</a>
                 <a href="{{ route('siswa.tugas') }}" class="link-item"><span class="link-dot-siswa"></span>Siswa: Tugas</a>
-                <a href="{{ route('siswa.kumpul-tugas') }}" class="link-item"><span class="link-dot-siswa"></span>Siswa: Kumpulkan Tugas</a>
+                <a href="{{ route('siswa.pengerjaan-tugas', 1) }}" class="link-item"><span class="link-dot-siswa"></span>Siswa: Pengerjaan Tugas</a>
                 <a href="{{ route('siswa.ujian') }}" class="link-item"><span class="link-dot-siswa"></span>Siswa: Ujian</a>
-                <a href="{{ route('siswa.pengerjaan-ujian') }}" class="link-item"><span class="link-dot-siswa"></span>Siswa: Kerjakan Ujian</a>
+                <a href="{{ route('siswa.pengerjaan-ujian', 1) }}" class="link-item"><span class="link-dot-siswa"></span>Siswa: Kerjakan Ujian</a>
+                <a href="{{ route('siswa.pengerjaan-kuis', 1) }}" class="link-item"><span class="link-dot-siswa"></span>Siswa: Kerjakan Kuis</a>
                 <a href="{{ route('siswa.nilai') }}" class="link-item"><span class="link-dot-siswa"></span>Siswa: Nilai</a>
                 <a href="{{ route('siswa.notifikasi') }}" class="link-item"><span class="link-dot-siswa"></span>Siswa: Notifikasi</a>
             </div>

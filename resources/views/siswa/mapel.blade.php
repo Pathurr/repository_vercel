@@ -19,112 +19,53 @@
 
 <!-- Subject Grid -->
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="class-grid">
-    <!-- Card 1 -->
-    <article class="class-card bg-surface-container-lowest rounded-xl border border-outline-variant/30 shadow-sm hover:shadow-md overflow-hidden flex flex-col group hover:-translate-y-1 transition-soft" data-status="aktif">
-        <div class="h-20 bg-primary-container relative overflow-hidden flex items-center justify-center">
+    @forelse($kelas as $k)
+    <article class="class-card bg-surface-container-lowest rounded-xl border border-outline-variant/30 shadow-sm hover:shadow-md overflow-hidden flex flex-col group hover:-translate-y-1 transition-soft" data-status="{{ $k->aktif ? 'aktif' : 'non-aktif' }}">
+        <div class="h-20 {{ $k->aktif ? 'bg-primary-container' : 'bg-surface-variant' }} relative overflow-hidden flex items-center justify-center">
             <!-- Abstract pattern background -->
             <div class="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-secondary-container to-transparent"></div>
-            <span class="material-symbols-outlined text-3xl text-secondary-container relative z-10" style="font-variation-settings: 'FILL' 1;">code</span>
+            <span class="material-symbols-outlined text-3xl {{ $k->aktif ? 'text-secondary-container' : 'text-on-surface-variant' }} relative z-10" style="font-variation-settings: 'FILL' 1;">class</span>
         </div>
         <div class="p-4 flex-1 flex flex-col">
             <div class="flex justify-between items-start mb-3">
                 <div>
-                    <h3 class="font-bold text-lg text-primary leading-tight" style="font-family: var(--font-serif)">Pemrograman Web</h3>
-                    <p class="text-xs font-bold text-on-surface-variant mt-0.5">Kelas 11 - RPL</p>
+                    <h3 class="font-bold text-lg text-primary leading-tight" style="font-family: var(--font-serif)">{{ $k->mata_pelajaran }}</h3>
+                    <p class="text-xs font-bold text-on-surface-variant mt-0.5">{{ $k->nama_kelas }}</p>
                 </div>
+                @if($k->aktif)
                 <span class="bg-secondary-container/20 text-secondary-fixed-variant px-2 py-0.5 rounded text-[10px] font-bold">Aktif</span>
-            </div>
-            <div class="flex items-center gap-2 mb-4">
-                <div class="w-6 h-6 rounded-full bg-surface-variant flex items-center justify-center">
-                    <span class="material-symbols-outlined text-on-surface-variant text-[14px]">person</span>
-                </div>
-                <span class="text-xs font-semibold text-on-surface">Bpk. Budi Santoso</span>
-            </div>
-            <div class="flex gap-4 mb-4 border-t border-surface-variant pt-3">
-                <div class="flex flex-col">
-                    <span class="font-bold text-lg text-primary">12</span>
-                    <span class="text-[10px] font-bold text-on-surface-variant">Materi</span>
-                </div>
-                <div class="flex flex-col border-l border-surface-variant pl-4">
-                    <span class="font-bold text-lg text-secondary">3</span>
-                    <span class="text-[10px] font-bold text-on-surface-variant">Tugas Baru</span>
-                </div>
-            </div>
-            <a href="{{ route('siswa.mapel.detail') }}" class="mt-auto w-full py-2 border-2 border-outline hover:bg-secondary-container hover:border-secondary-container hover:text-on-secondary-container text-primary text-xs font-bold rounded-lg transition-colors flex items-center justify-center gap-2">
-                Buka Kelas <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
-            </a>
-        </div>
-    </article>
-    <!-- Card 2 -->
-    <article class="class-card bg-surface-container-lowest rounded-xl border border-outline-variant/30 shadow-sm hover:shadow-md overflow-hidden flex flex-col group hover:-translate-y-1 transition-soft" data-status="aktif">
-        <div class="h-20 bg-tertiary-container relative overflow-hidden flex items-center justify-center">
-            <div class="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-tertiary-fixed to-transparent"></div>
-            <span class="material-symbols-outlined text-3xl text-tertiary-fixed relative z-10" style="font-variation-settings: 'FILL' 1;">database</span>
-        </div>
-        <div class="p-4 flex-1 flex flex-col">
-            <div class="flex justify-between items-start mb-3">
-                <div>
-                    <h3 class="font-bold text-lg text-primary leading-tight" style="font-family: var(--font-serif)">Basis Data Terapan</h3>
-                    <p class="text-xs font-bold text-on-surface-variant mt-0.5">Kelas 11 - RPL</p>
-                </div>
-                <span class="bg-secondary-container/20 text-secondary-fixed-variant px-2 py-0.5 rounded text-[10px] font-bold">Aktif</span>
-            </div>
-            <div class="flex items-center gap-2 mb-4">
-                <div class="w-6 h-6 rounded-full bg-surface-variant flex items-center justify-center">
-                    <span class="material-symbols-outlined text-on-surface-variant text-[14px]">person</span>
-                </div>
-                <span class="text-xs font-semibold text-on-surface">Ibu Dina Mulyani</span>
-            </div>
-            <div class="flex gap-4 mb-4 border-t border-surface-variant pt-3">
-                <div class="flex flex-col">
-                    <span class="font-bold text-lg text-primary">8</span>
-                    <span class="text-[10px] font-bold text-on-surface-variant">Materi</span>
-                </div>
-                <div class="flex flex-col border-l border-surface-variant pl-4">
-                    <span class="font-bold text-lg text-on-surface-variant">0</span>
-                    <span class="text-[10px] font-bold text-on-surface-variant">Tugas Baru</span>
-                </div>
-            </div>
-            <a href="{{ route('siswa.mapel.detail') }}" class="mt-auto w-full py-2 border-2 border-outline hover:bg-secondary-container hover:border-secondary-container hover:text-on-secondary-container text-primary text-xs font-bold rounded-lg transition-colors flex items-center justify-center gap-2">
-                Buka Kelas <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
-            </a>
-        </div>
-    </article>
-    <!-- Card 3 (Non-Aktif) -->
-    <article class="class-card bg-surface-container-lowest rounded-xl border border-outline-variant/30 shadow-sm hover:shadow-md overflow-hidden flex flex-col group hover:-translate-y-1 transition-soft" data-status="non-aktif">
-        <div class="h-20 bg-primary relative overflow-hidden flex items-center justify-center">
-            <div class="absolute inset-0 opacity-10 bg-[linear-gradient(45deg,_var(--tw-gradient-stops))] from-white to-transparent"></div>
-            <span class="material-symbols-outlined text-3xl text-on-primary relative z-10" style="font-variation-settings: 'FILL' 1;">language</span>
-        </div>
-        <div class="p-4 flex-1 flex flex-col">
-            <div class="flex justify-between items-start mb-3">
-                <div>
-                    <h3 class="font-bold text-lg text-primary leading-tight" style="font-family: var(--font-serif)">Bahasa Inggris Bisnis</h3>
-                    <p class="text-xs font-bold text-on-surface-variant mt-0.5">Kelas 11 - Umum</p>
-                </div>
+                @else
                 <span class="bg-surface-variant text-on-surface-variant px-2 py-0.5 rounded text-[10px] font-bold">Non-Aktif</span>
+                @endif
             </div>
             <div class="flex items-center gap-2 mb-4">
                 <div class="w-6 h-6 rounded-full bg-surface-variant flex items-center justify-center">
                     <span class="material-symbols-outlined text-on-surface-variant text-[14px]">person</span>
                 </div>
-                <span class="text-xs font-semibold text-on-surface">Mr. Andi Wijaya</span>
+                <span class="text-xs font-semibold text-on-surface">{{ $k->guru->name ?? 'Guru' }}</span>
             </div>
             <div class="flex gap-4 mb-4 border-t border-surface-variant pt-3">
                 <div class="flex flex-col">
-                    <span class="font-bold text-lg text-primary">15</span>
+                    <span class="font-bold text-lg text-primary">{{ $k->materi_count ?? 0 }}</span>
                     <span class="text-[10px] font-bold text-on-surface-variant">Materi</span>
                 </div>
                 <div class="flex flex-col border-l border-surface-variant pl-4">
-                    <span class="font-bold text-lg text-secondary">1</span>
-                    <span class="text-[10px] font-bold text-on-surface-variant">Tugas Baru</span>
+                    <span class="font-bold text-lg text-secondary">{{ $k->tugas_count ?? 0 }}</span>
+                    <span class="text-[10px] font-bold text-on-surface-variant">Tugas</span>
                 </div>
             </div>
-            <a href="{{ route('siswa.mapel.detail') }}" class="mt-auto w-full py-2 border-2 border-outline hover:bg-secondary-container hover:border-secondary-container hover:text-on-secondary-container text-primary text-xs font-bold rounded-lg transition-colors flex items-center justify-center gap-2">
+            <a href="{{ route('siswa.mapel.detail', $k->id) }}" class="mt-auto w-full py-2 border-2 border-outline hover:bg-secondary-container hover:border-secondary-container hover:text-on-secondary-container text-primary text-xs font-bold rounded-lg transition-colors flex items-center justify-center gap-2">
                 Buka Kelas <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
             </a>
         </div>
     </article>
+    @empty
+    <div class="col-span-1 md:col-span-3 text-center py-10 bg-surface-container-lowest rounded-xl border border-outline-variant/30">
+        <span class="material-symbols-outlined text-4xl text-on-surface-variant opacity-50 mb-3">sentiment_dissatisfied</span>
+        <h3 class="font-bold text-lg text-primary mb-1">Anda belum bergabung ke kelas mana pun</h3>
+        <p class="text-sm text-on-surface-variant">Gunakan tombol + Gabung Kelas di kanan bawah untuk bergabung menggunakan kode dari guru Anda.</p>
+    </div>
+    @endforelse
 </div>
 
 <!-- Floating Action Button -->

@@ -13,22 +13,22 @@
             </div>
             {{-- Text --}}
             <div>
-                <h1 class="font-bold text-5xl text-primary mb-1" style="font-family: var(--font-serif)">X TKJ 1</h1>
-                <p class="font-bold text-secondary uppercase tracking-wider text-sm mb-4">Dasar Teknik Komputer</p>
+                <h1 class="font-bold text-5xl text-primary mb-1" style="font-family: var(--font-serif)">{{ $kelas->nama_kelas }}</h1>
+                <p class="font-bold text-secondary uppercase tracking-wider text-sm mb-4">{{ $kelas->mata_pelajaran }}</p>
                 <div class="flex flex-wrap items-center gap-4 md:gap-6 text-on-surface-variant text-sm">
                     <div class="flex items-center gap-2">
                         <span class="material-symbols-outlined" style="font-size: 18px">calendar_today</span>
                         <div>
-                            <p>Semester Ganjil</p>
-                            <p>2023/2024</p>
+                            <p>Dibuat</p>
+                            <p>{{ $kelas->created_at?->format('d M Y') ?? '-' }}</p>
                         </div>
                     </div>
                     <div class="hidden md:block w-px h-8 bg-outline-variant/50"></div>
                     <div class="flex items-center gap-2">
                         <span class="material-symbols-outlined" style="font-size: 18px">meeting_room</span>
                         <div>
-                            <p>Lab</p>
-                            <p>Jaringan A</p>
+                            <p>Kode Kelas</p>
+                            <p>{{ $kelas->kode_kelas ?? 'Belum tersedia' }}</p>
                         </div>
                     </div>
                 </div>
@@ -96,7 +96,7 @@
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
                         <div>
                         <h2 class="font-bold text-3xl md:text-4xl text-primary flex items-end gap-2" style="font-family: var(--font-serif)">
-                            Daftar Siswa <span class="text-on-surface-variant text-lg font-sans pb-1">(32)</span>
+                            Daftar Siswa <span class="text-on-surface-variant text-lg font-sans pb-1">({{ $siswa->total() }})</span>
                         </h2>
                     </div>
                     <div class="flex items-center gap-3 w-full sm:w-auto">
@@ -117,58 +117,32 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-outline-variant/30">
+                        @forelse($siswa as $index => $s)
                         <tr class="hover:bg-surface-container-low/50 transition-soft">
-                            <td class="py-3 px-4 text-center text-on-surface-variant">1</td>
+                            <td class="py-3 px-4 text-center text-on-surface-variant">{{ $siswa->firstItem() + $index }}</td>
                             <td class="py-3 px-4 flex items-center gap-3">
                                 <div class="w-10 h-10 rounded-full bg-surface-variant overflow-hidden flex-shrink-0">
-                                    <img src="https://ui-avatars.com/api/?name=Ahmad+Ridwan&background=random" class="w-full h-full object-cover" alt="avatar">
+                                    <img src="https://ui-avatars.com/api/?name={{ urlencode($s->name) }}&background=random" class="w-full h-full object-cover" alt="avatar">
                                 </div>
                                 <div>
-                                    <p class="font-bold text-primary text-base">Ahmad Ridwan</p>
-                                    <p class="text-xs text-on-surface-variant">ahmad.r@student.smkmandalahayu.sch.id</p>
+                                    <p class="font-bold text-primary text-base">{{ $s->name }}</p>
+                                    <p class="text-xs text-on-surface-variant">{{ $s->email }}</p>
                                 </div>
                             </td>
-                            <td class="py-3 px-4 text-on-surface-variant">12 Jul 2023</td>
+                            <td class="py-3 px-4 text-on-surface-variant">{{ \Carbon\Carbon::parse($s->pivot->joined_at)->format('d M Y') }}</td>
                         </tr>
-                        <tr class="hover:bg-surface-container-low/50 transition-soft">
-                            <td class="py-3 px-4 text-center text-on-surface-variant">2</td>
-                            <td class="py-3 px-4 flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center text-on-surface-variant flex-shrink-0">
-                                    <span class="material-symbols-outlined">person</span>
-                                </div>
-                                <div>
-                                    <p class="font-bold text-primary text-base">Siti Nurhaliza</p>
-                                    <p class="text-xs text-on-surface-variant">siti.n@student.smkmandalahayu.sch.id</p>
-                                </div>
-                            </td>
-                            <td class="py-3 px-4 text-on-surface-variant">14 Jul 2023</td>
+                        @empty
+                        <tr>
+                            <td colspan="3" class="py-8 text-center text-on-surface-variant">Belum ada siswa yang bergabung di kelas ini.</td>
                         </tr>
-                        <tr class="hover:bg-surface-container-low/50 transition-soft">
-                            <td class="py-3 px-4 text-center text-on-surface-variant">3</td>
-                            <td class="py-3 px-4 flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-full bg-surface-variant overflow-hidden flex-shrink-0">
-                                    <img src="https://ui-avatars.com/api/?name=Dewi+Lestari&background=random" class="w-full h-full object-cover" alt="avatar">
-                                </div>
-                                <div>
-                                    <p class="font-bold text-primary text-base">Dewi Lestari</p>
-                                    <p class="text-xs text-on-surface-variant">dewi.l@student.smkmandalahayu.sch.id</p>
-                                </div>
-                            </td>
-                            <td class="py-3 px-4 text-on-surface-variant">15 Jul 2023</td>
-                        </tr>
+                        @endforelse
                     </tbody>
                 </table>
-                <div class="px-4 py-3 border-t border-outline-variant/30 flex flex-col sm:flex-row justify-between items-center gap-3 text-sm text-on-surface-variant">
-                    <p>Menampilkan 1-3 dari 32 siswa</p>
-                    <div class="flex items-center gap-1">
-                        <button class="w-8 h-8 flex items-center justify-center border border-outline-variant/50 rounded hover:bg-surface-container-low transition-soft"><span class="material-symbols-outlined" style="font-size: 16px">chevron_left</span></button>
-                        <button class="w-8 h-8 flex items-center justify-center bg-primary text-on-primary rounded font-bold">1</button>
-                        <button class="w-8 h-8 flex items-center justify-center border border-outline-variant/50 rounded hover:bg-surface-container-low transition-soft">2</button>
-                        <button class="w-8 h-8 flex items-center justify-center border border-outline-variant/50 rounded hover:bg-surface-container-low transition-soft">3</button>
-                        <span class="px-2">...</span>
-                        <button class="w-8 h-8 flex items-center justify-center border border-outline-variant/50 rounded hover:bg-surface-container-low transition-soft"><span class="material-symbols-outlined" style="font-size: 16px">chevron_right</span></button>
-                    </div>
+                @if($siswa->hasPages())
+                <div class="px-4 py-3 border-t border-outline-variant/30">
+                    {{ $siswa->links() }}
                 </div>
+                @endif
             </div>
             </div> {{-- End tab-siswa --}}
 
@@ -181,30 +155,24 @@
                     </a>
                 </div>
                 <div class="flex flex-col gap-4">
-                    {{-- Materi Item 1 --}}
+                    @forelse($kelas->materi as $materi)
                     <div onclick="window.location.href='{{ route('guru.materi') }}'" class="bg-surface border border-outline-variant/30 rounded-xl p-4 flex justify-between items-center hover:bg-surface-container-low transition-soft cursor-pointer shadow-sm">
                         <div class="flex items-center gap-4">
                             <div class="w-12 h-12 rounded-lg bg-secondary-container/20 text-secondary flex items-center justify-center flex-shrink-0">
-                                <span class="material-symbols-outlined">picture_as_pdf</span>
+                                <span class="material-symbols-outlined">{{ $materi->link_video ? 'play_circle' : 'picture_as_pdf' }}</span>
                             </div>
                             <div>
-                                <h3 class="font-bold text-primary text-sm md:text-base" style="font-family: var(--font-serif)">Modul 1 - Pengenalan Jaringan Dasar</h3>
-                                <p class="text-xs text-on-surface-variant">Diunggah 12 Jul 2023 • PDF • 2.4 MB</p>
+                                <h3 class="font-bold text-primary text-sm md:text-base" style="font-family: var(--font-serif)">{{ $materi->judul }}</h3>
+                                <p class="text-xs text-on-surface-variant">Diunggah {{ $materi->created_at ? $materi->created_at->format('d M Y') : '-' }}</p>
                             </div>
                         </div>
                     </div>
-                    {{-- Materi Item 2 --}}
-                    <div onclick="window.location.href='{{ route('guru.materi') }}'" class="bg-surface border border-outline-variant/30 rounded-xl p-4 flex justify-between items-center hover:bg-surface-container-low transition-soft cursor-pointer shadow-sm">
-                        <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 rounded-lg bg-error-container/20 text-error flex items-center justify-center flex-shrink-0">
-                                <span class="material-symbols-outlined">play_circle</span>
-                            </div>
-                            <div>
-                                <h3 class="font-bold text-primary text-sm md:text-base" style="font-family: var(--font-serif)">Video: Cara Crimping Kabel UTP</h3>
-                                <p class="text-xs text-on-surface-variant">Diunggah 14 Jul 2023 • MP4 • 45 MB</p>
-                            </div>
-                        </div>
+                    @empty
+                    <div class="text-center py-8 text-on-surface-variant">
+                        <span class="material-symbols-outlined text-4xl mb-2 opacity-50">folder_open</span>
+                        <p>Belum ada materi untuk kelas ini.</p>
                     </div>
+                    @endforelse
                 </div>
             </div>
 
@@ -217,7 +185,7 @@
                     </a>
                 </div>
                 <div class="flex flex-col gap-4">
-                    {{-- Tugas Item 1 --}}
+                    @forelse($kelas->tugas as $tugas)
                     <div onclick="window.location.href='{{ route('guru.monitor.tugas') }}'" class="bg-surface border border-outline-variant/30 rounded-xl p-4 hover:bg-surface-container-low transition-soft cursor-pointer shadow-sm">
                         <div class="flex justify-between items-start mb-3">
                             <div class="flex items-center gap-4">
@@ -225,34 +193,22 @@
                                     <span class="material-symbols-outlined">assignment</span>
                                 </div>
                                 <div>
-                                    <h3 class="font-bold text-primary text-sm md:text-base" style="font-family: var(--font-serif)">Tugas 1 - Crimping Kabel Straight</h3>
-                                    <p class="text-xs text-on-surface-variant">Tenggat: 15 Jul 2023, 23:59</p>
+                                    <h3 class="font-bold text-primary text-sm md:text-base" style="font-family: var(--font-serif)">{{ $tugas->judul }}</h3>
+                                    <p class="text-xs text-on-surface-variant">Tenggat: {{ $tugas->deadline ? $tugas->deadline->format('d M Y, H:i') : '-' }}</p>
                                 </div>
                             </div>
                             <span class="bg-secondary-container/20 text-secondary text-xs font-bold px-2 py-1 rounded">Aktif</span>
                         </div>
                         <div class="flex justify-between items-center text-sm border-t border-outline-variant/30 pt-3">
-                            <p class="text-on-surface-variant"><span class="font-bold text-primary">28/32</span> Mengumpulkan</p>
+                            <p class="text-on-surface-variant"><span class="font-bold text-primary">{{ $tugas->pengumpulan_count ?? 0 }}/{{ $kelas->siswa->count() }}</span> Mengumpulkan</p>
                         </div>
                     </div>
-                    {{-- Tugas Item 2 --}}
-                    <div onclick="window.location.href='{{ route('guru.monitor.tugas') }}'" class="bg-surface border border-outline-variant/30 rounded-xl p-4 hover:bg-surface-container-low transition-soft cursor-pointer shadow-sm">
-                        <div class="flex justify-between items-start mb-3">
-                            <div class="flex items-center gap-4">
-                                <div class="w-12 h-12 rounded-lg bg-outline-variant/30 text-on-surface-variant flex items-center justify-center flex-shrink-0">
-                                    <span class="material-symbols-outlined">assignment_turned_in</span>
-                                </div>
-                                <div>
-                                    <h3 class="font-bold text-primary text-sm md:text-base" style="font-family: var(--font-serif)">Tugas Pendahuluan Sejarah Komputer</h3>
-                                    <p class="text-xs text-on-surface-variant">Tenggat: 10 Jul 2023, 23:59</p>
-                                </div>
-                            </div>
-                            <span class="bg-surface-variant text-on-surface-variant text-xs font-bold px-2 py-1 rounded">Selesai</span>
-                        </div>
-                        <div class="flex justify-between items-center text-sm border-t border-outline-variant/30 pt-3">
-                            <p class="text-on-surface-variant"><span class="font-bold text-primary">32/32</span> Mengumpulkan</p>
-                        </div>
+                    @empty
+                    <div class="text-center py-8 text-on-surface-variant">
+                        <span class="material-symbols-outlined text-4xl mb-2 opacity-50">assignment</span>
+                        <p>Belum ada tugas untuk kelas ini.</p>
                     </div>
+                    @endforelse
                 </div>
             </div>
 
@@ -265,17 +221,24 @@
                     </a>
                 </div>
                 <div class="flex flex-col gap-4">
+                    @forelse($kelas->kuis as $kuis)
                     <div onclick="window.location.href='{{ route('guru.kuis') }}'" class="bg-surface border border-outline-variant/30 rounded-xl p-4 hover:bg-surface-container-low transition-soft cursor-pointer shadow-sm">
                         <div class="flex items-center gap-4">
                             <div class="w-12 h-12 rounded-lg bg-primary-container/20 text-primary flex items-center justify-center flex-shrink-0">
                                 <span class="material-symbols-outlined">quiz</span>
                             </div>
                             <div>
-                                <h3 class="font-bold text-primary text-sm md:text-base" style="font-family: var(--font-serif)">Kuis 1 - Jaringan Dasar</h3>
-                                <p class="text-xs text-on-surface-variant">Durasi: 30 Menit • 20 Soal Pilihan Ganda</p>
+                                <h3 class="font-bold text-primary text-sm md:text-base" style="font-family: var(--font-serif)">{{ $kuis->judul }}</h3>
+                                <p class="text-xs text-on-surface-variant">Durasi: {{ $kuis->durasi_menit }} Menit</p>
                             </div>
                         </div>
                     </div>
+                    @empty
+                    <div class="text-center py-8 text-on-surface-variant">
+                        <span class="material-symbols-outlined text-4xl mb-2 opacity-50">quiz</span>
+                        <p>Belum ada kuis untuk kelas ini.</p>
+                    </div>
+                    @endforelse
                 </div>
             </div>
 
@@ -287,17 +250,24 @@
                     </a>
                 </div>
                 <div class="flex flex-col gap-4">
+                    @forelse($kelas->ujian as $ujian)
                     <div onclick="window.location.href='{{ route('guru.ujian') }}'" class="bg-surface border border-outline-variant/30 rounded-xl p-4 hover:bg-surface-container-low transition-soft cursor-pointer shadow-sm">
                         <div class="flex items-center gap-4">
                             <div class="w-12 h-12 rounded-lg bg-error-container/20 text-error flex items-center justify-center flex-shrink-0">
                                 <span class="material-symbols-outlined">edit_calendar</span>
                             </div>
                             <div>
-                                <h3 class="font-bold text-primary text-sm md:text-base" style="font-family: var(--font-serif)">UTS - Semester Ganjil</h3>
-                                <p class="text-xs text-on-surface-variant">Jadwal: 20 Okt 2023, 08:00 - 10:00</p>
+                                <h3 class="font-bold text-primary text-sm md:text-base" style="font-family: var(--font-serif)">{{ $ujian->judul }}</h3>
+                                <p class="text-xs text-on-surface-variant">Jadwal: {{ $ujian->mulai_at ? $ujian->mulai_at->format('d M Y, H:i') : '-' }}</p>
                             </div>
                         </div>
                     </div>
+                    @empty
+                    <div class="text-center py-8 text-on-surface-variant">
+                        <span class="material-symbols-outlined text-4xl mb-2 opacity-50">edit_calendar</span>
+                        <p>Belum ada ujian untuk kelas ini.</p>
+                    </div>
+                    @endforelse
                 </div>
             </div>
 

@@ -14,7 +14,8 @@ $selectedKelas = array_filter(explode('|', request('kelas', '')));
             </p>
         </header>
 
-        <form id="form-buat-tugas" class="grid grid-cols-12 gap-5">
+        <form id="form-buat-tugas" method="POST" action="{{ route('guru.tugas.store') }}" enctype="multipart/form-data" class="grid grid-cols-12 gap-5">
+            @csrf
             <div class="col-span-12 lg:col-span-8 space-y-4">
                 <div class="bg-surface-container-lowest p-5 rounded-xl shadow-ambient border border-outline-variant/30">
                     <div class="flex items-center gap-2 mb-4">
@@ -23,7 +24,7 @@ $selectedKelas = array_filter(explode('|', request('kelas', '')));
                     <div class="space-y-4">
                         <div>
                             <label class="block text-xs font-bold text-on-surface mb-1">Judul Tugas</label>
-                            <input id="judul-tugas" class="w-full bg-surface-container-low border-0 border-b-2 border-primary focus:ring-0 focus:border-secondary-container transition-all py-2 px-3 text-sm" placeholder="Contoh: Analisis Rangkaian Listrik AC/DC" type="text" value="{{ request('judul', '') }}"/>
+                            <input id="judul-tugas" name="judul" class="w-full bg-surface-container-low border-0 border-b-2 border-primary focus:ring-0 focus:border-secondary-container transition-all py-2 px-3 text-sm" placeholder="Contoh: Analisis Rangkaian Listrik AC/DC" type="text" value="{{ request('judul', '') }}"/>
                             <p id="judul-tugas-error" class="hidden text-[11px] text-red-500 font-bold mt-1">Judul tugas wajib diisi.</p>
                         </div>
                         <div>
@@ -41,42 +42,14 @@ $selectedKelas = array_filter(explode('|', request('kelas', '')));
 
                             <div id="dropdown-kelas-menu" class="absolute z-10 w-full mt-1 bg-surface border border-outline-variant/30 rounded-lg shadow-lg opacity-0 invisible pointer-events-none transform -translate-y-2 transition-all duration-200 origin-top">
                                 <div class="p-2 max-h-48 overflow-y-auto space-y-1">
+                                    @forelse($kelases as $kelas)
                                     <label class="flex items-center gap-2 p-2 hover:bg-surface-container rounded-md cursor-pointer transition-colors">
-                                        <input class="kelas-checkbox text-secondary rounded focus:ring-secondary-container" type="checkbox" value="X TKJ 1" {{ in_array('X TKJ 1', $selectedKelas, true) ? 'checked' : '' }}/>
-                                        <span class="text-sm text-on-surface">X TKJ 1</span>
+                                        <input class="kelas-checkbox text-secondary rounded focus:ring-secondary-container" name="kelas_id[]" type="checkbox" value="{{ $kelas->id }}" data-name="{{ $kelas->nama_kelas }}"/>
+                                        <span class="text-sm text-on-surface">{{ $kelas->nama_kelas }}</span>
                                     </label>
-                                    <label class="flex items-center gap-2 p-2 hover:bg-surface-container rounded-md cursor-pointer transition-colors">
-                                        <input class="kelas-checkbox text-secondary rounded focus:ring-secondary-container" type="checkbox" value="X TKJ 2" {{ in_array('X TKJ 2', $selectedKelas, true) ? 'checked' : '' }}/>
-                                        <span class="text-sm text-on-surface">X TKJ 2</span>
-                                    </label>
-                                    <label class="flex items-center gap-2 p-2 hover:bg-surface-container rounded-md cursor-pointer transition-colors">
-                                        <input class="kelas-checkbox text-secondary rounded focus:ring-secondary-container" type="checkbox" value="XI TKJ 1" {{ in_array('XI TKJ 1', $selectedKelas, true) ? 'checked' : '' }}/>
-                                        <span class="text-sm text-on-surface">XI TKJ 1</span>
-                                    </label>
-                                    <label class="flex items-center gap-2 p-2 hover:bg-surface-container rounded-md cursor-pointer transition-colors">
-                                        <input class="kelas-checkbox text-secondary rounded focus:ring-secondary-container" type="checkbox" value="XI TKJ 2" {{ in_array('XI TKJ 2', $selectedKelas, true) ? 'checked' : '' }}/>
-                                        <span class="text-sm text-on-surface">XI TKJ 2</span>
-                                    </label>
-                                    <label class="flex items-center gap-2 p-2 hover:bg-surface-container rounded-md cursor-pointer transition-colors">
-                                        <input class="kelas-checkbox text-secondary rounded focus:ring-secondary-container" type="checkbox" value="XII TKJ 1" {{ in_array('XII TKJ 1', $selectedKelas, true) ? 'checked' : '' }}/>
-                                        <span class="text-sm text-on-surface">XII TKJ 1</span>
-                                    </label>
-                                    <label class="flex items-center gap-2 p-2 hover:bg-surface-container rounded-md cursor-pointer transition-colors">
-                                        <input class="kelas-checkbox text-secondary rounded focus:ring-secondary-container" type="checkbox" value="XII - Teknik Elektro 1" {{ in_array('XII - Teknik Elektro 1', $selectedKelas, true) ? 'checked' : '' }}/>
-                                        <span class="text-sm text-on-surface">XII - Teknik Elektro 1</span>
-                                    </label>
-                                    <label class="flex items-center gap-2 p-2 hover:bg-surface-container rounded-md cursor-pointer transition-colors">
-                                        <input class="kelas-checkbox text-secondary rounded focus:ring-secondary-container" type="checkbox" value="XII - Teknik Elektro 2" {{ in_array('XII - Teknik Elektro 2', $selectedKelas, true) ? 'checked' : '' }}/>
-                                        <span class="text-sm text-on-surface">XII - Teknik Elektro 2</span>
-                                    </label>
-                                    <label class="flex items-center gap-2 p-2 hover:bg-surface-container rounded-md cursor-pointer transition-colors">
-                                        <input class="kelas-checkbox text-secondary rounded focus:ring-secondary-container" type="checkbox" value="XII - Rekayasa Perangkat Lunak 1" {{ in_array('XII - Rekayasa Perangkat Lunak 1', $selectedKelas, true) ? 'checked' : '' }}/>
-                                        <span class="text-sm text-on-surface">XII - Rekayasa Perangkat Lunak 1</span>
-                                    </label>
-                                    <label class="flex items-center gap-2 p-2 hover:bg-surface-container rounded-md cursor-pointer transition-colors">
-                                        <input class="kelas-checkbox text-secondary rounded focus:ring-secondary-container" type="checkbox" value="XII - Rekayasa Perangkat Lunak 2" {{ in_array('XII - Rekayasa Perangkat Lunak 2', $selectedKelas, true) ? 'checked' : '' }}/>
-                                        <span class="text-sm text-on-surface">XII - Rekayasa Perangkat Lunak 2</span>
-                                    </label>
+                                    @empty
+                                    <p class="text-xs text-red-500 italic p-2">Anda belum memiliki kelas.</p>
+                                    @endforelse
                                 </div>
                             </div>
                             <p id="kelas-error" class="hidden text-[11px] text-red-500 font-bold mt-2">Pilih minimal satu kelas.</p>
@@ -92,7 +65,7 @@ $selectedKelas = array_filter(explode('|', request('kelas', '')));
                     <div class="grid grid-cols-2 gap-4">
                         <div class="col-span-2 md:col-span-1">
                             <label class="block text-xs font-bold text-on-surface mb-1">Batas Akhir (Deadline)</label>
-                            <input id="deadline" class="w-full bg-surface-container-low border-0 border-b-2 border-primary focus:ring-0 focus:border-secondary-container py-2 px-3 text-sm" type="datetime-local" value="{{ request('deadline', '') }}"/>
+                            <input id="deadline" name="deadline" class="w-full bg-surface-container-low border-0 border-b-2 border-primary focus:ring-0 focus:border-secondary-container py-2 px-3 text-sm" type="datetime-local" value="{{ request('deadline', '') }}"/>
                             <p id="deadline-error" class="hidden text-[11px] text-red-500 font-bold mt-1">Deadline wajib diisi.</p>
                         </div>
                         <div class="col-span-2 md:col-span-1">
@@ -479,7 +452,7 @@ document.addEventListener('DOMContentLoaded', function() {
             dropdownKelasText.textContent = "Pilih kelas...";
             dropdownKelasText.classList.remove('text-primary', 'font-bold');
         } else if (checkedBoxes.length === 1) {
-            dropdownKelasText.textContent = checkedBoxes[0].value;
+            dropdownKelasText.textContent = checkedBoxes[0].getAttribute('data-name');
             dropdownKelasText.classList.add('text-primary', 'font-bold');
         } else {
             dropdownKelasText.textContent = `${checkedBoxes.length} Kelas Dipilih`;
@@ -692,27 +665,40 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     btnConfirmSimpan.addEventListener('click', () => {
+        console.log('simpan clicked');
         if (!validateForm()) {
+            console.log('validasi gagal');
             modalConfirmSimpan.classList.add('hidden');
             return;
         }
-
-        // Sembunyikan modal konfirmasi
+        console.log('validasi ok, akan submit');
         modalConfirmSimpan.classList.add('hidden');
-        
-        // Tampilkan Popup Toast Hijau 
         toastSuccess.classList.remove('invisible', 'opacity-0', '-translate-y-4');
         toastSuccess.classList.add('opacity-100', 'translate-y-0');
-        
-        // Buat jeda waktu 1.5 detik agar pengguna bisa baca popup, lalu pindah halaman
         setTimeout(() => {
-            // Bisa pakai form submit betulan jika backend dirutekan ke POST:
-            // document.getElementById('form-buat-tugas').submit();
-            
-            // Atau redirect mode view
-            window.location.href = "{{ route('guru.tugas') }}";
+            console.log('submit!');
+            document.getElementById('form-buat-tugas').submit();
         }, 1500);
     });
+    // btnConfirmSimpan.addEventListener('click', () => {
+    //     if (!validateForm()) {
+    //         modalConfirmSimpan.classList.add('hidden');
+    //         return;
+    //     }
+
+    //     // Sembunyikan modal konfirmasi
+    //     modalConfirmSimpan.classList.add('hidden');
+        
+    //     // Tampilkan Popup Toast Hijau 
+    //     toastSuccess.classList.remove('invisible', 'opacity-0', '-translate-y-4');
+    //     toastSuccess.classList.add('opacity-100', 'translate-y-0');
+        
+    //     // Buat jeda waktu 1.5 detik agar pengguna bisa baca popup, lalu pindah halaman
+    //     setTimeout(() => {
+    //         // Bisa pakai form submit betulan jika backend dirutekan ke POST:
+    //         document.getElementById('form-buat-tugas').submit();
+    //     }, 1500);
+    // });
 
 });
 </script>

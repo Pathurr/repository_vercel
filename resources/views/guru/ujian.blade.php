@@ -2,15 +2,19 @@
 @section('title', 'Ujian - SMK Mandalahayu 1')
 @section('content')
 @php
-$ujian = [
-    ['judul'=>'UTS Jaringan Komputer','kelas'=>'X TKJ 1','tanggal'=>'20 Mei 2025','waktu'=>'08.00 - 10.00 WIB','durasi'=>'120 menit','peserta'=>32,'status'=>'terjadwal'],
-    ['judul'=>'UTS Pemrograman Dasar','kelas'=>'X TKJ 2','tanggal'=>'21 Mei 2025','waktu'=>'10.00 - 12.00 WIB','durasi'=>'120 menit','peserta'=>30,'status'=>'terjadwal'],
-    ['judul'=>'UAS Administrasi Server','kelas'=>'XI TKJ 1','tanggal'=>'15 Mei 2025','waktu'=>'08.00 - 10.00 WIB','durasi'=>'120 menit','peserta'=>25,'status'=>'selesai'],
-    ['judul'=>'UAS Routing & Switching','kelas'=>'XI TKJ 2','tanggal'=>'16 Mei 2025','waktu'=>'10.00 - 12.00 WIB','durasi'=>'120 menit','peserta'=>28,'status'=>'selesai'],
-    ['judul'=>'UAS Keamanan Jaringan','kelas'=>'XII TKJ 1','tanggal'=>'28 Mei 2025','waktu'=>'08.00 - 11.00 WIB','durasi'=>'180 menit','peserta'=>22,'status'=>'terjadwal'],
-];
-$kelasList = collect($ujian)->pluck('kelas')->unique()->values();
-$statusList = collect($ujian)->pluck('status')->unique()->values();
+    $kelasList = $ujian->map(fn($item) => $item->kelas?->nama_kelas)
+        ->filter()
+        ->unique()
+        ->values();
+    $statusList = $ujian->map(function($item) {
+        if ($item->selesai_at && $item->selesai_at->isPast()) {
+            return 'selesai';
+        }
+        if ($item->mulai_at && $item->mulai_at->isFuture()) {
+            return 'terjadwal';
+        }
+        return 'berlangsung';
+    })->unique()->values();
 @endphp
 
 <div class="mb-8 flex justify-between items-center">
@@ -68,24 +72,32 @@ $statusList = collect($ujian)->pluck('status')->unique()->values();
         </thead>
         <tbody class="divide-y divide-surface-variant">
             @foreach($ujian as $u)
-            <tr class="hover:bg-surface-container transition-soft ujian-row" data-kelas="{{ $u['kelas'] }}" data-status="{{ $u['status'] }}">
+            @php
+                $kelasNama = $u->kelas?->nama_kelas ?? 'Belum ditentukan';
+                $tanggal = $u->mulai_at ? $u->mulai_at->format('d M Y') : '-';
+                $waktu = $u->mulai_at && $u->selesai_at ? $u->mulai_at->format('H:i').' - '.$u->selesai_at->format('H:i').' WIB' : '-';
+                $durasiText = $u->durasi_menit ? $u->durasi_menit.' menit' : '-';
+                $peserta = $u->kelas?->siswa->count() ?? 0;
+                $status = $u->selesai_at && $u->selesai_at->isPast() ? 'selesai' : ($u->mulai_at && $u->mulai_at->isFuture() ? 'terjadwal' : 'berlangsung');
+            @endphp
+            <tr class="hover:bg-surface-container transition-soft ujian-row" data-kelas="{{ $kelasNama }}" data-status="{{ $status }}">
                 <td class="p-4">
-                    <p class="font-bold text-on-surface">{{ $u['judul'] }}</p>
-                    <p class="text-xs text-on-surface-variant">{{ $u['kelas'] }}</p>
+                    <p class="font-bold text-on-surface">{{ $u->judul }}</p>
+                    <p class="text-xs text-on-surface-variant">{{ $kelasNama }}</p>
                 </td>
                 <td class="p-4">
-                    <p class="font-bold text-on-surface">{{ $u['tanggal'] }}</p>
-                    <p class="text-xs text-on-surface-variant">{{ $u['waktu'] }} • {{ $u['durasi'] }}</p>
+                    <p class="font-bold text-on-surface">{{ $tanggal }}</p>
+                    <p class="text-xs text-on-surface-variant">{{ $waktu }} • {{ $durasiText }}</p>
                 </td>
-                <td class="p-4 text-center font-bold text-primary">{{ $u['peserta'] }}</td>
+                <td class="p-4 text-center font-bold text-primary">{{ $peserta }}</td>
                 <td class="p-4 text-center">
-                    <span class="px-3 py-1 rounded-full text-xs font-bold {{ $u['status']==='selesai' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700' }}">
-                        {{ ucfirst($u['status']) }}
+                    <span class="px-3 py-1 rounded-full text-xs font-bold {{ $status==='selesai' ? 'bg-green-100 text-green-700' : ($status==='terjadwal' ? 'bg-blue-100 text-blue-700' : 'bg-amber-100 text-amber-700') }}">
+                        {{ ucfirst($status) }}
                     </span>
                 </td>
                 <td class="p-4 text-center">
                     <div class="flex gap-2 justify-center">
-                        <a href="{{ route('guru.ujian.buat', ['edit' => 1, 'judul' => $u['judul'], 'kelas' => $u['kelas'], 'tanggal' => $u['tanggal'], 'waktu' => $u['waktu'], 'durasi' => str_replace(' menit', '', $u['durasi']), 'status' => $u['status']]) }}" class="p-2 rounded-lg text-secondary hover:bg-secondary-container/30 transition-soft"><span class="material-symbols-outlined text-base">edit</span></a>
+                        <a href="{{ route('guru.ujian.buat', ['edit' => 1, 'id' => $u->id]) }}" class="p-2 rounded-lg text-secondary hover:bg-secondary-container/30 transition-soft"><span class="material-symbols-outlined text-base">edit</span></a>
                     </div>
                 </td>
             </tr>

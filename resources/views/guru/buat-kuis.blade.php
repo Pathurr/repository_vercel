@@ -33,13 +33,14 @@
         </div>
     </div>
     
-    <form class="space-y-10 pb-10" id="quizForm">
+    <form class="space-y-10 pb-10" id="quizForm" method="POST" action="{{ route('guru.kuis.store') }}" enctype="multipart/form-data">
+        @csrf
         <section class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
             <div class="bg-white p-8 rounded-xl shadow-sm border border-outline-variant/20 space-y-6 sticky top-6">
                 <h3 class="font-bold text-2xl text-primary" style="font-family: var(--font-serif)">Informasi Kuis</h3>
                 <div class="space-y-2">
                     <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Nama Kuis</label>
-                    <input class="w-full text-2xl font-semibold stationery-input py-2" id="quizName" placeholder="Contoh: Kuis Akhir Bab 3 - Jaringan Komputer" type="text" value="{{ request('judul') }}"/>
+                    <input class="w-full text-2xl font-semibold stationery-input py-2" id="quizName" name="judul" placeholder="Contoh: Kuis Akhir Bab 3 - Jaringan Komputer" type="text" value="{{ request('judul') }}"/>
                     <p class="text-xs text-error font-bold hidden" id="err-quizName"></p>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 z-10">
@@ -61,30 +62,18 @@
                         </button>
                         <div id="classesDropdown" class="absolute z-50 w-full mt-1 bg-white border border-outline-variant/50 rounded-lg shadow-lg hidden top-full left-0">
                             <ul class="p-2 space-y-1 max-h-48 overflow-y-auto">
+                                @forelse($kelases as $kelas)
                                 <li>
                                     <label class="flex items-center gap-3 p-2 hover:bg-surface-container-low rounded cursor-pointer group">
-                                        <input type="checkbox" value="X TKJ 1" class="w-5 h-5 text-secondary border-outline rounded class-checkbox" onchange="updateSelectedClasses()" {{ str_contains(request('kelas', ''), 'X TKJ 1') ? 'checked' : '' }}>
-                                        <span class="text-sm group-hover:text-primary">X TKJ 1</span>
+                                        <input type="checkbox" name="kelas_id[]" value="{{ $kelas->id }}" data-name="{{ $kelas->nama_kelas }}" class="w-5 h-5 text-secondary border-outline rounded class-checkbox" onchange="updateSelectedClasses()">
+                                        <span class="text-sm group-hover:text-primary">{{ $kelas->nama_kelas }}</span>
                                     </label>
                                 </li>
+                                @empty
                                 <li>
-                                    <label class="flex items-center gap-3 p-2 hover:bg-surface-container-low rounded cursor-pointer group">
-                                        <input type="checkbox" value="X TKJ 2" class="w-5 h-5 text-secondary border-outline rounded class-checkbox" onchange="updateSelectedClasses()" {{ str_contains(request('kelas', ''), 'X TKJ 2') ? 'checked' : '' }}>
-                                        <span class="text-sm group-hover:text-primary">X TKJ 2</span>
-                                    </label>
+                                    <p class="text-xs text-red-500 italic p-2">Anda belum memiliki kelas.</p>
                                 </li>
-                                <li>
-                                    <label class="flex items-center gap-3 p-2 hover:bg-surface-container-low rounded cursor-pointer group">
-                                        <input type="checkbox" value="XI TKJ 1" class="w-5 h-5 text-secondary border-outline rounded class-checkbox" onchange="updateSelectedClasses()" {{ str_contains(request('kelas', ''), 'XI TKJ 1') ? 'checked' : '' }}>
-                                        <span class="text-sm group-hover:text-primary">XI TKJ 1</span>
-                                    </label>
-                                </li>
-                                <li>
-                                    <label class="flex items-center gap-3 p-2 hover:bg-surface-container-low rounded cursor-pointer group">
-                                        <input type="checkbox" value="XI TKJ 2" class="w-5 h-5 text-secondary border-outline rounded class-checkbox" onchange="updateSelectedClasses()" {{ str_contains(request('kelas', ''), 'XI TKJ 2') ? 'checked' : '' }}>
-                                        <span class="text-sm group-hover:text-primary">XI TKJ 2</span>
-                                    </label>
-                                </li>
+                                @endforelse
                             </ul>
                         </div>
                         <p class="text-xs text-error font-bold hidden" id="err-quizClasses"></p>
@@ -523,7 +512,7 @@
             textSpan.classList.add('text-on-surface-variant');
             textSpan.classList.remove('font-semibold');
         } else {
-            const values = Array.from(checked).map(cb => cb.value);
+            const values = Array.from(checked).map(cb => cb.getAttribute('data-name'));
             textSpan.textContent = values.join(', ');
             textSpan.classList.remove('text-on-surface-variant');
             textSpan.classList.add('font-semibold');
@@ -680,7 +669,7 @@
                     toast.classList.add('opacity-100', 'translate-y-0');
                 }, 10);
                 setTimeout(() => {
-                    window.location.href = '/guru/kuis';
+                    document.getElementById('quizForm').submit();
                 }, 1500);
             } else {
                 closeActionModal();
