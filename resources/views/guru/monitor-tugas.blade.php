@@ -108,97 +108,48 @@
             </tr>
         </thead>
         <tbody class="divide-y divide-outline-variant/30" id="studentTableBody">
-
-            <!-- Row 1: Submitted / Tugas -->
-            <tr class="hover:bg-surface-container-lowest transition-colors" data-name="aditya saputra" data-type="tugas" data-status="terkumpul" data-grade="belum">
-                <td class="px-3 py-2.5">
-                    <div class="flex items-center gap-2">
-                        <div class="w-7 h-7 flex-shrink-0 bg-primary-fixed flex items-center justify-center rounded-full text-primary font-bold text-[10px]">AS</div>
-                        <span class="font-semibold text-xs leading-tight">Aditya Saputra</span>
-                    </div>
-                </td>
-                <td class="px-3 py-2.5">
-                    <p class="text-xs font-semibold text-on-surface leading-tight">XI TKJ 1 <span class="text-[10px] text-on-surface-variant font-normal">· Ganjil</span></p>
-                    <p class="text-[10px] text-on-surface-variant mt-0.5">Admin Server</p>
-                </td>
-                <td class="px-3 py-2.5">
-                    <p class="text-xs font-semibold text-on-surface leading-tight truncate">Laporan Praktikum</p>
-                    <span class="text-[10px] px-1.5 py-0.5 bg-surface-variant rounded text-on-surface-variant">Tugas</span>
-                </td>
-                <td class="px-3 py-2.5 text-center">
-                    <span class="px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-[10px] font-bold inline-flex items-center gap-1">
-                        <span class="w-1.5 h-1.5 bg-green-700 rounded-full flex-shrink-0"></span>Terkumpul
-                    </span>
-                </td>
-                <td class="px-3 py-2.5 text-center">
-                    <p class="text-[10px] text-on-surface-variant">12 Okt 2023</p>
-                    <p class="text-xs font-bold text-on-surface-variant">-</p>
-                </td>
-                <td class="px-3 py-2.5 text-right">
-                    <a href="{{ route('guru.penilaian.tugas') }}?s=0" class="btn-nilai">Nilai</a>
-                </td>
-            </tr>
-
-            <!-- Row 2: Late / Kuis -->
-            <tr class="hover:bg-surface-container-lowest transition-colors" data-name="bambang pamungkas" data-type="kuis" data-status="terlambat" data-grade="belum">
-                <td class="px-3 py-2.5">
-                    <div class="flex items-center gap-2">
-                        <div class="w-7 h-7 flex-shrink-0 bg-primary-fixed flex items-center justify-center rounded-full text-primary font-bold text-[10px]">BP</div>
-                        <span class="font-semibold text-xs leading-tight">Bambang Pamungkas</span>
-                    </div>
-                </td>
-                <td class="px-3 py-2.5">
-                    <p class="text-xs font-semibold text-on-surface leading-tight">XI TKJ 1 <span class="text-[10px] text-on-surface-variant font-normal">· Ganjil</span></p>
-                    <p class="text-[10px] text-on-surface-variant mt-0.5">Jaringan Dasar</p>
-                </td>
-                <td class="px-3 py-2.5">
-                    <p class="text-xs font-semibold text-on-surface leading-tight truncate">Kuis Bab 2 Routing</p>
-                    <span class="text-[10px] px-1.5 py-0.5 bg-surface-variant rounded text-on-surface-variant">Kuis</span>
-                </td>
-                <td class="px-3 py-2.5 text-center">
-                    <span class="px-2 py-0.5 bg-red-100 text-red-700 rounded-full text-[10px] font-bold inline-flex items-center gap-1">
-                        <span class="w-1.5 h-1.5 bg-red-700 rounded-full flex-shrink-0"></span>Terlambat
-                    </span>
-                </td>
-                <td class="px-3 py-2.5 text-center">
-                    <p class="text-[10px] text-red-500">13 Okt 2023</p>
-                    <p class="text-xs font-bold text-on-surface-variant">-</p>
-                </td>
-                <td class="px-3 py-2.5 text-right">
-                    <a href="{{ route('guru.penilaian.kuis') }}?s=1" class="btn-nilai">Nilai</a>
-                </td>
-            </tr>
-
-            <!-- Row 3: Graded / Ujian -->
-            <tr class="hover:bg-surface-container-lowest transition-colors" data-name="citra nuraini" data-type="ujian" data-status="terkumpul" data-grade="sudah">
-                <td class="px-3 py-2.5">
-                    <div class="flex items-center gap-2">
-                        <div class="w-7 h-7 flex-shrink-0 bg-primary-fixed flex items-center justify-center rounded-full text-primary font-bold text-[10px]">CN</div>
-                        <span class="font-semibold text-xs leading-tight">Citra Nuraini</span>
-                    </div>
-                </td>
-                <td class="px-3 py-2.5">
-                    <p class="text-xs font-semibold text-on-surface leading-tight">XI TKJ 1 <span class="text-[10px] text-on-surface-variant font-normal">· Genap</span></p>
-                    <p class="text-[10px] text-on-surface-variant mt-0.5">Pemrograman Web</p>
-                </td>
-                <td class="px-3 py-2.5">
-                    <p class="text-xs font-semibold text-on-surface leading-tight truncate">UTS Semester Genap</p>
-                    <span class="text-[10px] px-1.5 py-0.5 bg-surface-variant rounded text-on-surface-variant">Ujian</span>
-                </td>
-                <td class="px-3 py-2.5 text-center">
-                    <span class="px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-[10px] font-bold inline-flex items-center gap-1">
-                        <span class="w-1.5 h-1.5 bg-green-700 rounded-full flex-shrink-0"></span>Terkumpul
-                    </span>
-                </td>
-                <td class="px-3 py-2.5 text-center">
-                    <p class="text-[10px] text-on-surface-variant">11 Okt 2023</p>
-                    <p class="text-xs font-bold text-secondary">88</p>
-                </td>
-                <td class="px-3 py-2.5 text-right">
-                    <a href="{{ route('guru.penilaian.ujian') }}?s=2" class="btn-lihat">Edit</a>
-                </td>
-            </tr>
-
+            @forelse($submissions as $submission)
+                @php
+                    $tugas = $submission->tugas;
+                    $kelas = $tugas->kelas;
+                    $status = $submission->status ?? ($submission->dikumpulkan_at && $tugas->deadline ? ($submission->dikumpulkan_at->greaterThan($tugas->deadline) ? 'terlambat' : 'terkumpul') : 'terkumpul');
+                    $gradeStatus = $submission->nilai ? 'sudah' : 'belum';
+                    $badgeClass = $status === 'terkumpul' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700';
+                    $scoreText = $submission->nilai ? $submission->nilai : '-';
+                @endphp
+                <tr class="hover:bg-surface-container-lowest transition-colors" data-name="{{ strtolower($submission->siswa->name) }}" data-type="tugas" data-status="{{ $status }}" data-grade="{{ $gradeStatus }}">
+                    <td class="px-3 py-2.5">
+                        <div class="flex items-center gap-2">
+                            <div class="w-7 h-7 flex-shrink-0 bg-primary-fixed flex items-center justify-center rounded-full text-primary font-bold text-[10px]">{{ strtoupper(substr($submission->siswa->name, 0, 1)) }}</div>
+                            <span class="font-semibold text-xs leading-tight">{{ $submission->siswa->name }}</span>
+                        </div>
+                    </td>
+                    <td class="px-3 py-2.5">
+                        <p class="text-xs font-semibold text-on-surface leading-tight">{{ $kelas?->nama_kelas ?? 'Kelas tidak tersedia' }} <span class="text-[10px] text-on-surface-variant font-normal">· {{ $kelas?->mata_pelajaran ?? 'Mata Pelajaran belum ditentukan' }}</span></p>
+                        <p class="text-[10px] text-on-surface-variant mt-0.5">{{ $tugas->judul }}</p>
+                    </td>
+                    <td class="px-3 py-2.5">
+                        <p class="text-xs font-semibold text-on-surface leading-tight truncate">{{ $tugas->judul }}</p>
+                        <span class="text-[10px] px-1.5 py-0.5 bg-surface-variant rounded text-on-surface-variant">Tugas</span>
+                    </td>
+                    <td class="px-3 py-2.5 text-center">
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold inline-flex items-center gap-1 {{ $badgeClass }}">
+                            <span class="w-1.5 h-1.5 {{ $status === 'terkumpul' ? 'bg-green-700' : 'bg-red-700' }} rounded-full flex-shrink-0"></span>{{ ucfirst($status) }}
+                        </span>
+                    </td>
+                    <td class="px-3 py-2.5 text-center">
+                        <p class="text-[10px] text-on-surface-variant">{{ $submission->dikumpulkan_at?->format('d M Y') ?? '-' }}</p>
+                        <p class="text-xs font-bold text-on-surface-variant">{{ $scoreText }}</p>
+                    </td>
+                    <td class="px-3 py-2.5 text-right">
+                        <a href="{{ route('guru.penilaian.tugas', ['id' => $submission->id]) }}" class="btn-nilai">Nilai</a>
+                    </td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="6" class="px-3 py-8 text-center text-on-surface-variant">Belum ada pengumpulan tugas untuk ditampilkan.</td>
+                </tr>
+            @endforelse
         </tbody>
     </table>
     <!-- Pagination -->

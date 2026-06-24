@@ -13,20 +13,20 @@
 
     {{-- Form Card --}}
     <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-4 md:p-6 shadow-sm">
-        <form action="{{ route('guru.kelas') }}" method="GET">
+        <form id="form-buat-kelas" action="{{ route('guru.kelas.store') }}" method="POST">
             @csrf
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 {{-- Nama Kelas --}}
                 <div>
                     <label class="block text-xs font-bold text-[#51443c] mb-1">Nama Kelas</label>
-                    <input type="text" id="nama-kelas" placeholder="Contoh: Pengembangan Web" class="w-full bg-[#f8f3ed] border-none rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#835500] text-sm text-[#50290b] placeholder-[#84746b]">
+                    <input type="text" id="nama-kelas" name="nama_kelas" placeholder="Contoh: Pengembangan Web" class="w-full bg-[#f8f3ed] border-none rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#835500] text-sm text-[#50290b] placeholder-[#84746b]" required>
                     <p id="nama-kelas-error" class="hidden text-[11px] text-red-500 font-bold mt-1">Nama kelas wajib diisi.</p>
                 </div>
                 {{-- Pemilihan Kelas --}}
                 <div>
-                    <label class="block text-xs font-bold text-[#51443c] mb-1">Pilih Kelas</label>
+                    <label class="block text-xs font-bold text-[#51443c] mb-1">Pilih Tingkat / Mata Pelajaran</label>
                     <div class="relative">
-                        <select id="pilih-kelas" class="w-full bg-[#f8f3ed] border-none rounded-lg pl-3 pr-8 py-2 focus:ring-2 focus:ring-[#835500] text-sm text-[#50290b] appearance-none cursor-pointer">
+                        <select id="pilih-kelas" name="mata_pelajaran" class="w-full bg-[#f8f3ed] border-none rounded-lg pl-3 pr-8 py-2 focus:ring-2 focus:ring-[#835500] text-sm text-[#50290b] appearance-none cursor-pointer" required>
                             <option value="">Pilih satu kelas...</option>
                             <option value="X TKJ 1">X TKJ 1</option>
                             <option value="X TKJ 2">X TKJ 2</option>
@@ -44,7 +44,7 @@
             {{-- Deskripsi Kelas --}}
             <div class="mb-4">
                 <label class="block text-xs font-bold text-[#51443c] mb-1">Deskripsi Kelas</label>
-                <textarea rows="2" placeholder="Jelaskan tujuan dan cakupan materi kelas ini..." class="w-full bg-[#f8f3ed] border-none rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#835500] text-sm text-[#50290b] placeholder-[#84746b] resize-none"></textarea>
+                <textarea name="deskripsi" rows="2" placeholder="Jelaskan tujuan dan cakupan materi kelas ini..." class="w-full bg-[#f8f3ed] border-none rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#835500] text-sm text-[#50290b] placeholder-[#84746b] resize-none"></textarea>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -58,7 +58,7 @@
                     <label class="block text-xs font-bold text-[#51443c] mb-1">Class Key</label>
                     <div class="flex gap-2">
                         <div class="relative flex-1">
-                            <input type="text" id="classKeyInput" placeholder="MNDLH-XXXX" class="w-full bg-[#f8f3ed] border-none rounded-lg pl-3 pr-14 py-2 focus:ring-2 focus:ring-[#835500] text-sm font-mono tracking-wider text-[#50290b] placeholder-[#84746b]/50">
+                            <input type="text" id="classKeyInput" name="kode_kelas" placeholder="MNDLH-XXXX" class="w-full bg-[#f8f3ed] border-none rounded-lg pl-3 pr-14 py-2 focus:ring-2 focus:ring-[#835500] text-sm font-mono tracking-wider text-[#50290b] placeholder-[#84746b]/50" required readonly>
                             <span class="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-[#84746b] uppercase tracking-widest">Sistem</span>
                         </div>
                         <button type="button" onclick="generateClassKey()" class="px-3 py-2 border border-[#835500] text-[#835500] font-bold text-xs rounded-lg flex items-center justify-center gap-1 hover:bg-[#835500]/5 transition-soft flex-shrink-0">
@@ -362,12 +362,8 @@
             }
             modalConfirmSimpan.classList.add('hidden');
             
-            toastSuccess.classList.remove('invisible', 'opacity-0', '-translate-y-4');
-            toastSuccess.classList.add('opacity-100', 'translate-y-0');
-            
-            setTimeout(() => {
-                window.location.href = "{{ route('guru.kelas') }}";
-            }, 1500);
+            // Allow form submission to proceed
+            document.getElementById('form-buat-kelas').submit();
         });
     });
 </script>

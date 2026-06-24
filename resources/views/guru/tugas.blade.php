@@ -2,14 +2,10 @@
 @section('title', 'Tugas - SMK Mandalahayu 1')
 @section('content')
 @php
-$tugas = [
-    ['id'=>1,'judul'=>'Instalasi Sistem Operasi Linux','kelas'=>'X TKJ 1','deadline'=>'20 Mei 2025','deadline_iso'=>'2025-05-20T23:59','dikumpulkan'=>28,'total'=>32,'status'=>'aktif','deskripsi'=>'Kerjakan instalasi Linux sesuai langkah pada modul.','bobot'=>20,'kkm'=>75,'maks'=>100],
-    ['id'=>2,'judul'=>'Konfigurasi Router Cisco','kelas'=>'X TKJ 2','deadline'=>'22 Mei 2025','deadline_iso'=>'2025-05-22T23:59','dikumpulkan'=>15,'total'=>30,'status'=>'aktif','deskripsi'=>'Konfigurasi dasar routing dan VLAN.','bobot'=>15,'kkm'=>70,'maks'=>100],
-    ['id'=>3,'judul'=>'Desain Topologi Jaringan','kelas'=>'XI TKJ 1','deadline'=>'18 Mei 2025','deadline_iso'=>'2025-05-18T23:59','dikumpulkan'=>25,'total'=>25,'status'=>'selesai','deskripsi'=>'Buat topologi jaringan sekolah.','bobot'=>25,'kkm'=>75,'maks'=>100],
-    ['id'=>4,'judul'=>'Troubleshooting Jaringan LAN','kelas'=>'XI TKJ 2','deadline'=>'25 Mei 2025','deadline_iso'=>'2025-05-25T23:59','dikumpulkan'=>0,'total'=>28,'status'=>'aktif','deskripsi'=>'Identifikasi dan perbaiki masalah koneksi.','bobot'=>20,'kkm'=>75,'maks'=>100],
-    ['id'=>5,'judul'=>'Laporan Prakerin Semester 2','kelas'=>'XII TKJ 1','deadline'=>'15 Mei 2025','deadline_iso'=>'2025-05-15T23:59','dikumpulkan'=>20,'total'=>22,'status'=>'selesai','deskripsi'=>'Kumpulkan laporan prakerin.','bobot'=>30,'kkm'=>80,'maks'=>100],
-];
-$kelasList = collect($tugas)->pluck('kelas')->unique()->values();
+    $kelasList = $tugas->map(fn($item) => $item->kelas?->nama_kelas)
+        ->filter()
+        ->unique()
+        ->values();
 @endphp
 
 <div class="mb-8 flex justify-between items-center">
@@ -69,36 +65,33 @@ $kelasList = collect($tugas)->pluck('kelas')->unique()->values();
         </thead>
         <tbody class="divide-y divide-surface-variant">
             @foreach($tugas as $t)
-            <tr class="hover:bg-surface-container transition-soft" data-kelas="{{ $t['kelas'] }}" data-status="{{ $t['status'] }}">
-                <td class="p-4 font-bold text-on-surface">{{ $t['judul'] }}</td>
-                <td class="p-4 text-sm text-on-surface-variant">{{ $t['kelas'] }}</td>
-                <td class="p-4 text-sm text-on-surface-variant">{{ $t['deadline'] }}</td>
+            @php
+                $kelasNama = $t->kelas?->nama_kelas ?? 'Belum ditentukan';
+                $submittedCount = $t->pengumpulan->count();
+                $totalSiswa = $t->kelas?->siswa()->count() ?? 0;
+                $progressPercent = $totalSiswa > 0 ? round($submittedCount / $totalSiswa * 100) : 0;
+                $status = $t->status ?? ($t->deadline?->isPast() ? 'selesai' : 'aktif');
+            @endphp
+            <tr class="hover:bg-surface-container transition-soft" data-kelas="{{ $kelasNama }}" data-status="{{ $status }}">
+                <td class="p-4 font-bold text-on-surface">{{ $t->judul }}</td>
+                <td class="p-4 text-sm text-on-surface-variant">{{ $kelasNama }}</td>
+                <td class="p-4 text-sm text-on-surface-variant">{{ $t->deadline?->format('d M Y') ?? '-' }}</td>
                 <td class="p-4 text-center">
                     <div class="flex items-center gap-2 justify-center">
-                        <span class="font-bold text-primary">{{ $t['dikumpulkan'] }}/{{ $t['total'] }}</span>
+                        <span class="font-bold text-primary">{{ $submittedCount }}/{{ $totalSiswa ?: '-' }}</span>
                         <div class="w-16 h-2 bg-surface-variant rounded-full overflow-hidden">
-                            <div class="h-full rounded-full {{ $t['status']==='selesai' ? 'bg-green-500' : 'bg-secondary' }}" style="width: {{ $t['total']>0 ? round($t['dikumpulkan']/$t['total']*100) : 0 }}%"></div>
+                            <div class="h-full rounded-full {{ $status === 'selesai' ? 'bg-green-500' : 'bg-secondary' }}" style="width: {{ $progressPercent }}%"></div>
                         </div>
                     </div>
                 </td>
                 <td class="p-4 text-center">
-                    <span class="px-3 py-1 rounded-full text-xs font-bold {{ $t['status']==='selesai' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700' }}">
-                        {{ ucfirst($t['status']) }}
+                    <span class="px-3 py-1 rounded-full text-xs font-bold {{ $status === 'selesai' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700' }}">
+                        {{ ucfirst($status) }}
                     </span>
                 </td>
                 <td class="p-4 text-center">
                     <div class="flex gap-2 justify-center">
-                        <a href="{{ route('guru.tugas.buat', [
-                            'mode' => 'edit',
-                            'id' => $t['id'],
-                            'judul' => $t['judul'],
-                            'deskripsi' => $t['deskripsi'],
-                            'kelas' => $t['kelas'],
-                            'deadline' => $t['deadline_iso'],
-                            'bobot' => $t['bobot'],
-                            'kkm' => $t['kkm'],
-                            'maks' => $t['maks'],
-                        ]) }}" class="p-2 rounded-lg text-secondary hover:bg-secondary-container/30 transition-soft"><span class="material-symbols-outlined text-base">edit</span></a>
+                        <a href="{{ route('guru.tugas.buat', ['mode' => 'edit', 'id' => $t->id]) }}" class="p-2 rounded-lg text-secondary hover:bg-secondary-container/30 transition-soft"><span class="material-symbols-outlined text-base">edit</span></a>
                         <a href="{{ route('guru.nilai') }}" class="px-3 py-2 rounded-lg text-primary border border-primary/20 hover:bg-primary-container/30 transition-soft text-xs font-bold">Nilai</a>
                     </div>
                 </td>

@@ -3,15 +3,11 @@
 @section('page-title', 'Kuis')
 @section('content')
 @php
-$kuis = [
-    ['judul'=>'Kuis Topologi Jaringan','kelas'=>'X TKJ 1','soal'=>15,'durasi'=>'30 menit','deadline'=>'19 Mei 2025','dikerjakan'=>28,'total'=>32,'status'=>'aktif'],
-    ['judul'=>'Kuis Model OSI','kelas'=>'X TKJ 2','soal'=>10,'durasi'=>'20 menit','deadline'=>'20 Mei 2025','dikerjakan'=>12,'total'=>30,'status'=>'aktif'],
-    ['judul'=>'Kuis IP Address','kelas'=>'XI TKJ 1','soal'=>20,'durasi'=>'40 menit','deadline'=>'15 Mei 2025','dikerjakan'=>25,'total'=>25,'status'=>'selesai'],
-    ['judul'=>'Kuis Subnetting','kelas'=>'XI TKJ 2','soal'=>20,'durasi'=>'40 menit','deadline'=>'16 Mei 2025','dikerjakan'=>28,'total'=>28,'status'=>'selesai'],
-    ['judul'=>'Kuis Routing Protocol','kelas'=>'XII TKJ 1','soal'=>25,'durasi'=>'50 menit','deadline'=>'25 Mei 2025','dikerjakan'=>0,'total'=>22,'status'=>'aktif'],
-];
-$kelasList = collect($kuis)->pluck('kelas')->unique()->values();
-$statusList = collect($kuis)->pluck('status')->unique()->values();
+    $kelasList = $kuis->map(fn($item) => $item->kelas?->nama_kelas)
+        ->filter()
+        ->unique()
+        ->values();
+    $statusList = collect(['aktif']);
 @endphp
 
 <div class="max-w-[1200px] mx-auto space-y-6">
@@ -66,29 +62,33 @@ $statusList = collect($kuis)->pluck('status')->unique()->values();
             <div class="col-span-2 text-center">Aksi</div>
         </div>
         @foreach($kuis as $k)
-        <div class="grid grid-cols-12 gap-4 px-4 py-4 border-b border-surface-variant last:border-b-0 hover:bg-surface-container transition-soft" data-kelas="{{ $k['kelas'] }}" data-status="{{ $k['status'] }}">
+        @php
+            $kelasNama = $k->kelas?->nama_kelas ?? 'Belum ditentukan';
+            $soalCount = $k->soal->count();
+            $jawabanCount = $k->jawaban->count();
+            $totalSiswa = $k->kelas?->siswa->count() ?? 0;
+            $status = 'aktif';
+            $durationText = $k->durasi_menit ? $k->durasi_menit.' menit' : '-';
+            $createdDate = $k->created_at ? $k->created_at->format('d M Y') : '-';
+        @endphp
+        <div class="grid grid-cols-12 gap-4 px-4 py-4 border-b border-surface-variant last:border-b-0 hover:bg-surface-container transition-soft" data-kelas="{{ $kelasNama }}" data-status="{{ $status }}">
             <div class="col-span-4">
-                <p class="font-bold text-on-surface">{{ $k['judul'] }}</p>
-                <p class="text-xs text-on-surface-variant">{{ $k['soal'] }} soal • {{ $k['deadline'] }}</p>
+                <p class="font-bold text-on-surface">{{ $k->judul }}</p>
+                <p class="text-xs text-on-surface-variant">{{ $soalCount }} soal • {{ $createdDate }}</p>
             </div>
             <div class="col-span-2">
-                <p class="text-sm text-on-surface-variant">{{ $k['kelas'] }}</p>
+                <p class="text-sm text-on-surface-variant">{{ $kelasNama }}</p>
             </div>
             <div class="col-span-2">
-                <p class="text-sm text-on-surface-variant">{{ $k['durasi'] }}</p>
+                <p class="text-sm text-on-surface-variant">{{ $durationText }}</p>
             </div>
             <div class="col-span-2">
-                <span class="px-3 py-1 rounded-full text-xs font-bold
-                    {{ $k['status']==='aktif' ? 'bg-amber-100 text-amber-700' : '' }}
-                    {{ $k['status']==='selesai' ? 'bg-green-100 text-green-700' : '' }}
-                    {{ $k['status']==='terjadwal' ? 'bg-blue-100 text-blue-700' : '' }}
-                    {{ $k['status']==='close' ? 'bg-red-100 text-red-700' : '' }}
-                    {{ $k['status']==='archived' ? 'bg-slate-100 text-slate-700' : '' }}">
-                    {{ ucfirst($k['status']) }}
+                <span class="px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-700">
+                    {{ ucfirst($status) }}
                 </span>
             </div>
             <div class="col-span-2 flex justify-center">
-                <a href="{{ route('guru.kuis.buat', ['edit' => 1, 'judul' => $k['judul'], 'kelas' => $k['kelas'], 'durasi' => str_replace(' menit', '', $k['durasi']), 'status' => $k['status']]) }}" class="p-2 rounded-lg text-secondary hover:bg-secondary-container/30 transition-soft">
+                <a href="{{ route('guru.kuis.buat', ['edit' => 1, 'id' => $k->id]) }}" class="p-2 rounded-lg text-secondary hover:bg-secondary-container/30 transition-soft">
                     <span class="material-symbols-outlined text-base">edit</span>
                 </a>
             </div>

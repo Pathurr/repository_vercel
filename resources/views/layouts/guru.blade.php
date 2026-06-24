@@ -132,11 +132,6 @@
             </button>
             <div id="submenu-kelas" class="hidden flex flex-col mt-1 mb-1 pl-12 pr-4 sidebar-label">
                 <a href="{{ route('guru.kelas') }}" class="text-on-primary/70 hover:text-secondary-fixed text-xs py-2 transition-soft border-l border-on-primary/20 pl-3 hover:border-secondary-fixed">Semua Kelas</a>
-                <a href="{{ route('guru.kelas.detail') }}" class="text-on-primary/70 hover:text-secondary-fixed text-xs py-2 transition-soft border-l border-on-primary/20 pl-3 hover:border-secondary-fixed">X TKJ 1</a>
-                <a href="{{ route('guru.kelas.detail') }}" class="text-on-primary/70 hover:text-secondary-fixed text-xs py-2 transition-soft border-l border-on-primary/20 pl-3 hover:border-secondary-fixed">X TKJ 2</a>
-                <a href="{{ route('guru.kelas.detail') }}" class="text-on-primary/70 hover:text-secondary-fixed text-xs py-2 transition-soft border-l border-on-primary/20 pl-3 hover:border-secondary-fixed">XI TKJ 1</a>
-                <a href="{{ route('guru.kelas.detail') }}" class="text-on-primary/70 hover:text-secondary-fixed text-xs py-2 transition-soft border-l border-on-primary/20 pl-3 hover:border-secondary-fixed">XI TKJ 2</a>
-                <a href="{{ route('guru.kelas.detail') }}" class="text-on-primary/70 hover:text-secondary-fixed text-xs py-2 transition-soft border-l border-on-primary/20 pl-3 hover:border-secondary-fixed">XII TKJ 1</a>
             </div>
         </div>
         <a href="{{ route('guru.materi') }}"

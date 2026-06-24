@@ -12,7 +12,7 @@
 <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
     <div class="lg:col-span-8 space-y-4">
         <div class="bg-surface-container-lowest rounded-2xl p-5 shadow-ambient border border-outline-variant/30">
-            <form method="POST" action="{{ route('guru.materi.store') }}" enctype="multipart/form-data">
+            <form id="form-materi" method="POST" action="{{ route('guru.materi.store') }}" enctype="multipart/form-data">
                 @csrf
                 <div class="space-y-4">
                     <div>
@@ -40,12 +40,14 @@
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-primary mb-2">Kelas Tujuan</label>
                             <div class="space-y-2 bg-surface-container-low p-3 rounded-xl max-h-32 overflow-y-auto custom-scrollbar" id="kelas-container">
-                                @foreach(['X TKJ 1','X TKJ 2','XI RPL 1','XI RPL 2'] as $kelas)
+                                @forelse($kelases as $kelas)
                                 <label class="flex items-center gap-2 cursor-pointer group">
-                                    <input class="kelas-checkbox w-4 h-4 rounded border-outline-variant text-secondary focus:ring-secondary" name="kelas[]" type="checkbox" value="{{ $kelas }}"/>
-                                    <span class="text-sm text-on-surface-variant group-hover:text-primary">{{ $kelas }}</span>
+                                    <input class="kelas-checkbox w-4 h-4 rounded border-outline-variant text-secondary focus:ring-secondary" name="kelas_id[]" type="checkbox" value="{{ $kelas->id }}"/>
+                                    <span class="text-sm text-on-surface-variant group-hover:text-primary">{{ $kelas->nama_kelas }}</span>
                                 </label>
-                                @endforeach
+                                @empty
+                                <p class="text-xs text-red-500 italic">Anda belum memiliki kelas. Buat kelas terlebih dahulu.</p>
+                                @endforelse
                             </div>
                             <p id="kelas-error" class="hidden text-[11px] text-red-500 font-bold mt-1">Pilih minimal satu kelas tujuan.</p>
                         </div>
@@ -149,6 +151,7 @@
         </div>
     </div>
 </div>
+
 @endsection
 @push('scripts')
 <script>
@@ -219,10 +222,10 @@ document.addEventListener('DOMContentLoaded', function() {
             isValid = false;
         }
         
-        if (fileInput.files.length === 0) {
-            fileError.classList.remove('hidden');
-            isValid = false;
-        }
+        // if (fileInput.files.length === 0) {
+        //     fileError.classList.remove('hidden');
+        //     isValid = false;
+        // }
 
         const anyChecked = Array.from(kelasCheckboxes).some(c => c.checked);
         if (!anyChecked) {
@@ -351,17 +354,17 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     btnConfirmSimpan.addEventListener('click', () => {
+        console.log('confirm simpan clicked');
         if (!validateForm()) {
+            console.log('validasi gagal');
             modalConfirmSimpan.classList.add('hidden');
             return;
         }
         modalConfirmSimpan.classList.add('hidden');
-        
-        toastSuccess.classList.remove('invisible', 'opacity-0', '-translate-y-4');
-        toastSuccess.classList.add('opacity-100', 'translate-y-0');
-        
+        console.log('akan submit form');
         setTimeout(() => {
-            window.location.href = "{{ route('guru.materi') }}";
+            console.log('submit!');
+            document.getElementById('form-materi').submit();
         }, 1500);
     });
 });

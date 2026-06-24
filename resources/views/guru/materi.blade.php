@@ -1,16 +1,7 @@
 @extends('layouts.guru')
 @section('title', 'Materi - SMK Mandalahayu 1')
 @section('content')
-@php
-$materi = [
-    ['judul'=>'Pengantar Jaringan Komputer','kelas'=>'X TKJ 1, X TKJ 2','pertemuan'=>'Pertemuan 1','tipe'=>'PDF','icon'=>'picture_as_pdf','tanggal'=>'10 Mei 2025','status'=>'Published'],
-    ['judul'=>'Model OSI dan TCP/IP','kelas'=>'X TKJ 1','pertemuan'=>'Pertemuan 2','tipe'=>'Video','icon'=>'play_circle','tanggal'=>'12 Mei 2025','status'=>'Published'],
-    ['judul'=>'Konfigurasi IP Address','kelas'=>'XI TKJ 1','pertemuan'=>'Pertemuan 5','tipe'=>'PDF','icon'=>'picture_as_pdf','tanggal'=>'13 Mei 2025','status'=>'Terjadwal'],
-    ['judul'=>'Subnetting dan CIDR','kelas'=>'XI TKJ 2','pertemuan'=>'Pertemuan 6','tipe'=>'Presentasi','icon'=>'slideshow','tanggal'=>'14 Mei 2025','status'=>'Published'],
-    ['judul'=>'Routing Statis & Dinamis','kelas'=>'XII TKJ 1','pertemuan'=>'Pertemuan 10','tipe'=>'PDF','icon'=>'picture_as_pdf','tanggal'=>'15 Mei 2025','status'=>'Archive'],
-    ['judul'=>'Keamanan Jaringan Dasar','kelas'=>'XII TKJ 1','pertemuan'=>'Pertemuan 11','tipe'=>'Video','icon'=>'play_circle','tanggal'=>'16 Mei 2025','status'=>'Published'],
-];
-@endphp
+//Materi dummy untuk demo, nanti diganti dengan data dari database
 
 <div class="mb-8 flex justify-between items-center">
     <div>
@@ -63,56 +54,60 @@ $materi = [
     
     {{-- Grid Materi --}}
     <div id="materiContainer" class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        @foreach($materi as $m)
+        @forelse($materi as $m)
         <div class="materi-item bg-surface rounded-xl border border-outline-variant/30 overflow-hidden group hover:shadow-md hover:border-primary/50 transition-soft cursor-pointer flex flex-col" 
-             data-judul="{{ strtolower($m['judul']) }}" 
-             data-kelas="{{ $m['kelas'] }}" 
-             data-status="{{ $m['status'] }}"
-             onclick="window.location.href='{{ route('guru.materi.tambah') }}?edit=true&judul={{ urlencode($m['judul']) }}'">
+            data-judul="{{ strtolower($m->judul) }}" 
+            data-kelas="{{ $m->kelas_id }}" 
+            data-status="{{ $m->status ?? 'published' }}"
+            onclick="window.location.href='{{ route('guru.materi.tambah') }}?edit=true&judul={{ urlencode($m->judul) }}'">
             
             <div class="h-36 bg-primary-container flex items-center justify-center relative">
-                <span class="material-symbols-outlined text-5xl text-on-primary-container opacity-50 group-hover:scale-110 transition-soft">{{ $m['icon'] }}</span>
-                <span class="absolute top-3 right-3 bg-white/90 text-primary text-xs font-bold px-2 py-1 rounded shadow-sm">{{ $m['tipe'] }}</span>
+                <span class="material-symbols-outlined text-5xl text-on-primary-container opacity-50 group-hover:scale-110 transition-soft">book</span>
+                <span class="absolute top-3 right-3 bg-white/90 text-primary text-xs font-bold px-2 py-1 rounded shadow-sm">Materi</span>
                 
                 {{-- Status Badge --}}
                 @php
-                    $statusColor = match($m['status']) {
-                        'Published' => 'bg-green-100 text-green-700',
-                        'Terjadwal' => 'bg-blue-100 text-blue-700',
-                        'Archive' => 'bg-amber-100 text-amber-700',
+                    $statusColor = match($m->status ?? 'published') {
+                        'published' => 'bg-green-100 text-green-700',
+                        'terjadwal' => 'bg-blue-100 text-blue-700',
+                        'archived' => 'bg-amber-100 text-amber-700',
                         default => 'bg-gray-100 text-gray-700',
                     };
                 @endphp
                 <span class="absolute top-3 left-3 {{ $statusColor }} text-[10px] font-bold px-2 py-1 rounded shadow-sm flex items-center gap-1">
-                    <span class="w-1.5 h-1.5 rounded-full {{ str_replace(['bg-', '-100', 'text-', '-700'], ['bg-', '-500', '', ''], $statusColor) ?: 'bg-current' }}"></span>
-                    {{ $m['status'] }}
+                    {{ $m->status ?? 'published' }}
                 </span>
             </div>
             
             <div class="p-4 flex flex-col flex-1">
                 <div class="flex-1">
-                    <span class="text-[10px] font-bold uppercase tracking-wider text-secondary bg-secondary-fixed/30 px-2 py-1 rounded">{{ $m['pertemuan'] }}</span>
-                    <h4 class="font-bold text-on-surface mt-3 mb-1 group-hover:text-primary transition-soft leading-tight">{{ $m['judul'] }}</h4>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-secondary bg-secondary-fixed/30 px-2 py-1 rounded">Pertemuan</span>
+                    <h4 class="font-bold text-on-surface mt-3 mb-1 group-hover:text-primary transition-soft leading-tight">{{ $m->judul }}</h4>
                     <p class="text-xs text-on-surface-variant flex items-center gap-1 mt-2">
-                        <span class="material-symbols-outlined" style="font-size: 14px">school</span> {{ $m['kelas'] }}
+                        <span class="material-symbols-outlined" style="font-size: 14px">school</span> {{ $m->kelas_id }}
                     </p>
                     <p class="text-xs text-on-surface-variant flex items-center gap-1 mt-1">
-                        <span class="material-symbols-outlined" style="font-size: 14px">calendar_today</span> Diunggah: {{ $m['tanggal'] }}
+                        <span class="material-symbols-outlined" style="font-size: 14px">calendar_today</span> Diunggah: {{ $m->created_at->format('d M Y') }}
                     </p>
                 </div>
                 
                 {{-- Actions --}}
                 <div class="flex gap-2 mt-5 pt-4 border-t border-outline-variant/30" onclick="event.stopPropagation()">
-                    <a href="{{ route('guru.materi.tambah') }}?edit=true&judul={{ urlencode($m['judul']) }}" class="flex-1 text-center py-2 border border-secondary text-secondary text-xs font-bold rounded-lg hover:bg-secondary hover:text-on-secondary transition-soft flex items-center justify-center gap-1">
+                    <a href="{{ route('guru.materi.tambah') }}?edit=true&judul={{ urlencode($m->judul) }}" class="flex-1 text-center py-2 border border-secondary text-secondary text-xs font-bold rounded-lg hover:bg-secondary hover:text-on-secondary transition-soft flex items-center justify-center gap-1">
                         <span class="material-symbols-outlined" style="font-size: 16px">edit</span> Edit
                     </a>
-                    <button onclick="confirmDelete('{{ $m['judul'] }}')" class="flex-1 py-2 border border-error text-error text-xs font-bold rounded-lg hover:bg-error hover:text-white transition-soft flex items-center justify-center gap-1 group/btn">
+                    <button onclick="confirmDelete('{{ $m->judul }}')" class="flex-1 py-2 border border-error text-error text-xs font-bold rounded-lg hover:bg-error hover:text-white transition-soft flex items-center justify-center gap-1 group/btn">
                         <span class="material-symbols-outlined group-hover/btn:animate-bounce" style="font-size: 16px">delete</span> Hapus
                     </button>
                 </div>
             </div>
         </div>
-        @endforeach
+        @empty
+        <div class="col-span-3 p-12 text-center text-on-surface-variant">
+            <span class="material-symbols-outlined text-5xl mb-4">book</span>
+            <p class="font-bold">Belum ada materi</p>
+        </div>
+        @endforelse
     </div>
     
     {{-- Empty State --}}
