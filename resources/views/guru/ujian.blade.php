@@ -97,7 +97,12 @@
                 </td>
                 <td class="p-4 text-center">
                     <div class="flex gap-2 justify-center">
-                        <a href="{{ route('guru.ujian.buat', ['edit' => 1, 'id' => $u->id]) }}" class="p-2 rounded-lg text-secondary hover:bg-secondary-container/30 transition-soft"><span class="material-symbols-outlined text-base">edit</span></a>
+                        <a href="{{ route('guru.ujian.buat', ['mode' => 'edit', 'id' => $u->id]) }}" class="p-2 rounded-lg text-secondary hover:bg-secondary-container/30 transition-soft"><span class="material-symbols-outlined text-base">edit</span></a>
+                        <form action="{{ route('guru.ujian.destroy', $u->id) }}" method="POST" class="inline" onsubmit="return confirm('Yakin ingin menghapus ujian ini?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="p-2 rounded-lg text-error hover:bg-error-container/30 transition-soft"><span class="material-symbols-outlined text-base">delete</span></button>
+                        </form>
                     </div>
                 </td>
             </tr>

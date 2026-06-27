@@ -22,7 +22,7 @@
         </div>
         <div class="relative z-10">
             <p class="text-on-surface-variant text-xs font-bold uppercase tracking-wider mb-1">Kelas Aktif</p>
-            <h3 class="font-bold text-4xl text-primary" style="font-family: var(--font-serif)">8</h3>
+            <h3 class="font-bold text-4xl text-primary" style="font-family: var(--font-serif)">{{ $kelasAktif }}</h3>
             <p class="text-sm text-on-surface-variant mt-2">Semester Ganjil 2023</p>
         </div>
     </div>
@@ -34,7 +34,7 @@
         </div>
         <div class="relative z-10">
             <p class="text-on-surface-variant text-xs font-bold uppercase tracking-wider mb-1">Belum Dinilai</p>
-            <h3 class="font-bold text-4xl text-red-500" style="font-family: var(--font-serif)">42</h3>
+            <h3 class="font-bold text-4xl text-red-500" style="font-family: var(--font-serif)">{{ $belumDinilaiCount }}</h3>
             <p class="text-sm text-on-surface-variant mt-2">Tugas &amp; Kuis</p>
         </div>
     </div>
@@ -46,7 +46,7 @@
         </div>
         <div class="relative z-10">
             <p class="text-on-surface-variant text-xs font-bold uppercase tracking-wider mb-1">Ujian Berlangsung</p>
-            <h3 class="font-bold text-4xl text-secondary" style="font-family: var(--font-serif)">2</h3>
+            <h3 class="font-bold text-4xl text-secondary" style="font-family: var(--font-serif)">{{ $ujianBerlangsung }}</h3>
             <p class="text-sm text-on-surface-variant mt-2">Hari Ini</p>
         </div>
     </div>
@@ -57,7 +57,7 @@
         </div>
         <div class="relative z-10">
             <p class="text-on-surface-variant text-xs font-bold uppercase tracking-wider mb-1">Siswa Total</p>
-            <h3 class="font-bold text-4xl text-primary" style="font-family: var(--font-serif)">245</h3>
+            <h3 class="font-bold text-4xl text-primary" style="font-family: var(--font-serif)">{{ $siswaTotal }}</h3>
             <p class="text-sm text-on-surface-variant mt-2">Siswa Aktif</p>
         </div>
     </div>
@@ -83,18 +83,21 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-surface-variant">
+                    @forelse($submissionsList as $s)
                     <tr class="hover:bg-surface-container transition-soft">
-                        <td class="p-4"><p class="font-bold text-primary">Laporan Praktikum Jaringan Dasar</p><p class="text-sm text-on-surface-variant">Tenggat: Kemarin, 23:59</p></td>
-                        <td class="p-4 text-on-surface">10 TKJ 1</td>
-                        <td class="p-4 text-center"><span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-error-container text-error font-bold">15</span></td>
+                        <td class="p-4"><p class="font-bold text-primary">{{ $s->tugas->judul ?? 'Tugas' }}</p><p class="text-sm text-on-surface-variant">Siswa: {{ $s->siswa->name ?? '-' }} | Disubmit: {{ \Carbon\Carbon::parse($s->dikumpulkan_at)->diffForHumans() }}</p></td>
+                        <td class="p-4 text-on-surface">{{ $s->tugas->kelas->nama_kelas ?? '-' }}</td>
+                        <td class="p-4 text-center"><span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-error-container text-error font-bold">1</span></td>
                         <td class="p-4 text-right"><a href="{{ route('guru.penilaian.tugas') }}" class="px-4 py-2 border-2 border-secondary text-secondary text-xs font-bold rounded-lg hover:bg-secondary hover:text-on-secondary transition-soft">Nilai Sekarang</a></td>
                     </tr>
-                    <tr class="hover:bg-surface-container transition-soft">
-                        <td class="p-4"><p class="font-bold text-primary">Tugas Pemrograman Web Bab 3</p><p class="text-sm text-on-surface-variant">Tenggat: 2 Hari Lalu</p></td>
-                        <td class="p-4 text-on-surface">11 RPL 2</td>
-                        <td class="p-4 text-center"><span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-error-container text-error font-bold">8</span></td>
-                        <td class="p-4 text-right"><a href="{{ route('guru.penilaian.tugas') }}" class="px-4 py-2 border-2 border-secondary text-secondary text-xs font-bold rounded-lg hover:bg-secondary hover:text-on-secondary transition-soft">Nilai Sekarang</a></td>
+                    @empty
+                    <tr>
+                        <td colspan="4" class="p-8 text-center text-on-surface-variant">
+                            <span class="material-symbols-outlined text-4xl opacity-50 mb-2">done_all</span>
+                            <p class="text-sm">Semua tugas telah dinilai!</p>
+                        </td>
                     </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>

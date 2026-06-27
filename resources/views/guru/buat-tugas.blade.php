@@ -14,8 +14,11 @@ $selectedKelas = array_filter(explode('|', request('kelas', '')));
             </p>
         </header>
 
-        <form id="form-buat-tugas" method="POST" action="{{ route('guru.tugas.store') }}" enctype="multipart/form-data" class="grid grid-cols-12 gap-5">
+        <form id="form-buat-tugas" method="POST" action="{{ $isEdit && isset($tugas) ? route('guru.tugas.update', $tugas->id) : route('guru.tugas.store') }}" enctype="multipart/form-data" class="grid grid-cols-12 gap-5">
             @csrf
+            @if($isEdit && isset($tugas))
+                @method('PUT')
+            @endif
             <div class="col-span-12 lg:col-span-8 space-y-4">
                 <div class="bg-surface-container-lowest p-5 rounded-xl shadow-ambient border border-outline-variant/30">
                     <div class="flex items-center gap-2 mb-4">
@@ -24,12 +27,12 @@ $selectedKelas = array_filter(explode('|', request('kelas', '')));
                     <div class="space-y-4">
                         <div>
                             <label class="block text-xs font-bold text-on-surface mb-1">Judul Tugas</label>
-                            <input id="judul-tugas" name="judul" class="w-full bg-surface-container-low border-0 border-b-2 border-primary focus:ring-0 focus:border-secondary-container transition-all py-2 px-3 text-sm" placeholder="Contoh: Analisis Rangkaian Listrik AC/DC" type="text" value="{{ request('judul', '') }}"/>
+                            <input id="judul-tugas" name="judul" class="w-full bg-surface-container-low border-0 border-b-2 border-primary focus:ring-0 focus:border-secondary-container transition-all py-2 px-3 text-sm" placeholder="Contoh: Analisis Rangkaian Listrik AC/DC" type="text" value="{{ old('judul', $tugas->judul ?? '') }}"/>
                             <p id="judul-tugas-error" class="hidden text-[11px] text-red-500 font-bold mt-1">Judul tugas wajib diisi.</p>
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-on-surface mb-1">Deskripsi &amp; Instruksi</label>
-                            <textarea id="deskripsi-tugas" class="w-full bg-surface-container-low border-0 border-b-2 border-primary focus:ring-0 focus:border-secondary-container transition-all py-2 px-3 text-sm" placeholder="Tuliskan instruksi lengkap untuk siswa..." rows="3">{{ request('deskripsi', '') }}</textarea>
+                            <textarea id="deskripsi-tugas" name="deskripsi" class="w-full bg-surface-container-low border-0 border-b-2 border-primary focus:ring-0 focus:border-secondary-container transition-all py-2 px-3 text-sm" placeholder="Tuliskan instruksi lengkap untuk siswa..." rows="3">{{ old('deskripsi', $tugas->deskripsi ?? '') }}</textarea>
                             <p id="deskripsi-tugas-error" class="hidden text-[11px] text-red-500 font-bold mt-1">Deskripsi tugas wajib diisi.</p>
                         </div>
                         <div class="relative">
@@ -44,8 +47,8 @@ $selectedKelas = array_filter(explode('|', request('kelas', '')));
                                 <div class="p-2 max-h-48 overflow-y-auto space-y-1">
                                     @forelse($kelases as $kelas)
                                     <label class="flex items-center gap-2 p-2 hover:bg-surface-container rounded-md cursor-pointer transition-colors">
-                                        <input class="kelas-checkbox text-secondary rounded focus:ring-secondary-container" name="kelas_id[]" type="checkbox" value="{{ $kelas->id }}" data-name="{{ $kelas->nama_kelas }}"/>
-                                        <span class="text-sm text-on-surface">{{ $kelas->nama_kelas }}</span>
+                                        <input class="kelas-checkbox text-secondary rounded focus:ring-secondary-container" name="kelas_id[]" type="checkbox" value="{{ $kelas->id }}" data-name="{{ $kelas->nama_kelas }}" {{ (isset($tugas) && $tugas->kelas_id == $kelas->id) ? 'checked' : '' }}/>
+                                        <span class="text-sm text-on-surface">{{ $kelas->nama_kelas }} ({{ $kelas->mata_pelajaran }})</span>
                                     </label>
                                     @empty
                                     <p class="text-xs text-red-500 italic p-2">Anda belum memiliki kelas.</p>
@@ -65,7 +68,7 @@ $selectedKelas = array_filter(explode('|', request('kelas', '')));
                     <div class="grid grid-cols-2 gap-4">
                         <div class="col-span-2 md:col-span-1">
                             <label class="block text-xs font-bold text-on-surface mb-1">Batas Akhir (Deadline)</label>
-                            <input id="deadline" name="deadline" class="w-full bg-surface-container-low border-0 border-b-2 border-primary focus:ring-0 focus:border-secondary-container py-2 px-3 text-sm" type="datetime-local" value="{{ request('deadline', '') }}"/>
+                            <input id="deadline" name="deadline" class="w-full bg-surface-container-low border-0 border-b-2 border-primary focus:ring-0 focus:border-secondary-container py-2 px-3 text-sm" type="datetime-local" value="{{ old('deadline', isset($tugas->deadline) ? $tugas->deadline->format('Y-m-d\TH:i') : '') }}"/>
                             <p id="deadline-error" class="hidden text-[11px] text-red-500 font-bold mt-1">Deadline wajib diisi.</p>
                         </div>
                         <div class="col-span-2 md:col-span-1">
@@ -80,7 +83,7 @@ $selectedKelas = array_filter(explode('|', request('kelas', '')));
                         </div>
                         <div class="col-span-2 md:col-span-1">
                             <label class="block text-xs font-bold text-on-surface mb-1">Nilai Maksimum</label>
-                            <input id="nilai-maksimum" class="w-full bg-surface-container-low border-0 border-b-2 border-primary focus:ring-0 focus:border-secondary-container py-2 px-3 text-sm" placeholder="100" type="number" value="{{ request('maks', '') }}"/>
+                            <input id="nilai-maksimum" name="nilai_maksimal" class="w-full bg-surface-container-low border-0 border-b-2 border-primary focus:ring-0 focus:border-secondary-container py-2 px-3 text-sm" placeholder="100" type="number" value="{{ old('nilai_maksimal', $tugas->nilai_maksimal ?? 100) }}"/>
                             <p id="nilai-maksimum-error" class="hidden text-[11px] text-red-500 font-bold mt-1">Nilai maksimum wajib diisi.</p>
                         </div>
                     </div>

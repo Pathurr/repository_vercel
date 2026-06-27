@@ -14,10 +14,14 @@ class TugasController extends Controller
         return view('guru.tugas', compact('tugas'));
     }
 
-    public function create()
+    public function create(Request $request)
     {
         $kelases = \App\Models\Kelas::where('guru_id', Auth::id())->get();
-        return view('guru.buat-tugas', compact('kelases'));
+        $tugas = null;
+        if ($request->mode === 'edit' && $request->id) {
+            $tugas = Tugas::where('guru_id', Auth::id())->findOrFail($request->id);
+        }
+        return view('guru.buat-tugas', compact('kelases', 'tugas'));
     }
 
     public function store(Request $request)
@@ -42,5 +46,34 @@ class TugasController extends Controller
         }
 
         return redirect()->route('guru.tugas')->with('success', 'Tugas berhasil disimpan!');
+    }
+
+    public function update(Request $request, $id)
+    {
+        $tugas = Tugas::where('guru_id', Auth::id())->findOrFail($id);
+
+        $request->validate([
+            'judul'    => 'required|string|max:255',
+            'kelas_id' => 'required|array',
+            'kelas_id.*'=> 'exists:kelas,id',
+            'deadline' => 'required|date',
+        ]);
+
+        $tugas->update([
+            'kelas_id'       => $request->kelas_id[0],
+            'judul'          => $request->judul,
+            'deskripsi'      => $request->deskripsi,
+            'deadline'       => $request->deadline,
+            'nilai_maksimal' => $request->nilai_maksimal ?? 100,
+        ]);
+
+        return redirect()->route('guru.tugas')->with('success', 'Tugas berhasil diperbarui!');
+    }
+
+    public function destroy($id)
+    {
+        $tugas = Tugas::findOrFail($id);
+        $tugas->delete();
+        return back()->with('success', 'Tugas berhasil dihapus!');
     }
 }

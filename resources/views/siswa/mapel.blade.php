@@ -17,6 +17,21 @@
     </div>
 </div>
 
+<!-- Session Alerts -->
+@if(session('success'))
+<div class="mb-6 p-4 bg-green-100 text-green-800 border border-green-300 rounded-lg text-sm flex items-center gap-2">
+    <span class="material-symbols-outlined text-[20px]">check_circle</span>
+    {{ session('success') }}
+</div>
+@endif
+
+@if(session('error'))
+<div class="mb-6 p-4 bg-red-100 text-red-800 border border-red-300 rounded-lg text-sm flex items-center gap-2">
+    <span class="material-symbols-outlined text-[20px]">error</span>
+    {{ session('error') }}
+</div>
+@endif
+
 <!-- Subject Grid -->
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="class-grid">
     @forelse($kelas as $k)
@@ -29,8 +44,8 @@
         <div class="p-4 flex-1 flex flex-col">
             <div class="flex justify-between items-start mb-3">
                 <div>
-                    <h3 class="font-bold text-lg text-primary leading-tight" style="font-family: var(--font-serif)">{{ $k->mata_pelajaran }}</h3>
-                    <p class="text-xs font-bold text-on-surface-variant mt-0.5">{{ $k->nama_kelas }}</p>
+                    <h3 class="font-bold text-xl text-primary leading-tight" style="font-family: var(--font-serif)">{{ $k->nama_kelas }}</h3>
+                    <h4 class="font-bold text-md text-secondary mt-1">{{ $k->mata_pelajaran }}</h4>
                 </div>
                 @if($k->aktif)
                 <span class="bg-secondary-container/20 text-secondary-fixed-variant px-2 py-0.5 rounded text-[10px] font-bold">Aktif</span>
@@ -85,11 +100,11 @@
         </div>
         <p class="text-xs text-on-surface-variant mb-4">Masukkan kunci kelas yang diberikan oleh guru Anda untuk bergabung.</p>
         
-        <form id="join-class-form" onsubmit="handleJoinClass(event)">
+        <form id="join-class-form" method="POST" action="{{ route('siswa.mapel.join') }}">
+            @csrf
             <div class="mb-4">
                 <label for="class-key" class="block text-xs font-bold text-on-surface mb-1">Kunci Kelas</label>
-                <input type="text" id="class-key" class="w-full bg-surface border border-outline-variant rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary" placeholder="Contoh: 12345" required autocomplete="off">
-                <p id="join-error" class="text-error text-xs font-semibold mt-1 hidden">Kunci kelas salah</p>
+                <input type="text" id="class-key" name="kode_kelas" class="w-full bg-surface border border-outline-variant rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary" placeholder="Contoh: XTKJ-123" required autocomplete="off">
             </div>
             
             <button type="submit" class="w-full bg-primary hover:bg-primary-container text-on-primary font-bold py-2 rounded-lg text-sm transition-colors flex items-center justify-center gap-2">
@@ -146,8 +161,6 @@
     const modal = document.getElementById('join-modal');
     const modalContent = document.getElementById('join-modal-content');
     const inputKey = document.getElementById('class-key');
-    const errorText = document.getElementById('join-error');
-    const successPopup = document.getElementById('success-popup');
 
     function toggleJoinModal() {
         if (modal.classList.contains('hidden')) {
@@ -159,7 +172,6 @@
                 inputKey.focus();
             }, 10);
             inputKey.value = '';
-            errorText.classList.add('hidden');
         } else {
             modal.classList.add('opacity-0');
             modalContent.classList.remove('scale-100');
@@ -168,39 +180,6 @@
                 modal.classList.add('hidden');
             }, 300);
         }
-    }
-
-    // Form Submit Logic
-    function handleJoinClass(event) {
-        event.preventDefault();
-        const key = inputKey.value.trim();
-        
-        // Mock valid keys: '12345'
-        if (key === '12345') {
-            errorText.classList.add('hidden');
-            toggleJoinModal();
-            showSuccess();
-            
-        } else {
-            errorText.classList.remove('hidden');
-        }
-    }
-
-    function showSuccess() {
-        successPopup.classList.remove('hidden');
-        setTimeout(() => {
-            successPopup.classList.remove('opacity-0', 'translate-y-[-20px]');
-            successPopup.classList.add('opacity-100', 'translate-y-0');
-        }, 10);
-        
-        // Hide after 3 seconds
-        setTimeout(() => {
-            successPopup.classList.remove('opacity-100', 'translate-y-0');
-            successPopup.classList.add('opacity-0', 'translate-y-[-20px]');
-            setTimeout(() => {
-                successPopup.classList.add('hidden');
-            }, 300);
-        }, 3000);
     }
 </script>
 @endpush

@@ -1,6 +1,6 @@
 @extends('layouts.siswa')
 @section('title', 'Ruang Kuis - SMK Mandalahayu 1')
-@section('page-title', 'Kuis 1: Struktur Data HTML')
+@section('page-title', $kuis->judul)
 
 @section('content')
 <style>
@@ -17,8 +17,8 @@
                 <span class="material-symbols-outlined text-on-primary text-[18px]" style="font-variation-settings: 'FILL' 1;">quiz</span>
             </div>
             <div>
-                <h1 class="font-bold text-sm text-primary" style="font-family: var(--font-serif)">Kuis 1: Struktur Data HTML</h1>
-                <p class="text-[10px] text-on-surface-variant uppercase tracking-wider">Pemrograman Web</p>
+                <h1 class="font-bold text-sm text-primary" style="font-family: var(--font-serif)">{{ $kuis->judul }}</h1>
+                <p class="text-[10px] text-on-surface-variant uppercase tracking-wider">{{ $kuis->kelas->mata_pelajaran ?? 'Mata Pelajaran' }}</p>
             </div>
         </div>
         <div class="flex items-center gap-6">
@@ -143,22 +143,29 @@
 @push('scripts')
 <script>
     // State
-    const totalQuestions = 15;
-    const questions = Array.from({length: totalQuestions}, (_, i) => ({
+    const rawQuestions = @json($kuis->soal);
+    const totalQuestions = rawQuestions.length;
+    const questions = rawQuestions.map((q, i) => ({
         id: i + 1,
-        text: `Soal no ${i + 1}: Tag HTML manakah yang digunakan untuk membuat daftar bernomor (ordered list)?`,
-        options: ['<ul>', '<ol>', '<li>', '<dl>'],
+        soal_id: q.id,
+        text: q.pertanyaan,
+        tipe: q.tipe,
+        options: q.pilihan,
         answer: null,
         doubt: false
     }));
-    
-    // Default mock data for testing
-    questions[4].answer = 1; // answered B
-    questions[4].doubt = true; 
 
-    let currentIndex = 0; // 0 to 14
+    let currentIndex = 0; // 0 to (totalQuestions - 1)
 
     function initExam() {
+        if (totalQuestions === 0) {
+            document.getElementById('question-text').innerText = "Belum ada soal untuk kuis ini.";
+            document.getElementById('options-container').innerHTML = "";
+            document.getElementById('grid-container').innerHTML = "<p class='text-xs text-on-surface-variant col-span-5'>Kosong</p>";
+            document.getElementById('btn-prev').style.visibility = 'hidden';
+            document.getElementById('btn-next').style.visibility = 'hidden';
+            return;
+        }
         renderGrid();
         loadQuestion(currentIndex);
     }
@@ -168,29 +175,40 @@
         const q = questions[index];
         
         document.getElementById('question-label').innerText = `Soal No. ${q.id}`;
-        document.getElementById('question-text').innerText = q.text;
+        document.getElementById('question-text').innerHTML = q.text; // Change to innerHTML to support rich text
         document.getElementById('progress-current').innerText = q.id;
         document.getElementById('progress-total').innerText = totalQuestions;
 
         // Render Options
         const container = document.getElementById('options-container');
         container.innerHTML = '';
-        const labels = ['A', 'B', 'C', 'D'];
-        q.options.forEach((opt, idx) => {
-            const isSelected = q.answer === idx;
-            const bgClass = isSelected ? 'border-primary bg-primary/5 border-2' : 'border-outline-variant hover:border-primary hover:bg-surface-container-low border';
-            const textClass = isSelected ? 'text-primary font-bold' : 'text-on-surface-variant';
-            
-            container.innerHTML += `
-                <label class="group relative flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all ${bgClass}">
-                    <input ${isSelected ? 'checked' : ''} onchange="selectAnswer(${idx})" class="w-4 h-4 text-primary border-outline-variant focus:ring-primary" name="answer" type="radio" value="${idx}"/>
-                    <div class="flex-1 flex gap-2 items-center text-xs">
-                        <span class="font-bold text-sm ${isSelected ? 'text-primary' : 'text-on-surface'}">${labels[idx]}.</span>
-                        <span class="${textClass}">${opt.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</span>
-                    </div>
-                </label>
+        
+        if (q.tipe === 'essay') {
+            container.innerHTML = `
+                <div class="flex-1 flex flex-col h-full">
+                    <label class="text-xs font-bold text-on-surface-variant mb-2 block">Jawaban Essay:</label>
+                    <textarea id="essay-answer" oninput="saveEssayAnswer()" class="w-full flex-1 min-h-[200px] p-4 bg-surface border border-outline-variant rounded-xl focus:border-primary focus:ring-1 focus:ring-primary text-sm resize-none custom-scrollbar" placeholder="Ketik jawaban Anda di sini...">${q.answer || ''}</textarea>
+                </div>
             `;
-        });
+        } else {
+            const labels = ['A', 'B', 'C', 'D', 'E'];
+            const opts = q.options || [];
+            opts.forEach((opt, idx) => {
+                const isSelected = q.answer == idx;
+                const bgClass = isSelected ? 'border-primary bg-primary/5 border-2' : 'border-outline-variant hover:border-primary hover:bg-surface-container-low border';
+                const textClass = isSelected ? 'text-primary font-bold' : 'text-on-surface-variant';
+                
+                container.innerHTML += `
+                    <label class="group relative flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all ${bgClass}">
+                        <input ${isSelected ? 'checked' : ''} onchange="selectAnswer(${idx})" class="w-4 h-4 text-primary border-outline-variant focus:ring-primary" name="answer" type="radio" value="${idx}"/>
+                        <div class="flex-1 flex gap-2 items-center text-xs">
+                            <span class="font-bold text-sm ${isSelected ? 'text-primary' : 'text-on-surface'}">${labels[idx] || ''}.</span>
+                            <span class="${textClass}">${typeof opt === 'string' ? opt.replace(/</g, '&lt;').replace(/>/g, '&gt;') : opt}</span>
+                        </div>
+                    </label>
+                `;
+            });
+        }
 
         // Doubt Button
         const btnRagu = document.getElementById('btn-ragu');
@@ -215,6 +233,12 @@
     function selectAnswer(optIndex) {
         questions[currentIndex].answer = optIndex;
         loadQuestion(currentIndex);
+    }
+
+    function saveEssayAnswer() {
+        const val = document.getElementById('essay-answer').value;
+        questions[currentIndex].answer = val.trim() === '' ? null : val;
+        renderGrid();
     }
 
     function toggleDoubt() {
@@ -265,7 +289,7 @@
 
         // Timer Logic
         const timerEl = document.getElementById('quiz-timer');
-        let totalSeconds = 25 * 60 + 12; // 25 menit 12 detik
+        let totalSeconds = {{ ($kuis->durasi_menit ?? 60) * 60 }};
         
         function updateQuizTimer() {
             if (totalSeconds <= 0) {
@@ -326,10 +350,32 @@
         btnCancelSimpan.addEventListener('click', () => modalSimpan.classList.add('hidden'));
         btnConfirmSimpan.addEventListener('click', () => {
             modalSimpan.classList.add('hidden');
-            showToast(toastSuccess);
-            setTimeout(() => {
-                window.location.href = "{{ route('siswa.mapel.detail') }}?tab=tugas";
-            }, 1000);
+            
+            // Siapkan data submission
+            const answers = questions.map(q => ({
+                soal_id: q.soal_id,
+                jawaban: q.answer
+            }));
+            
+            // Format form dynamically
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = ''; // Submit back to controller
+            
+            const csrfToken = document.createElement('input');
+            csrfToken.type = 'hidden';
+            csrfToken.name = '_token';
+            csrfToken.value = '{{ csrf_token() }}';
+            form.appendChild(csrfToken);
+
+            const answersInput = document.createElement('input');
+            answersInput.type = 'hidden';
+            answersInput.name = 'answers';
+            answersInput.value = JSON.stringify(answers);
+            form.appendChild(answersInput);
+
+            document.body.appendChild(form);
+            form.submit();
         });
     });
 </script>

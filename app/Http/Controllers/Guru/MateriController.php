@@ -28,7 +28,13 @@ class MateriController extends Controller
             'kelas_id'  => 'required|array',
             'kelas_id.*'=> 'exists:kelas,id',
             'deskripsi' => 'nullable|string',
+            'file'      => 'nullable|file|mimes:pdf,ppt,pptx,jpg,jpeg,png|max:20480', // 20MB
         ]);
+
+        $filePath = null;
+        if ($request->hasFile('file')) {
+            $filePath = $request->file('file')->store('materi', 'public');
+        }
 
         foreach ($request->kelas_id as $kelasId) {
             Materi::create([
@@ -36,9 +42,23 @@ class MateriController extends Controller
                 'kelas_id'  => $kelasId,
                 'judul'     => $request->judul,
                 'deskripsi' => $request->deskripsi,
+                'file_path' => $filePath,
                 'link_video'=> $request->link_video,
             ]);
         }
         return redirect()->route('guru.materi')->with('success', 'Materi berhasil disimpan!');
+    }
+
+    public function destroy($id)
+    {
+        $materi = Materi::findOrFail($id);
+        
+        // Hapus file jika ada
+        if ($materi->file_path && \Illuminate\Support\Facades\Storage::disk('public')->exists($materi->file_path)) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($materi->file_path);
+        }
+        
+        $materi->delete();
+        return back()->with('success', 'Materi berhasil dihapus!');
     }
 }

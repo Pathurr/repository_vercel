@@ -31,8 +31,11 @@
         </div>
     </div>
 
-    <form class="space-y-10 pb-10" id="ujianForm" method="POST" action="{{ route('guru.ujian.store') }}" enctype="multipart/form-data">
+    <form class="space-y-10 pb-10" id="ujianForm" method="POST" action="{{ isset($ujian) ? route('guru.ujian.update', $ujian->id) : route('guru.ujian.store') }}" enctype="multipart/form-data">
         @csrf
+        @if(isset($ujian))
+            @method('PUT')
+        @endif
         <section class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
             
             <!-- Left Column: Konfigurasi -->
@@ -44,21 +47,11 @@
                 
                 <div class="space-y-2">
                     <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Judul Ujian</label>
-                    <input class="w-full text-2xl font-semibold stationery-input py-2" id="ujianName" name="judul" placeholder="Contoh: Penilaian Akhir Semester Ganjil 2024" type="text" value="{{ request('judul') }}"/>
+                    <input class="w-full text-2xl font-semibold stationery-input py-2" id="ujianName" name="judul" placeholder="Contoh: Ujian Tengah Semester (UTS) Ganjil" type="text" value="{{ old('judul', $ujian->judul ?? request('judul')) }}"/>
                     <p class="text-xs text-error font-bold hidden" id="err-ujianName"></p>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 z-10">
-                    <div class="space-y-2">
-                        <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Mata Pelajaran</label>
-                        <select class="w-full p-3 bg-surface-container-low border border-outline rounded-lg focus:ring-2 focus:ring-secondary-container" id="ujianMapel">
-                            <option value="">Pilih Mata Pelajaran...</option>
-                            <option value="Jaringan Komputer">Jaringan Komputer</option>
-                            <option value="Sistem Operasi">Sistem Operasi</option>
-                            <option value="Pemrograman Dasar">Pemrograman Dasar</option>
-                        </select>
-                        <p class="text-xs text-error font-bold hidden" id="err-ujianMapel"></p>
-                    </div>
+                <div class="z-10">
                     <div class="space-y-2 relative" id="classDropdownContainer">
                         <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Pilih Kelas</label>
                         <button type="button" class="w-full p-3 bg-surface-container-low border border-outline rounded-lg focus:ring-2 focus:ring-secondary-container flex justify-between items-center" onclick="toggleClassesDropdown()">
@@ -70,8 +63,8 @@
                                 @forelse($kelases as $kelas)
                                 <li>
                                     <label class="flex items-center gap-3 p-2 hover:bg-surface-container-low rounded cursor-pointer group">
-                                        <input type="checkbox" name="kelas_id[]" value="{{ $kelas->id }}" data-name="{{ $kelas->nama_kelas }}" class="w-5 h-5 text-secondary border-outline rounded class-checkbox" onchange="updateSelectedClasses()">
-                                        <span class="text-sm group-hover:text-primary">{{ $kelas->nama_kelas }}</span>
+                                        <input type="checkbox" name="kelas_id[]" value="{{ $kelas->id }}" data-name="{{ $kelas->nama_kelas }}" class="w-5 h-5 text-secondary border-outline rounded class-checkbox" onchange="updateSelectedClasses()" {{ (isset($ujian) && $ujian->kelas_id == $kelas->id) ? 'checked' : '' }}>
+                                        <span class="text-sm group-hover:text-primary">{{ $kelas->nama_kelas }} ({{ $kelas->mata_pelajaran }})</span>
                                     </label>
                                 </li>
                                 @empty
@@ -89,14 +82,14 @@
                     <div class="space-y-2 relative">
                         <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Durasi (Menit)</label>
                         <div class="relative">
-                            <input id="ujianDurasi" class="w-full p-3 bg-surface-container-low border border-outline rounded-lg focus:ring-2 focus:ring-secondary-container pr-12" type="number" value="{{ request('durasi', 90) }}"/>
+                            <input class="w-full p-3 bg-surface-container-low border border-outline rounded-lg focus:ring-2 focus:ring-secondary-container pr-12" id="ujianDuration" name="durasi" type="number" value="{{ old('durasi', $ujian->durasi_menit ?? request('durasi', 90)) }}"/>
                             <span class="absolute right-4 top-3 text-on-surface-variant/60 text-xs font-bold uppercase tracking-wider">Mnt</span>
                         </div>
                         <p class="text-xs text-error font-bold hidden" id="err-ujianDurasi"></p>
                     </div>
                     <div class="space-y-2 relative">
                         <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Batas Percobaan</label>
-                        <input id="ujianBatas" class="w-full p-3 bg-surface-container-low border border-outline rounded-lg focus:ring-2 focus:ring-secondary-container" type="number" value="1"/>
+                        <input id="ujianBatas" name="batas" class="w-full p-3 bg-surface-container-low border border-outline rounded-lg focus:ring-2 focus:ring-secondary-container" type="number" value="{{ old('batas', $ujian->batas_percobaan ?? 1) }}"/>
                         <p class="text-xs text-error font-bold hidden" id="err-ujianBatas"></p>
                     </div>
                 </div>
@@ -105,19 +98,19 @@
                     <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Status Ujian</label>
                     <div class="flex flex-wrap gap-4">
                         <label class="flex items-center gap-3 cursor-pointer group">
-                            <input {{ in_array(request('status'), ['aktif', 'published']) ? 'checked' : '' }} class="w-5 h-5 text-secondary border-outline focus:ring-secondary-container" name="status" type="radio" value="published" onchange="toggleScheduleInput()"/>
+                            <input {{ in_array(old('status', $ujian->status ?? ''), ['aktif', 'published']) ? 'checked' : '' }} class="w-5 h-5 text-secondary border-outline focus:ring-secondary-container" name="status" type="radio" value="published" onchange="toggleScheduleInput()"/>
                             <span class="text-sm group-hover:text-primary transition-colors">Published</span>
                         </label>
                         <label class="flex items-center gap-3 cursor-pointer group">
-                            <input {{ in_array(request('status'), ['selesai', 'closed']) ? 'checked' : '' }} class="w-5 h-5 text-secondary border-outline focus:ring-secondary-container" name="status" type="radio" value="closed" onchange="toggleScheduleInput()"/>
+                            <input {{ in_array(old('status', $ujian->status ?? ''), ['selesai', 'closed']) ? 'checked' : '' }} class="w-5 h-5 text-secondary border-outline focus:ring-secondary-container" name="status" type="radio" value="closed" onchange="toggleScheduleInput()"/>
                             <span class="text-sm group-hover:text-primary transition-colors">Closed</span>
                         </label>
                         <label class="flex items-center gap-3 cursor-pointer group">
-                            <input {{ request('status') === 'archived' ? 'checked' : '' }} class="w-5 h-5 text-secondary border-outline focus:ring-secondary-container" name="status" type="radio" value="archived" onchange="toggleScheduleInput()"/>
+                            <input {{ old('status', $ujian->status ?? '') === 'archived' ? 'checked' : '' }} class="w-5 h-5 text-secondary border-outline focus:ring-secondary-container" name="status" type="radio" value="archived" onchange="toggleScheduleInput()"/>
                             <span class="text-sm group-hover:text-primary transition-colors">Archived</span>
                         </label>
                         <label class="flex items-center gap-3 cursor-pointer group">
-                            <input {{ request('status') === 'terjadwal' ? 'checked' : '' }} class="w-5 h-5 text-secondary border-outline focus:ring-secondary-container" name="status" type="radio" value="terjadwal" onchange="toggleScheduleInput()"/>
+                            <input {{ old('status', $ujian->status ?? '') === 'terjadwal' ? 'checked' : '' }} class="w-5 h-5 text-secondary border-outline focus:ring-secondary-container" name="status" type="radio" value="terjadwal" onchange="toggleScheduleInput()"/>
                             <span class="text-sm group-hover:text-primary transition-colors">Terjadwal</span>
                         </label>
                     </div>
@@ -125,13 +118,13 @@
                     <div id="scheduleContainer" class="hidden space-y-4 mt-4 bg-surface-container-low p-4 rounded-lg border border-outline/30">
                         <div class="space-y-2" id="waktuMulaiContainer">
                             <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Waktu Mulai</label>
-                            <input class="w-full p-3 bg-white border border-outline rounded-lg focus:ring-2 focus:ring-secondary-container" type="datetime-local" id="ujianWaktuMulai"/>
+                            <input class="w-full p-3 bg-white border border-outline rounded-lg focus:ring-2 focus:ring-secondary-container" type="datetime-local" name="waktu_mulai" id="ujianWaktuMulai" value="{{ old('waktu_mulai', isset($ujian) ? date('Y-m-d\TH:i', strtotime($ujian->waktu_mulai)) : '') }}"/>
                             <p class="text-xs text-on-surface-variant/60 italic">Ujian akan otomatis diterbitkan pada waktu yang ditentukan.</p>
                             <p class="text-xs text-error font-bold hidden" id="err-ujianWaktuMulai"></p>
                         </div>
                         <div class="space-y-2">
                             <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Waktu Berakhir</label>
-                            <input class="w-full p-3 bg-white border border-outline rounded-lg focus:ring-2 focus:ring-secondary-container" type="datetime-local" id="ujianWaktuBerakhir"/>
+                            <input class="w-full p-3 bg-white border border-outline rounded-lg focus:ring-2 focus:ring-secondary-container" type="datetime-local" name="waktu_berakhir" id="ujianWaktuBerakhir" value="{{ old('waktu_berakhir', isset($ujian) ? date('Y-m-d\TH:i', strtotime($ujian->waktu_berakhir)) : '') }}"/>
                             <p class="text-xs text-on-surface-variant/60 italic">Ujian akan otomatis ditutup pada waktu yang ditentukan.</p>
                             <p class="text-xs text-error font-bold hidden" id="err-ujianWaktuBerakhir"></p>
                         </div>
@@ -140,7 +133,7 @@
 
                 <div class="space-y-2">
                     <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Deskripsi Ujian</label>
-                    <textarea class="w-full p-4 bg-surface-container-low border border-outline rounded-lg focus:ring-2 focus:ring-secondary-container resize-none" placeholder="Berikan instruksi atau deskripsi singkat mengenai cakupan materi ujian ini..." rows="4"></textarea>
+                    <textarea name="deskripsi" class="w-full p-4 bg-surface-container-low border border-outline rounded-lg focus:ring-2 focus:ring-secondary-container resize-none" placeholder="Berikan instruksi atau tata tertib selama ujian berlangsung..." rows="4">{{ old('deskripsi', $ujian->deskripsi ?? '') }}</textarea>
                 </div>
 
                 <div class="space-y-3 pt-2">
@@ -150,7 +143,7 @@
                             <p class="text-xs text-on-surface-variant">Urutan berbeda untuk setiap siswa.</p>
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer" onclick="event.stopPropagation()">
-                            <input id="toggle1" class="sr-only peer" type="checkbox"/>
+                            <input id="toggle1" name="acak_soal" value="1" {{ old('acak_soal', $ujian->acak_soal ?? false) ? 'checked' : '' }} class="sr-only peer" type="checkbox"/>
                             <div class="w-9 h-5 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-secondary"></div>
                         </label>
                     </div>
@@ -160,7 +153,7 @@
                             <p class="text-xs text-on-surface-variant">Otomatis kumpul saat waktu habis.</p>
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer" onclick="event.stopPropagation()">
-                            <input checked id="toggle2" class="sr-only peer" type="checkbox"/>
+                            <input checked id="toggle2" name="auto_submit" value="1" {{ old('auto_submit', $ujian->auto_submit ?? true) ? 'checked' : '' }} class="sr-only peer" type="checkbox"/>
                             <div class="w-9 h-5 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-secondary"></div>
                         </label>
                     </div>
@@ -550,6 +543,48 @@
         }
     }
 
+    document.addEventListener('DOMContentLoaded', () => {
+        updateSelectedClasses();
+        toggleScheduleInput();
+
+        @if(isset($ujian) && $ujian->soal && $ujian->soal->count() > 0)
+            // Pre-populate questions for Edit mode
+            const soalData = @json($ujian->soal);
+            
+            // Remove the default empty card
+            const defaultCard = document.querySelector('.question-card');
+            if (defaultCard) defaultCard.remove();
+            
+            soalData.forEach((soal, index) => {
+                addQuestion();
+                const cards = document.querySelectorAll('.question-card');
+                const newCard = cards[cards.length - 1];
+                
+                newCard.querySelector('.question-type').value = soal.tipe;
+                toggleQuestionType(newCard.querySelector('.question-type'), questionCount);
+                
+                newCard.querySelector('.question-weight').value = soal.bobot;
+                newCard.querySelector('.question-text').value = soal.pertanyaan;
+                
+                if (soal.tipe === 'pg' && soal.pilihan) {
+                    const opts = newCard.querySelectorAll('.question-option-text');
+                    const choices = soal.pilihan;
+                    opts.forEach((opt, idx) => {
+                        if (choices[idx]) opt.value = choices[idx];
+                    });
+                    
+                    const correctMapRev = { 0: 'A', 1: 'B', 2: 'C', 3: 'D', 4: 'E', '0': 'A', '1': 'B', '2': 'C', '3': 'D', '4': 'E' };
+                    // if jawaban_benar is 'A', 'B' instead of 0, 1
+                    let correctChar = correctMapRev[soal.jawaban_benar] || soal.jawaban_benar;
+                    if (!['A', 'B', 'C', 'D', 'E'].includes(correctChar)) correctChar = 'A';
+                    
+                    const radio = newCard.querySelector(`.question-correct[value="${correctChar}"]`);
+                    if (radio) radio.checked = true;
+                }
+            });
+        @endif
+    });
+
     document.addEventListener('click', function(event) {
         const container = document.getElementById('classDropdownContainer');
         const dropdown = document.getElementById('classesDropdown');
@@ -575,9 +610,6 @@
 
         const name = document.getElementById('ujianName').value.trim();
         if (!name) showError('err-ujianName', 'Judul Ujian harus diisi.');
-
-        const mapel = document.getElementById('ujianMapel').value;
-        if (!mapel) showError('err-ujianMapel', 'Pilih Mata Pelajaran.');
 
         const classes = document.querySelectorAll('.class-checkbox:checked');
         if (classes.length === 0) showError('err-ujianKelas', 'Pilih minimal satu Kelas.');
@@ -632,7 +664,7 @@
         }
 
         const questions = document.querySelectorAll('.question-card');
-        //if (questions.length < 5) showError('err-ujianQuestions', 'Minimal harus ada 5 soal.');
+        if (questions.length === 0) showError('err-ujianQuestions', 'Minimal harus ada 1 soal.');
 
         questions.forEach((q, index) => {
             const text = q.querySelector('.question-text').value.trim();
@@ -700,6 +732,33 @@
                     toast.classList.add('opacity-100', 'translate-y-0');
                 }, 10);
                 setTimeout(() => {
+                    const qCards = document.querySelectorAll('.question-card');
+                    const qData = [];
+                    qCards.forEach((q, idx) => {
+                        const text = q.querySelector('.question-text').value.trim();
+                        const opts = Array.from(q.querySelectorAll('.question-option-text')).map(o => o.value.trim());
+                        const correctMap = { 'A': 0, 'B': 1, 'C': 2, 'D': 3 };
+                        const checkedEl = q.querySelector('.question-correct:checked');
+                        const correctVal = checkedEl ? checkedEl.value : 'A';
+                        
+                        const type = q.querySelector('.question-type').value;
+                        
+                        qData.push({
+                            pertanyaan: text,
+                            tipe: type,
+                            pilihan: opts,
+                            jawaban_benar: correctMap[correctVal] ?? 0,
+                            bobot: 1,
+                            urutan: idx + 1
+                        });
+                    });
+                    
+                    const qInput = document.createElement('input');
+                    qInput.type = 'hidden';
+                    qInput.name = 'questions_data';
+                    qInput.value = JSON.stringify(qData);
+                    document.getElementById('ujianForm').appendChild(qInput);
+                    
                     document.getElementById('ujianForm').submit();
                 }, 1500);
             } else {

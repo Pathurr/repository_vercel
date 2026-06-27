@@ -81,135 +81,110 @@
             <div class="bg-surface-container-lowest p-3 rounded-xl shadow-ambient border border-outline-variant/30 mb-3">
                 <div class="flex flex-col md:flex-row justify-between items-start gap-2 mb-2">
                     <div>
-                        <h1 class="font-bold text-lg text-primary mb-0" style="font-family: var(--font-serif)">Aditya Saputra</h1>
-                        <p class="text-xs text-on-surface-variant">XI TKJ 1 · Dasar Jaringan</p>
-                        <p class="text-[11px] text-on-surface-variant/70">Diserahkan: 12 Des 2023, 10:42</p>
-                    </div>
-                    <div class="flex-shrink-0">
-                        <div class="bg-error-container text-on-error-container px-2 py-0.5 rounded-full text-[11px] font-bold flex items-center gap-1 mb-1 w-fit ml-auto">
-                            <span class="material-symbols-outlined text-[13px]">schedule</span> Late (5m)
-                        </div>
+                        <h1 class="font-bold text-lg text-primary mb-0" style="font-family: var(--font-serif)">{{ $submission['siswa']->name }}</h1>
+                        <p class="text-xs text-on-surface-variant">{{ $submission['ujian']->kelas->nama_kelas }} · {{ $submission['ujian']->kelas->mata_pelajaran }}</p>
                     </div>
                 </div>
             </div>
 
             <!-- Questions — scrollable -->
             <div class="overflow-y-auto space-y-3 pr-1" style="max-height: calc(100vh - 220px)">
-
-                <!-- Q1: Correct -->
+                @foreach($submission['answers'] as $index => $ans)
                 <div class="bg-surface-container-lowest p-4 rounded-xl shadow-ambient border border-outline-variant/30 relative">
-                    <div class="absolute top-4 right-4 flex items-center gap-2">
-                        <span class="bg-green-100 text-green-700 px-2.5 py-1 rounded-full text-xs font-bold flex items-center gap-1 border border-green-200">
-                            <span class="material-symbols-outlined text-sm">check_circle</span> Benar
-                        </span>
-                        <span class="text-sm font-bold text-primary">10/10 pts</span>
-                    </div>
-                    <h4 class="text-xs font-bold text-secondary uppercase tracking-wider mb-2">Pertanyaan 1 — Pilihan Ganda</h4>
-                    <p class="text-base font-semibold text-on-surface mb-4 pr-28">Manakah di bawah ini yang merupakan fungsi utama dari Router dalam sebuah jaringan komputer?</p>
-                    <div class="space-y-2">
-                        <div class="flex items-center p-3 rounded-lg bg-surface-container border border-outline-variant/20">
-                            <span class="w-6 h-6 flex items-center justify-center rounded-full border-2 border-outline-variant mr-3 text-xs flex-shrink-0">A</span>
-                            <span class="text-sm">Menghubungkan perangkat di dalam satu LAN</span>
+                    @if($ans->soal->tipe !== 'essay')
+                        <div class="absolute top-4 right-4 flex items-center gap-2">
+                            @if($ans->benar)
+                            <span class="bg-green-100 text-green-700 px-2.5 py-1 rounded-full text-xs font-bold flex items-center gap-1 border border-green-200">
+                                <span class="material-symbols-outlined text-sm">check_circle</span> Benar
+                            </span>
+                            @else
+                            <span class="bg-error-container text-on-error-container px-2.5 py-1 rounded-full text-xs font-bold flex items-center gap-1">
+                                <span class="material-symbols-outlined text-sm">cancel</span> Salah
+                            </span>
+                            @endif
                         </div>
-                        <div class="flex items-center p-3 rounded-lg bg-green-50 border-2 border-green-500 text-green-900">
-                            <span class="w-6 h-6 flex items-center justify-center rounded-full bg-green-500 text-white mr-3 text-xs font-bold flex-shrink-0">B</span>
-                            <span class="text-sm flex-1">Menentukan jalur terbaik untuk pengiriman data antar jaringan</span>
-                            <span class="material-symbols-outlined text-green-600 text-lg">check</span>
+                    @else
+                        <div class="absolute top-4 right-4 flex items-center gap-2">
+                            <span class="bg-secondary-container/20 text-on-secondary-container px-2.5 py-1 rounded-full text-xs font-bold flex items-center gap-1 border border-secondary-container/40">
+                                <span class="material-symbols-outlined text-sm">edit</span> Essay (Nilai Manual)
+                            </span>
                         </div>
-                        <div class="flex items-center p-3 rounded-lg bg-surface-container border border-outline-variant/20">
-                            <span class="w-6 h-6 flex items-center justify-center rounded-full border-2 border-outline-variant mr-3 text-xs flex-shrink-0">C</span>
-                            <span class="text-sm">Mengonversi sinyal analog menjadi digital</span>
+                    @endif
+                    
+                    <h4 class="text-xs font-bold text-secondary uppercase tracking-wider mb-2">Pertanyaan {{ $index + 1 }} — {{ $ans->soal->tipe === 'essay' ? 'Essay' : 'Pilihan Ganda' }}</h4>
+                    <p class="text-base font-semibold text-on-surface mb-4 pr-28">{!! $ans->soal->pertanyaan !!}</p>
+                    
+                    @if($ans->soal->tipe !== 'essay')
+                        <div class="space-y-2">
+                            @foreach($ans->soal->pilihan ?? [] as $optIdx => $optText)
+                                @php
+                                    $isSelected = ((string)$ans->jawaban === (string)$optIdx);
+                                    $isCorrectOpt = ((string)$ans->soal->jawaban_benar === (string)$optIdx);
+                                    
+                                    $bgClass = 'bg-surface-container border-outline-variant/20';
+                                    $icon = '';
+                                    if ($isSelected && $isCorrectOpt) {
+                                        $bgClass = 'bg-green-50 border-green-500 text-green-900 border-2';
+                                        $icon = '<span class="material-symbols-outlined text-green-600 text-lg ml-auto">check</span>';
+                                    } elseif ($isSelected && !$isCorrectOpt) {
+                                        $bgClass = 'bg-error-container/20 border-error text-on-error-container border-2';
+                                        $icon = '<span class="material-symbols-outlined text-error text-lg ml-auto">close</span>';
+                                    } elseif (!$isSelected && $isCorrectOpt) {
+                                        $bgClass = 'bg-green-50/50 border-green-400/50 text-green-800 border-2';
+                                        $icon = '<span class="text-xs ml-auto font-bold">(Kunci Jawaban)</span>';
+                                    }
+                                @endphp
+                                <div class="flex items-center p-3 rounded-lg border {{ $bgClass }}">
+                                    <span class="text-sm flex-1">{{ is_string($optText) ? $optText : '' }}</span>
+                                    {!! $icon !!}
+                                </div>
+                            @endforeach
                         </div>
-                    </div>
-                    <p class="text-xs text-on-surface-variant italic mt-3 pt-3 border-t border-outline-variant/20">Automated: Kunci Jawaban B cocok dengan pilihan siswa.</p>
+                    @else
+                        <div class="bg-surface-bright p-4 rounded-lg border border-outline-variant/30 mb-4 italic text-on-surface text-sm leading-relaxed">
+                            "{{ $ans->jawaban ?? 'Siswa tidak menjawab.' }}"
+                        </div>
+                    @endif
                 </div>
-
-                <!-- Q2: Incorrect -->
-                <div class="bg-surface-container-lowest p-4 rounded-xl shadow-ambient border border-outline-variant/30 relative">
-                    <div class="absolute top-4 right-4 flex items-center gap-2">
-                        <span class="bg-error-container text-on-error-container px-2.5 py-1 rounded-full text-xs font-bold flex items-center gap-1">
-                            <span class="material-symbols-outlined text-sm">cancel</span> Salah
-                        </span>
-                        <span class="text-sm font-bold text-error">0/10 pts</span>
-                    </div>
-                    <h4 class="text-xs font-bold text-secondary uppercase tracking-wider mb-2">Pertanyaan 2 — Pilihan Ganda</h4>
-                    <p class="text-base font-semibold text-on-surface mb-4 pr-28">Protokol apa yang digunakan untuk mengirimkan email dari client ke server?</p>
-                    <div class="space-y-2">
-                        <div class="flex items-center p-3 rounded-lg bg-error-container/20 border-2 border-error text-on-error-container">
-                            <span class="w-6 h-6 flex items-center justify-center rounded-full bg-error text-white mr-3 text-xs font-bold flex-shrink-0">A</span>
-                            <span class="text-sm flex-1">HTTP</span>
-                            <span class="material-symbols-outlined text-error text-lg">close</span>
-                        </div>
-                        <div class="flex items-center p-3 rounded-lg bg-green-50 border-2 border-green-400/50 text-green-800">
-                            <span class="w-6 h-6 flex items-center justify-center rounded-full bg-green-400/50 text-white mr-3 text-xs font-bold flex-shrink-0">B</span>
-                            <span class="text-sm flex-1">SMTP <span class="text-xs">(Kunci Jawaban)</span></span>
-                        </div>
-                        <div class="flex items-center p-3 rounded-lg bg-surface-container border border-outline-variant/20">
-                            <span class="w-6 h-6 flex items-center justify-center rounded-full border-2 border-outline-variant mr-3 text-xs flex-shrink-0">C</span>
-                            <span class="text-sm">FTP</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Q3: Essay - needs grading -->
-                <div class="bg-surface-container-lowest p-4 rounded-xl shadow-ambient border-l-4 border-l-secondary border border-outline-variant/30 relative">
-                    <div class="absolute top-4 right-4 flex items-center gap-2">
-                        <span class="bg-secondary-container/20 text-on-secondary-container px-2.5 py-1 rounded-full text-xs font-bold flex items-center gap-1 border border-secondary-container/40">
-                            <span class="material-symbols-outlined text-sm">edit</span> Perlu Dinilai
-                        </span>
-                        <div class="flex items-center bg-surface-container border border-outline-variant px-2 py-1 rounded">
-                            <input class="essay-score w-10 bg-transparent border-none p-0 text-center font-bold text-primary focus:ring-0 text-sm" data-max="30" max="30" min="0" placeholder="0" type="number" value="25">
-                            <span class="text-xs text-on-surface-variant border-l border-outline-variant ml-2 pl-2">/ 30 pts</span>
-                        </div>
-                    </div>
-                    <h4 class="text-xs font-bold text-secondary uppercase tracking-wider mb-2">Pertanyaan 3 — Essay</h4>
-                    <p class="text-base font-semibold text-on-surface mb-4 pr-40">Jelaskan perbedaan mendasar antara model OSI dan model TCP/IP!</p>
-                    <div class="bg-surface-bright p-4 rounded-lg border border-outline-variant/30 mb-4 italic text-on-surface text-sm leading-relaxed">
-                        "Model OSI memiliki 7 lapisan sedangkan TCP/IP hanya memiliki 4 lapisan. Model OSI lebih bersifat teoritis untuk standarisasi, sedangkan TCP/IP adalah protokol praktis yang digunakan di internet saat ini. OSI memisahkan Data Link dan Physical Layer, sementara di TCP/IP keduanya digabung dalam Network Access layer."
-                    </div>
-                    <textarea class="w-full bg-surface-container border-0 border-b-2 border-primary focus:ring-0 focus:border-secondary transition-all p-3 rounded-t-lg text-sm resize-none" placeholder="Tulis catatan untuk jawaban ini..." rows="2">Penjelasan sudah sangat baik dan detail. Tambahkan protokol spesifik di tiap layer untuk nilai maksimal.</textarea>
-                </div>
-
+                @endforeach
             </div>
         </div>
 
         <!-- Right: Grading Sidebar 30% -->
         <aside class="flex-shrink-0 lg:sticky lg:top-4" style="flex: 0 0 30%; max-width: 30%; height: calc(100vh - 88px);">
-            <div class="bg-surface-container-highest p-4 rounded-xl shadow-ambient border border-outline-variant/30 h-full flex flex-col">
+            <form id="gradingForm" method="POST" action="{{ route('guru.penilaian.ujian.store', ['ujian_id' => $submission['ujian']->id, 'siswa_id' => $submission['siswa']->id]) }}" class="bg-surface-container-highest p-4 rounded-xl shadow-ambient border border-outline-variant/30 h-full flex flex-col">
+                @csrf
                 <h3 class="font-bold text-[15px] text-primary mb-3 flex-shrink-0" style="font-family: var(--font-serif)">Ringkasan Nilai</h3>
 
-                <!-- Score Circle -->
-                <div class="text-center mb-3 flex-shrink-0">
-                    <div class="inline-flex flex-col items-center justify-center w-20 h-20 rounded-full border-[6px] border-secondary-container bg-white shadow-inner score-circle transition-soft">
-                        <span class="text-2xl font-bold text-primary leading-none" id="totalScore">80</span>
-                        <span class="text-[9px] text-on-surface-variant font-bold border-t border-outline-variant pt-0.5 mt-0.5 w-10">/ 100</span>
-                    </div>
-                    <p class="mt-1 text-[11px] text-on-surface-variant font-medium">Skor saat ini</p>
-                </div>
+                @php
+                    $mcqTotal = $submission['answers']->where('soal.tipe', '!=', 'essay')->count();
+                    $mcqScore = $submission['answers']->where('soal.tipe', '!=', 'essay')->where('benar', true)->count();
+                    $baseScore = $mcqTotal > 0 ? ($mcqScore / $mcqTotal) * 100 : 0;
+                    
+                    // Fetch existing score if any
+                    $existingNilai = \App\Models\Nilai::where('siswa_id', $submission['siswa']->id)
+                        ->where('nilaiable_type', \App\Models\Ujian::class)
+                        ->where('nilaiable_id', $submission['ujian']->id)
+                        ->first();
+                @endphp
 
                 <!-- Score Breakdown -->
-                <div class="space-y-1.5 mb-3 flex-shrink-0">
+                <div class="space-y-1.5 mb-5 flex-shrink-0">
                     <div class="flex justify-between text-[11px]">
-                        <span class="text-on-surface-variant">Otomatis (PG)</span>
-                        <span class="font-bold text-primary" id="autoScore">55/70</span>
-                    </div>
-                    <div class="flex justify-between text-[11px]">
-                        <span class="text-on-surface-variant">Manual (Essay)</span>
-                        <span class="font-bold text-secondary" id="manualScore">25/30</span>
-                    </div>
-                    <div class="h-px bg-outline-variant/30 my-1.5"></div>
-                    <div class="flex justify-between text-xs font-bold">
-                        <span class="text-primary">Total</span>
-                        <span class="text-primary" id="totalPercent">80%</span>
+                        <span class="text-on-surface-variant">Skor Auto (PG)</span>
+                        <span class="font-bold text-primary">{{ $mcqScore }}/{{ $mcqTotal }} ({{ round($baseScore) }} Poin)</span>
                     </div>
                 </div>
 
-                <!-- Feedback -->
-                <div class="space-y-2 flex-1 flex flex-col min-h-0">
-                    <div class="flex-1 flex flex-col min-h-0">
-                        <label class="text-[11px] font-bold text-on-surface-variant block mb-1">Feedback Keseluruhan:</label>
-                        <textarea class="flex-1 w-full bg-white border border-outline-variant rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-secondary/20 focus:border-secondary focus:outline-none resize-none" placeholder="Tuliskan evaluasi menyeluruh..."></textarea>
+                <div class="mb-4">
+                    <label class="text-[11px] font-bold uppercase tracking-wider text-primary mb-1 block">Nilai Keseluruhan (0-100)</label>
+                    <div class="relative">
+                        <input name="nilai" value="{{ old('nilai', $existingNilai ? $existingNilai->nilai : round($baseScore)) }}" class="w-full text-3xl font-bold p-3 bg-white border-b-2 border-primary focus:ring-0 focus:border-secondary transition-all rounded-t-xl text-center" max="100" min="0" placeholder="0" type="number" required/>
                     </div>
+                    <p class="text-[10px] text-on-surface-variant mt-1 text-center">Sesuaikan nilai di atas jika ada soal essay.</p>
+                </div>
+
+                <div class="space-y-2 flex-1 flex flex-col min-h-0 justify-end">
                     <!-- Actions -->
                     <div class="pt-3 border-t border-outline-variant/30 flex-shrink-0">
                         <button type="button" id="btn-trigger-simpan" class="w-full px-6 py-2.5 bg-[#feae2c] text-[#6b4500] text-sm font-bold rounded-lg flex items-center justify-center gap-2 hover:brightness-110 transition-soft">
@@ -217,7 +192,7 @@
                         </button>
                     </div>
                 </div>
-            </div>
+            </form>
         </aside>
     </div>
 </div>
@@ -305,12 +280,7 @@ document.addEventListener('DOMContentLoaded', () => {
         modalSimpan.classList.add('hidden');
         modalSimpan.classList.remove('flex');
         
-        toastSuccess.classList.remove('invisible', 'opacity-0', '-translate-y-4');
-        toastSuccess.classList.add('opacity-100', 'translate-y-0');
-        
-        setTimeout(() => {
-            window.location.href = monitorUrl;
-        }, 1500);
+        document.getElementById('gradingForm').submit();
     });
 });
 </script>

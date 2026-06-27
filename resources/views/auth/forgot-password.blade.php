@@ -22,6 +22,15 @@
                 <div class="mb-6 p-4 bg-secondary-fixed/30 text-on-secondary-fixed rounded-lg text-sm">{{ session('status') }}</div>
             @endif
 
+            @if (session('reset_link'))
+                <div class="mb-6 p-5 bg-green-100 border border-green-400 rounded-lg shadow-sm text-center">
+                    <h3 class="font-bold text-green-800 mb-3">Tautan Berhasil Dibuat!</h3>
+                    <a href="{{ session('reset_link') }}" class="inline-block bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg text-sm transition-colors shadow-md">
+                        Lanjut ke Halaman Reset Password
+                    </a>
+                </div>
+            @endif
+
             <form method="POST" action="{{ route('password.email') }}" class="space-y-6">
                 @csrf
                 <div>

@@ -18,6 +18,14 @@
                 <p class="text-on-surface-variant">SMK Mandalahayu 1 Bekasi</p>
             </div>
 
+            {{-- Session Success --}}
+            @if (session('success'))
+                <div class="mb-6 p-4 bg-green-100 text-green-800 border border-green-300 rounded-lg text-sm flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[20px]">check_circle</span>
+                    {{ session('success') }}
+                </div>
+            @endif
+            
             {{-- Session Errors --}}
             @if ($errors->any())
                 <div class="mb-6 p-4 bg-error-container text-on-error-container rounded-lg text-sm">

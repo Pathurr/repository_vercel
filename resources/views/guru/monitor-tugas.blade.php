@@ -110,14 +110,15 @@
         <tbody class="divide-y divide-outline-variant/30" id="studentTableBody">
             @forelse($submissions as $submission)
                 @php
-                    $tugas = $submission->tugas;
-                    $kelas = $tugas->kelas;
-                    $status = $submission->status ?? ($submission->dikumpulkan_at && $tugas->deadline ? ($submission->dikumpulkan_at->greaterThan($tugas->deadline) ? 'terlambat' : 'terkumpul') : 'terkumpul');
-                    $gradeStatus = $submission->nilai ? 'sudah' : 'belum';
-                    $badgeClass = $status === 'terkumpul' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700';
-                    $scoreText = $submission->nilai ? $submission->nilai : '-';
+                    $status = $submission->status;
+                    $gradeStatus = $submission->nilai !== null ? 'sudah' : 'belum';
+                    $isSuccess = in_array($status, ['terkumpul', 'tepat_waktu']);
+                    $badgeClass = $isSuccess ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700';
+                    $dotClass = $isSuccess ? 'bg-green-700' : 'bg-red-700';
+                    $statusText = ucwords(str_replace('_', ' ', $status));
+                    $scoreText = $submission->nilai !== null ? $submission->nilai : '-';
                 @endphp
-                <tr class="hover:bg-surface-container-lowest transition-colors" data-name="{{ strtolower($submission->siswa->name) }}" data-type="tugas" data-status="{{ $status }}" data-grade="{{ $gradeStatus }}">
+                <tr class="hover:bg-surface-container-lowest transition-colors" data-name="{{ strtolower($submission->siswa->name) }}" data-type="{{ $submission->type }}" data-status="{{ $status }}" data-grade="{{ $gradeStatus }}">
                     <td class="px-3 py-2.5">
                         <div class="flex items-center gap-2">
                             <div class="w-7 h-7 flex-shrink-0 bg-primary-fixed flex items-center justify-center rounded-full text-primary font-bold text-[10px]">{{ strtoupper(substr($submission->siswa->name, 0, 1)) }}</div>
@@ -125,16 +126,16 @@
                         </div>
                     </td>
                     <td class="px-3 py-2.5">
-                        <p class="text-xs font-semibold text-on-surface leading-tight">{{ $kelas?->nama_kelas ?? 'Kelas tidak tersedia' }} <span class="text-[10px] text-on-surface-variant font-normal">· {{ $kelas?->mata_pelajaran ?? 'Mata Pelajaran belum ditentukan' }}</span></p>
-                        <p class="text-[10px] text-on-surface-variant mt-0.5">{{ $tugas->judul }}</p>
+                        <p class="text-xs font-semibold text-on-surface leading-tight">{{ $submission->kelas?->nama_kelas ?? 'Kelas tidak tersedia' }} <span class="text-[10px] text-on-surface-variant font-normal">· {{ $submission->kelas?->mata_pelajaran ?? 'Mata Pelajaran belum ditentukan' }}</span></p>
+                        <p class="text-[10px] text-on-surface-variant mt-0.5">{{ $submission->judul }}</p>
                     </td>
                     <td class="px-3 py-2.5">
-                        <p class="text-xs font-semibold text-on-surface leading-tight truncate">{{ $tugas->judul }}</p>
-                        <span class="text-[10px] px-1.5 py-0.5 bg-surface-variant rounded text-on-surface-variant">Tugas</span>
+                        <p class="text-xs font-semibold text-on-surface leading-tight truncate">{{ $submission->judul }}</p>
+                        <span class="text-[10px] px-1.5 py-0.5 bg-surface-variant rounded text-on-surface-variant">{{ ucfirst($submission->type) }}</span>
                     </td>
                     <td class="px-3 py-2.5 text-center">
                         <span class="px-2 py-0.5 rounded-full text-[10px] font-bold inline-flex items-center gap-1 {{ $badgeClass }}">
-                            <span class="w-1.5 h-1.5 {{ $status === 'terkumpul' ? 'bg-green-700' : 'bg-red-700' }} rounded-full flex-shrink-0"></span>{{ ucfirst($status) }}
+                            <span class="w-1.5 h-1.5 {{ $dotClass }} rounded-full flex-shrink-0"></span>{{ $statusText }}
                         </span>
                     </td>
                     <td class="px-3 py-2.5 text-center">
@@ -142,7 +143,7 @@
                         <p class="text-xs font-bold text-on-surface-variant">{{ $scoreText }}</p>
                     </td>
                     <td class="px-3 py-2.5 text-right">
-                        <a href="{{ route('guru.penilaian.tugas', ['id' => $submission->id]) }}" class="btn-nilai">Nilai</a>
+                        <a href="{{ $submission->link }}" class="btn-nilai">Nilai</a>
                     </td>
                 </tr>
             @empty

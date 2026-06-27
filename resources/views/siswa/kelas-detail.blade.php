@@ -70,6 +70,10 @@
             Tugas
             <div class="active-tab-indicator hidden" id="indicator-tugas"></div>
         </button>
+        <button class="px-4 md:px-6 py-3 text-sm text-on-surface-variant hover:text-primary transition-all duration-300 relative whitespace-nowrap font-bold" id="tab-evaluasi" onclick="switchTab('evaluasi')">
+            Kuis & Evaluasi
+            <div class="active-tab-indicator hidden" id="indicator-evaluasi"></div>
+        </button>
         <button class="px-4 md:px-6 py-3 text-sm text-on-surface-variant hover:text-primary transition-all duration-300 relative whitespace-nowrap font-bold" id="tab-pengumuman" onclick="switchTab('pengumuman')">
             Pengumuman
             <div class="active-tab-indicator hidden" id="indicator-pengumuman"></div>
@@ -89,9 +93,14 @@
                 </div>
                 <div class="flex-1">
                     <h4 class="font-bold text-sm text-on-surface">{{ $m->judul }}</h4>
-                    <p class="text-on-surface-variant text-[11px] flex flex-wrap items-center gap-2 mt-1 font-bold">
-                        <span class="material-symbols-outlined text-[12px]">calendar_month</span> Diunggah: {{ \Carbon\Carbon::parse($m->created_at)->format('d M Y') }}
-                    </p>
+                    <div class="flex items-center gap-2 mt-1">
+                        <p class="text-on-surface-variant text-[11px] flex flex-wrap items-center gap-2 font-bold">
+                            <span class="material-symbols-outlined text-[12px]">calendar_month</span> {{ \Carbon\Carbon::parse($m->created_at)->format('d M Y') }}
+                        </p>
+                        @if(in_array($m->id, $materiReadIds))
+                        <span class="px-2 py-0.5 bg-green-100 text-green-800 font-bold text-[8px] rounded-full uppercase tracking-wider">SELESAI DIBACA</span>
+                        @endif
+                    </div>
                 </div>
                 <button type="button" class="p-2 rounded-full bg-surface-container hover:bg-secondary-container transition-colors flex-shrink-0">
                     <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
@@ -141,6 +150,76 @@
             <div class="text-center py-8 bg-surface-container-lowest rounded-xl border border-outline-variant/30">
                 <span class="material-symbols-outlined text-on-surface-variant text-4xl mb-2 opacity-50">task</span>
                 <p class="text-on-surface-variant text-sm">Belum ada tugas untuk kelas ini.</p>
+            </div>
+            @endforelse
+        </div>
+
+        <!-- Tab: Evaluasi (Kuis & Ujian) -->
+        <div class="hidden space-y-4" id="content-evaluasi">
+            <h3 class="font-bold text-lg text-primary mb-4" style="font-family: var(--font-serif)">Daftar Kuis</h3>
+            
+            @forelse($kelas->kuis as $k)
+            <div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-outline-variant/30 hover:border-secondary transition-all mb-4">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h4 class="font-bold text-xl text-primary" style="font-family: var(--font-serif)">{{ $k->judul }}</h4>
+                        <p class="text-sm text-on-surface-variant mt-2 leading-relaxed">{{ Str::limit($k->deskripsi, 150) }}</p>
+                    </div>
+                    <div class="flex flex-col gap-2 items-end">
+                        <span class="px-3 py-1 bg-secondary/10 text-secondary font-bold text-[10px] rounded-full uppercase tracking-wider">KUIS</span>
+                        @php $nilaiKuis = $k->nilai_siswa->first(); @endphp
+                        @if($nilaiKuis)
+                        <span class="px-2 py-0.5 bg-green-100 text-green-800 font-bold text-[10px] rounded-full uppercase tracking-wider">NILAI: {{ number_format($nilaiKuis->nilai, 0) }}</span>
+                        @endif
+                    </div>
+                </div>
+                <div class="flex flex-col sm:flex-row items-center justify-between pt-4 border-t border-outline-variant/20 gap-4">
+                    @if(!$nilaiKuis)
+                    <a href="{{ route('siswa.pengerjaan-kuis', $k->id) }}" class="w-full sm:w-auto bg-primary text-on-primary px-6 py-2 rounded-lg font-bold text-xs hover:bg-primary-container transition-colors text-center shadow-sm">Kerjakan Kuis</a>
+                    @else
+                    <span class="text-xs font-bold text-on-surface-variant">Telah Dikerjakan</span>
+                    @endif
+                </div>
+            </div>
+            @empty
+            <div class="text-center py-8 bg-surface-container-lowest rounded-xl border border-outline-variant/30 mb-8">
+                <span class="material-symbols-outlined text-on-surface-variant text-4xl mb-2 opacity-50">quiz</span>
+                <p class="text-on-surface-variant text-sm">Belum ada kuis untuk kelas ini.</p>
+            </div>
+            @endforelse
+
+            <h3 class="font-bold text-lg text-primary mb-4 mt-8" style="font-family: var(--font-serif)">Daftar Ujian</h3>
+            @forelse($kelas->ujian as $u)
+            <div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-outline-variant/30 hover:border-secondary transition-all mb-4">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h4 class="font-bold text-xl text-primary" style="font-family: var(--font-serif)">{{ $u->judul }}</h4>
+                        <p class="text-sm text-on-surface-variant mt-2 leading-relaxed">{{ Str::limit($u->deskripsi, 150) }}</p>
+                    </div>
+                    <div class="flex flex-col gap-2 items-end">
+                        <span class="px-3 py-1 bg-primary/10 text-primary font-bold text-[10px] rounded-full uppercase tracking-wider">UJIAN</span>
+                        @php $nilaiUjian = $u->nilai_siswa->first(); @endphp
+                        @if($nilaiUjian)
+                        <span class="px-2 py-0.5 bg-green-100 text-green-800 font-bold text-[10px] rounded-full uppercase tracking-wider">NILAI: {{ number_format($nilaiUjian->nilai, 0) }}</span>
+                        @endif
+                    </div>
+                </div>
+                <div class="flex flex-col sm:flex-row items-center justify-between pt-4 border-t border-outline-variant/20 gap-4">
+                    <div class="flex items-center gap-4 text-xs font-bold text-on-surface-variant w-full sm:w-auto">
+                        <span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">timer</span> {{ $u->durasi_menit ?? 90 }} Menit</span>
+                        <span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">calendar_today</span> Mulai: {{ $u->mulai_at ? \Carbon\Carbon::parse($u->mulai_at)->format('d M Y, H:i') : '-' }}</span>
+                    </div>
+                    @if(!$nilaiUjian)
+                    <a href="{{ route('siswa.pengerjaan-ujian', $u->id) }}" class="w-full sm:w-auto bg-primary text-on-primary px-6 py-2 rounded-lg font-bold text-xs hover:bg-primary-container transition-colors text-center shadow-sm">Mulai Ujian</a>
+                    @else
+                    <span class="text-xs font-bold text-on-surface-variant">Telah Dikerjakan</span>
+                    @endif
+                </div>
+            </div>
+            @empty
+            <div class="text-center py-8 bg-surface-container-lowest rounded-xl border border-outline-variant/30">
+                <span class="material-symbols-outlined text-on-surface-variant text-4xl mb-2 opacity-50">description</span>
+                <p class="text-on-surface-variant text-sm">Belum ada ujian untuk kelas ini.</p>
             </div>
             @endforelse
         </div>
@@ -208,7 +287,7 @@
 @push('scripts')
 <script>
     function switchTab(tabName) {
-        const tabs = ['materi', 'tugas', 'pengumuman'];
+        const tabs = ['materi', 'tugas', 'evaluasi', 'pengumuman'];
         
         tabs.forEach(t => {
             const content = document.getElementById(`content-${t}`);

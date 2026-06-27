@@ -5,8 +5,8 @@
 <!-- Page Header -->
 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4 border-b border-outline-variant pb-6">
     <div>
-        <h1 class="font-h2 text-h2 text-primary">Laporan Aktivitas</h1>
-        <p class="font-body-md text-body-md text-on-surface-variant mt-1">Pantau dan analisis aktivitas sistem secara menyeluruh.</p>
+        <h1 class="font-h2 text-h2 text-primary">Log & Laporan Aktivitas</h1>
+        <p class="font-body-md text-body-md text-on-surface-variant mt-1">Lacak rekam jejak digital, pantau upaya otorisasi, dan pertahankan tingkat keamanan sistem.</p>
     </div>
 </div>
 
@@ -57,11 +57,11 @@
         <table class="w-full text-left font-body-md text-body-md whitespace-nowrap">
             <thead class="bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm border-b border-outline-variant">
                 <tr>
-                    <th class="px-6 py-4 font-semibold">Nama User</th>
-                    <th class="px-6 py-4 font-semibold">Role</th>
-                    <th class="px-6 py-4 font-semibold">Waktu Login</th>
-                    <th class="px-6 py-4 font-semibold">Status Login</th>
-                    <th class="px-6 py-4 font-semibold">Perangkat</th>
+                    <th class="px-6 py-4 font-semibold">Profil Pengguna</th>
+                    <th class="px-6 py-4 font-semibold">Tingkat Akses</th>
+                    <th class="px-6 py-4 font-semibold">Stempel Waktu</th>
+                    <th class="px-6 py-4 font-semibold">Status Otorisasi</th>
+                    <th class="px-6 py-4 font-semibold">Identifikasi Perangkat</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-outline-variant/50 text-on-surface">
