@@ -33,27 +33,20 @@
         </div>
     </div>
     
-    <form class="space-y-10 pb-10" id="quizForm" method="POST" action="{{ route('guru.kuis.store') }}" enctype="multipart/form-data">
+    <form class="space-y-10 pb-10" id="quizForm" method="POST" action="{{ isset($kuis) ? route('guru.kuis.update', $kuis->id) : route('guru.kuis.store') }}" enctype="multipart/form-data">
         @csrf
+        @if(isset($kuis))
+            @method('PUT')
+        @endif
         <section class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
             <div class="bg-white p-8 rounded-xl shadow-sm border border-outline-variant/20 space-y-6 sticky top-6">
                 <h3 class="font-bold text-2xl text-primary" style="font-family: var(--font-serif)">Informasi Kuis</h3>
                 <div class="space-y-2">
                     <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Nama Kuis</label>
-                    <input class="w-full text-2xl font-semibold stationery-input py-2" id="quizName" name="judul" placeholder="Contoh: Kuis Akhir Bab 3 - Jaringan Komputer" type="text" value="{{ request('judul') }}"/>
+                    <input class="w-full text-2xl font-semibold stationery-input py-2" id="quizName" name="judul" placeholder="Contoh: Kuis Akhir Bab 3 - Jaringan Komputer" type="text" value="{{ old('judul', $kuis->judul ?? request('judul')) }}"/>
                     <p class="text-xs text-error font-bold hidden" id="err-quizName"></p>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 z-10">
-                    <div class="space-y-2">
-                        <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Mata Pelajaran</label>
-                        <select class="w-full p-3 bg-surface-container-low border border-outline rounded-lg focus:ring-2 focus:ring-secondary-container" id="quizSubject">
-                            <option value="">Pilih Mata Pelajaran...</option>
-                            <option value="Jaringan Komputer">Jaringan Komputer</option>
-                            <option value="Sistem Operasi">Sistem Operasi</option>
-                            <option value="Pemrograman Dasar">Pemrograman Dasar</option>
-                        </select>
-                        <p class="text-xs text-error font-bold hidden" id="err-quizSubject"></p>
-                    </div>
+                <div class="z-10">
                     <div class="space-y-2 relative" id="classDropdownContainer">
                         <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Pilih Kelas</label>
                         <button type="button" class="w-full p-3 bg-surface-container-low border border-outline rounded-lg focus:ring-2 focus:ring-secondary-container flex justify-between items-center" onclick="toggleClassesDropdown()">
@@ -65,8 +58,8 @@
                                 @forelse($kelases as $kelas)
                                 <li>
                                     <label class="flex items-center gap-3 p-2 hover:bg-surface-container-low rounded cursor-pointer group">
-                                        <input type="checkbox" name="kelas_id[]" value="{{ $kelas->id }}" data-name="{{ $kelas->nama_kelas }}" class="w-5 h-5 text-secondary border-outline rounded class-checkbox" onchange="updateSelectedClasses()">
-                                        <span class="text-sm group-hover:text-primary">{{ $kelas->nama_kelas }}</span>
+                                        <input type="checkbox" name="kelas_id[]" value="{{ $kelas->id }}" data-name="{{ $kelas->nama_kelas }}" class="w-5 h-5 text-secondary border-outline rounded class-checkbox" onchange="updateSelectedClasses()" {{ (isset($kuis) && $kuis->kelas_id == $kelas->id) ? 'checked' : '' }}>
+                                        <span class="text-sm group-hover:text-primary">{{ $kelas->nama_kelas }} ({{ $kelas->mata_pelajaran }})</span>
                                     </label>
                                 </li>
                                 @empty
@@ -83,7 +76,7 @@
                 <div class="space-y-2">
                     <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Durasi Kuis (Menit)</label>
                     <div class="relative flex items-center">
-                        <input class="w-full p-3 bg-surface-container-low border border-outline rounded-lg focus:ring-2 focus:ring-secondary-container pr-12" id="quizDuration" type="number" value="{{ request('durasi', 60) }}"/>
+                        <input class="w-full p-3 bg-surface-container-low border border-outline rounded-lg focus:ring-2 focus:ring-secondary-container pr-12" id="quizDuration" name="durasi" type="number" value="{{ old('durasi', $kuis->durasi_menit ?? request('durasi', 60)) }}"/>
                         <span class="absolute right-4 text-on-surface-variant/60 text-xs font-bold uppercase tracking-wider">Min</span>
                     </div>
                     <p class="text-xs text-error font-bold hidden" id="err-quizDuration"></p>
@@ -126,7 +119,7 @@
                 </div>
                 <div class="space-y-2">
                     <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Deskripsi Kuis</label>
-                    <textarea class="w-full p-4 bg-surface-container-low border border-outline rounded-lg focus:ring-2 focus:ring-secondary-container resize-none" placeholder="Berikan instruksi atau deskripsi singkat mengenai cakupan materi kuis ini..." rows="4"></textarea>
+                    <textarea name="deskripsi" class="w-full p-4 bg-surface-container-low border border-outline rounded-lg focus:ring-2 focus:ring-secondary-container resize-none" placeholder="Berikan instruksi atau deskripsi singkat mengenai cakupan materi kuis ini..." rows="4">{{ old('deskripsi', $kuis->deskripsi ?? '') }}</textarea>
                 </div>
                 
                 <div class="pt-6 border-t border-outline-variant/30 flex flex-col-reverse md:flex-row gap-3 justify-end mt-4">
@@ -545,9 +538,6 @@
         const name = document.getElementById('quizName').value.trim();
         if (!name) showError('err-quizName', 'Nama Kuis harus diisi.');
 
-        const subject = document.getElementById('quizSubject').value;
-        if (!subject) showError('err-quizSubject', 'Pilih Mata Pelajaran.');
-
         const classes = document.querySelectorAll('.class-checkbox:checked');
         if (classes.length === 0) showError('err-quizClasses', 'Pilih minimal satu Kelas.');
 
@@ -597,7 +587,7 @@
         }
 
         const questions = document.querySelectorAll('.question-card');
-        if (questions.length < 5) showError('err-quizQuestions', 'Minimal harus ada 5 soal.');
+        if (questions.length === 0) showError('err-quizQuestions', 'Minimal harus ada 1 soal.');
 
         questions.forEach((q, index) => {
             const weight = q.querySelector('.question-weight').value;
@@ -669,6 +659,33 @@
                     toast.classList.add('opacity-100', 'translate-y-0');
                 }, 10);
                 setTimeout(() => {
+                    const qCards = document.querySelectorAll('.question-card');
+                    const qData = [];
+                    qCards.forEach((q, idx) => {
+                        const text = q.querySelector('.question-text').value.trim();
+                        const opts = Array.from(q.querySelectorAll('.question-option-text')).map(o => o.value.trim());
+                        const correctMap = { 'A': 0, 'B': 1, 'C': 2, 'D': 3 };
+                        const checkedEl = q.querySelector('.question-correct:checked');
+                        const correctVal = checkedEl ? checkedEl.value : 'A';
+                        
+                        const type = q.querySelector('.question-type').value;
+                        
+                        qData.push({
+                            pertanyaan: text,
+                            tipe: type,
+                            pilihan: opts,
+                            jawaban_benar: correctMap[correctVal] ?? 0,
+                            bobot: 1,
+                            urutan: idx + 1
+                        });
+                    });
+                    
+                    const qInput = document.createElement('input');
+                    qInput.type = 'hidden';
+                    qInput.name = 'questions_data';
+                    qInput.value = JSON.stringify(qData);
+                    document.getElementById('quizForm').appendChild(qInput);
+                    
                     document.getElementById('quizForm').submit();
                 }, 1500);
             } else {
@@ -680,6 +697,43 @@
     document.addEventListener('DOMContentLoaded', () => {
         updateSelectedClasses();
         toggleScheduleInput();
+
+        @if(isset($kuis) && $kuis->soal && $kuis->soal->count() > 0)
+            // Pre-populate questions for Edit mode
+            const soalData = @json($kuis->soal);
+            
+            // Remove the default empty card
+            const defaultCard = document.querySelector('.question-card');
+            if (defaultCard) defaultCard.remove();
+            
+            soalData.forEach((soal, index) => {
+                addQuestion();
+                const cards = document.querySelectorAll('.question-card');
+                const newCard = cards[cards.length - 1];
+                
+                newCard.querySelector('.question-type').value = soal.tipe;
+                toggleQuestionType(newCard.querySelector('.question-type'), questionCount);
+                
+                newCard.querySelector('.question-weight').value = soal.bobot;
+                newCard.querySelector('.question-text').value = soal.pertanyaan;
+                
+                if (soal.tipe === 'pg' && soal.pilihan) {
+                    const opts = newCard.querySelectorAll('.question-option-text');
+                    const choices = soal.pilihan;
+                    opts.forEach((opt, idx) => {
+                        if (choices[idx]) opt.value = choices[idx];
+                    });
+                    
+                    const correctMapRev = { 0: 'A', 1: 'B', 2: 'C', 3: 'D', 4: 'E', '0': 'A', '1': 'B', '2': 'C', '3': 'D', '4': 'E' };
+                    // if jawaban_benar is 'A', 'B' instead of 0, 1
+                    let correctChar = correctMapRev[soal.jawaban_benar] || soal.jawaban_benar;
+                    if (!['A', 'B', 'C', 'D', 'E'].includes(correctChar)) correctChar = 'A';
+                    
+                    const radio = newCard.querySelector(`.question-correct[value="${correctChar}"]`);
+                    if (radio) radio.checked = true;
+                }
+            });
+        @endif
     });
 </script>
 @endpush

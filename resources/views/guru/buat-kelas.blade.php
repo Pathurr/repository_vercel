@@ -58,7 +58,7 @@
                     <label class="block text-xs font-bold text-[#51443c] mb-1">Class Key</label>
                     <div class="flex gap-2">
                         <div class="relative flex-1">
-                            <input type="text" id="classKeyInput" name="kode_kelas" placeholder="MNDLH-XXXX" class="w-full bg-[#f8f3ed] border-none rounded-lg pl-3 pr-14 py-2 focus:ring-2 focus:ring-[#835500] text-sm font-mono tracking-wider text-[#50290b] placeholder-[#84746b]/50" required readonly>
+                            <input type="text" id="classKeyInput" name="kode_kelas" placeholder="MNDLH-XXXX" class="w-full bg-[#f8f3ed] border-none rounded-lg pl-3 pr-14 py-2 focus:ring-2 focus:ring-[#835500] text-sm font-mono tracking-wider text-[#50290b] placeholder-[#84746b]/50" required>
                             <span class="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-[#84746b] uppercase tracking-widest">Sistem</span>
                         </div>
                         <button type="button" onclick="generateClassKey()" class="px-3 py-2 border border-[#835500] text-[#835500] font-bold text-xs rounded-lg flex items-center justify-center gap-1 hover:bg-[#835500]/5 transition-soft flex-shrink-0">

@@ -60,6 +60,19 @@ return [
             'report' => false,
         ],
 
+        'supabase' => [
+            'driver' => 's3',
+            'key' => env('SUPABASE_ACCESS_KEY_ID'),
+            'secret' => env('SUPABASE_SECRET_ACCESS_KEY'),
+            'region' => env('SUPABASE_REGION', 'ap-southeast-1'),
+            'bucket' => env('SUPABASE_BUCKET', 'lms-files'),
+            'endpoint' => env('SUPABASE_ENDPOINT'),
+            'url' => env('SUPABASE_URL'),
+            'use_path_style_endpoint' => env('SUPABASE_USE_PATH_STYLE_ENDPOINT', true),
+            'throw' => false,
+            'report' => false,
+        ],
+
     ],
 
     /*

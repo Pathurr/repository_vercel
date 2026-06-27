@@ -44,14 +44,11 @@
             </div>
             <div class="flex flex-wrap sm:flex-nowrap items-center gap-3">
                 <div id="enrollmentKeyDisplay" class="bg-surface border border-outline-variant/30 rounded-xl px-4 py-2 font-mono font-bold text-lg text-primary tracking-[0.2em] flex-1 text-center sm:text-left">
-                    TKJ1-2024-XQ
+                    {{ $kelas->kode_kelas }}
                 </div>
                 <div class="flex gap-2">
                     <button onclick="copyEnrollmentKey()" class="w-10 h-10 bg-surface border border-outline-variant/30 rounded-xl flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-soft" title="Salin">
                         <span class="material-symbols-outlined" style="font-size: 20px">content_copy</span>
-                    </button>
-                    <button onclick="regenerateEnrollmentKey()" class="w-10 h-10 bg-surface border border-outline-variant/30 rounded-xl flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-soft" title="Perbarui">
-                        <span class="material-symbols-outlined" style="font-size: 20px">sync</span>
                     </button>
                 </div>
                 <button id="toggleEnrollmentBtn" onclick="toggleEnrollmentKey()" class="w-full sm:w-auto h-10 px-4 bg-error-container/20 border border-error/20 text-error rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-error-container/40 transition-soft">
@@ -166,6 +163,13 @@
                                 <p class="text-xs text-on-surface-variant">Diunggah {{ $materi->created_at ? $materi->created_at->format('d M Y') : '-' }}</p>
                             </div>
                         </div>
+                        <form action="{{ route('guru.materi.destroy', $materi->id) }}" method="POST" class="inline" onclick="event.stopPropagation();" onsubmit="return confirm('Apakah Anda yakin ingin menghapus materi ini?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:bg-error-container hover:text-error rounded-lg transition-soft" title="Hapus">
+                                <span class="material-symbols-outlined">delete</span>
+                            </button>
+                        </form>
                     </div>
                     @empty
                     <div class="text-center py-8 text-on-surface-variant">
@@ -197,7 +201,16 @@
                                     <p class="text-xs text-on-surface-variant">Tenggat: {{ $tugas->deadline ? $tugas->deadline->format('d M Y, H:i') : '-' }}</p>
                                 </div>
                             </div>
-                            <span class="bg-secondary-container/20 text-secondary text-xs font-bold px-2 py-1 rounded">Aktif</span>
+                            <div class="flex gap-2 items-center">
+                                <span class="bg-secondary-container/20 text-secondary text-xs font-bold px-2 py-1 rounded">Aktif</span>
+                                <form action="{{ route('guru.tugas.destroy', $tugas->id) }}" method="POST" class="inline" onclick="event.stopPropagation();" onsubmit="return confirm('Apakah Anda yakin ingin menghapus tugas ini?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:bg-error-container hover:text-error rounded-lg transition-soft" title="Hapus">
+                                        <span class="material-symbols-outlined">delete</span>
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                         <div class="flex justify-between items-center text-sm border-t border-outline-variant/30 pt-3">
                             <p class="text-on-surface-variant"><span class="font-bold text-primary">{{ $tugas->pengumpulan_count ?? 0 }}/{{ $kelas->siswa->count() }}</span> Mengumpulkan</p>
@@ -232,6 +245,13 @@
                                 <p class="text-xs text-on-surface-variant">Durasi: {{ $kuis->durasi_menit }} Menit</p>
                             </div>
                         </div>
+                        <form action="{{ route('guru.kuis.destroy', $kuis->id) }}" method="POST" class="inline" onclick="event.stopPropagation();" onsubmit="return confirm('Apakah Anda yakin ingin menghapus kuis ini?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:bg-error-container hover:text-error rounded-lg transition-soft" title="Hapus">
+                                <span class="material-symbols-outlined">delete</span>
+                            </button>
+                        </form>
                     </div>
                     @empty
                     <div class="text-center py-8 text-on-surface-variant">
@@ -261,6 +281,13 @@
                                 <p class="text-xs text-on-surface-variant">Jadwal: {{ $ujian->mulai_at ? $ujian->mulai_at->format('d M Y, H:i') : '-' }}</p>
                             </div>
                         </div>
+                        <form action="{{ route('guru.ujian.destroy', $ujian->id) }}" method="POST" class="inline" onclick="event.stopPropagation();" onsubmit="return confirm('Apakah Anda yakin ingin menghapus ujian ini?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:bg-error-container hover:text-error rounded-lg transition-soft" title="Hapus">
+                                <span class="material-symbols-outlined">delete</span>
+                            </button>
+                        </form>
                     </div>
                     @empty
                     <div class="text-center py-8 text-on-surface-variant">

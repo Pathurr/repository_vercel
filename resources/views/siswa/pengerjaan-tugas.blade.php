@@ -1,6 +1,6 @@
 @extends('layouts.siswa')
 @section('title', 'Pengumpulan Tugas - SMK Mandalahayu 1')
-@section('page-title', 'Tugas 1: Portofolio Sederhana')
+@section('page-title', $tugas->judul)
 
 @section('content')
 <style>
@@ -15,9 +15,9 @@
         <div class="p-5 border-b border-outline-variant/30 shrink-0">
             <div class="inline-flex items-center gap-2 bg-surface-container-low text-primary px-2.5 py-0.5 rounded-full mb-3">
                 <span class="material-symbols-outlined text-[14px]">menu_book</span>
-                <span class="font-bold text-[10px]">Pemrograman Web</span>
+                <span class="font-bold text-[10px]">{{ $tugas->kelas->mata_pelajaran ?? 'Mata Pelajaran' }}</span>
             </div>
-            <h1 class="font-bold text-lg text-primary mb-4" style="font-family: var(--font-serif)">Tugas 1: Membuat Halaman Portofolio Sederhana</h1>
+            <h1 class="font-bold text-lg text-primary mb-4" style="font-family: var(--font-serif)">{{ $tugas->judul }}</h1>
             <div class="flex flex-col sm:flex-row gap-4">
                 <div class="flex items-center gap-3">
                     <div class="p-1.5 bg-error/10 text-error rounded-md">
@@ -25,7 +25,7 @@
                     </div>
                     <div>
                         <span class="font-bold text-[10px] text-on-surface-variant block">Tenggat Waktu</span>
-                        <span class="font-bold text-[11px] text-error block mt-0.5">05 Nov 2023 • 23:59 WIB</span>
+                        <span class="font-bold text-[11px] text-error block mt-0.5">{{ $tugas->deadline ? \Carbon\Carbon::parse($tugas->deadline)->format('d M Y • H:i') . ' WIB' : 'Tidak ada tenggat' }}</span>
                     </div>
                 </div>
                 <div class="flex items-center gap-3">
@@ -42,26 +42,21 @@
         <div class="p-5 overflow-y-auto flex-1 custom-scrollbar">
             <h3 class="font-bold text-sm text-primary mb-3" style="font-family: var(--font-serif)">Deskripsi Tugas</h3>
             <div class="prose max-w-none text-[11px] text-on-surface-variant space-y-2">
-                <p>Gunakan HTML dan CSS murni tanpa framework untuk membuat halaman portofolio sederhana.</p>
-                <p class="font-bold text-on-surface mt-3">Kriteria Penilaian:</p>
-                <ul class="list-disc pl-4 space-y-1 mt-1">
-                    <li>Minimal terdiri dari bagian Header, About Me, Projects, dan Contact.</li>
-                    <li>Desain responsif dan enak dilihat.</li>
-                    <li>Struktur HTML yang rapi (semantik).</li>
-                </ul>
+                {!! nl2br(e($tugas->deskripsi)) !!}
             </div>
             
+            @if($tugas->file_path)
             <div class="mt-5 pt-4 border-t border-surface-container">
                 <p class="font-bold text-[10px] text-on-surface-variant mb-2">Lampiran Guru:</p>
                 <a class="flex items-center gap-2 p-2 rounded-lg border border-outline-variant hover:bg-surface-container-low transition-colors group" href="#">
-                    <span class="material-symbols-outlined text-primary text-[18px] group-hover:text-secondary">picture_as_pdf</span>
+                    <span class="material-symbols-outlined text-primary text-[18px] group-hover:text-secondary">attachment</span>
                     <div class="flex-1 leading-tight">
-                        <p class="font-bold text-[11px] text-on-surface group-hover:text-secondary transition-colors">Mockup_Portofolio.pdf</p>
-                        <p class="text-[10px] text-on-surface-variant mt-0.5">1.2 MB</p>
+                        <p class="font-bold text-[11px] text-on-surface group-hover:text-secondary transition-colors">Lampiran Tugas</p>
                     </div>
                     <span class="material-symbols-outlined text-on-surface-variant text-[16px] group-hover:text-secondary">download</span>
                 </a>
             </div>
+            @endif
         </div>
     </section>
 
@@ -80,39 +75,42 @@
         <div class="bg-surface-container-lowest rounded-xl p-5 shadow-sm border border-outline-variant/30 flex-1 flex flex-col overflow-hidden">
             <h3 class="font-bold text-sm text-primary mb-3" style="font-family: var(--font-serif)">Area Pengumpulan</h3>
             
-            <div class="flex-1 overflow-y-auto custom-scrollbar flex flex-col pr-1 gap-3">
-                <div class="shrink-0">
-                    <label class="block font-bold text-[10px] text-on-surface mb-1.5">Catatan Tambahan (Opsional)</label>
-                    <div class="border border-outline-variant rounded-lg overflow-hidden focus-within:border-secondary transition-all">
-                        <textarea class="w-full p-2 bg-transparent border-none focus:ring-0 text-[11px] text-on-surface resize-none placeholder-on-surface-variant/50" placeholder="Tuliskan pesan untuk guru..." rows="2"></textarea>
-                    </div>
-                </div>
-                
-                <div class="flex-1 flex flex-col min-h-[120px]">
-                    <label class="block font-bold text-[10px] text-on-surface mb-1.5">Unggah Berkas <span class="text-error">*</span></label>
-                    <input type="file" id="file-upload" class="hidden" onchange="handleFileUpload(event)">
-                    <div id="upload-zone" onclick="document.getElementById('file-upload').click()" class="border-2 border-dashed border-outline-variant hover:border-secondary bg-surface-container-low hover:bg-surface-container rounded-xl flex-1 flex flex-col items-center justify-center text-center cursor-pointer transition-colors group p-4">
-                        <div class="w-10 h-10 bg-surface-container-highest rounded-full flex items-center justify-center mb-2 group-hover:bg-primary-fixed-dim/20 transition-colors">
-                            <span class="material-symbols-outlined text-xl text-primary group-hover:text-secondary">cloud_upload</span>
+            <form id="form-pengumpulan" action="{{ route('siswa.kumpul-tugas', $tugas->id) }}" method="POST" enctype="multipart/form-data" class="flex-1 flex flex-col min-h-0">
+                @csrf
+                <div class="flex-1 overflow-y-auto custom-scrollbar flex flex-col pr-1 gap-3">
+                    <div class="shrink-0">
+                        <label class="block font-bold text-[10px] text-on-surface mb-1.5">Catatan Tambahan (Opsional)</label>
+                        <div class="border border-outline-variant rounded-lg overflow-hidden focus-within:border-secondary transition-all">
+                            <textarea name="catatan" class="w-full p-2 bg-transparent border-none focus:ring-0 text-[11px] text-on-surface resize-none placeholder-on-surface-variant/50" placeholder="Tuliskan pesan untuk guru..." rows="2"></textarea>
                         </div>
-                        <p id="upload-text" class="text-xs text-on-surface font-bold">Tarik & lepas file</p>
-                        <p id="upload-subtext" class="text-[10px] text-on-surface-variant">atau klik untuk mencari dari perangkat</p>
-                        <p class="text-[9px] text-on-surface-variant mt-2 font-bold">Maks. 50MB (ZIP/RAR/PDF)</p>
                     </div>
-                    <p id="file-error" class="text-[10px] font-bold text-error mt-2 hidden">Berkas wajib diunggah sebelum dikumpulkan!</p>
+                    
+                    <div class="flex-1 flex flex-col min-h-[120px]">
+                        <label class="block font-bold text-[10px] text-on-surface mb-1.5">Unggah Berkas <span class="text-error">*</span></label>
+                        <input type="file" id="file-upload" name="file" accept=".pdf,.zip,.rar,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png" class="hidden" onchange="handleFileUpload(event)">
+                        <div id="upload-zone" onclick="document.getElementById('file-upload').click()" class="border-2 border-dashed border-outline-variant hover:border-secondary bg-surface-container-low hover:bg-surface-container rounded-xl flex-1 flex flex-col items-center justify-center text-center cursor-pointer transition-colors group p-4">
+                            <div class="w-10 h-10 bg-surface-container-highest rounded-full flex items-center justify-center mb-2 group-hover:bg-primary-fixed-dim/20 transition-colors">
+                                <span class="material-symbols-outlined text-xl text-primary group-hover:text-secondary">cloud_upload</span>
+                            </div>
+                            <p id="upload-text" class="text-xs text-on-surface font-bold">Tarik & lepas file</p>
+                            <p id="upload-subtext" class="text-[10px] text-on-surface-variant">atau klik untuk mencari dari perangkat</p>
+                            <p class="text-[9px] text-on-surface-variant mt-2 font-bold">Maks. 50MB (PDF/DOCX/ZIP/RAR/JPG/PNG)</p>
+                        </div>
+                        <p id="file-error" class="text-[10px] font-bold text-error mt-2 hidden">Berkas wajib diunggah sebelum dikumpulkan!</p>
+                    </div>
                 </div>
-            </div>
 
-            <div class="mt-4 pt-3 border-t border-surface-container flex flex-col gap-3 shrink-0">
-                <div class="flex flex-col-reverse sm:flex-row justify-end gap-3 w-full">
-                    <button type="button" id="btn-trigger-batal" class="px-6 py-2 border border-[#d6c3b8] text-[#51443c] text-sm text-center font-bold rounded-lg hover:bg-[#f8f3ed] transition-soft">
-                        Batalkan
-                    </button>
-                    <button type="button" id="btn-trigger-simpan" class="px-6 py-2 bg-[#feae2c] text-[#6b4500] text-sm font-bold rounded-lg flex items-center justify-center gap-1 hover:brightness-110 transition-soft">
-                        <span class="material-symbols-outlined" style="font-size: 18px">send</span> Kumpulkan
-                    </button>
+                <div class="mt-4 pt-3 border-t border-surface-container flex flex-col gap-3 shrink-0">
+                    <div class="flex flex-col-reverse sm:flex-row justify-end gap-3 w-full">
+                        <button type="button" id="btn-trigger-batal" class="px-6 py-2 border border-[#d6c3b8] text-[#51443c] text-sm text-center font-bold rounded-lg hover:bg-[#f8f3ed] transition-soft">
+                            Batalkan
+                        </button>
+                        <button type="button" id="btn-trigger-simpan" class="px-6 py-2 bg-[#feae2c] text-[#6b4500] text-sm font-bold rounded-lg flex items-center justify-center gap-1 hover:brightness-110 transition-soft">
+                            <span class="material-symbols-outlined" style="font-size: 18px">send</span> Kumpulkan
+                        </button>
+                    </div>
                 </div>
-            </div>
+            </form>
         </div>
     </section>
 </div>
@@ -201,10 +199,7 @@
         btnCancelSimpan.addEventListener('click', () => modalSimpan.classList.add('hidden'));
         btnConfirmSimpan.addEventListener('click', () => {
             modalSimpan.classList.add('hidden');
-            showToast(toastSuccess);
-            setTimeout(() => {
-                window.location.href = "{{ route('siswa.mapel.detail') }}?tab=tugas";
-            }, 1000);
+            document.getElementById('form-pengumpulan').submit();
         });
 
         // Batal Flow
@@ -214,7 +209,7 @@
             modalBatal.classList.add('hidden');
             showToast(toastBatal);
             setTimeout(() => {
-                window.location.href = "{{ route('siswa.mapel.detail') }}?tab=tugas";
+                window.location.href = "{{ route('siswa.mapel.detail', $tugas->kelas_id ?? 1) }}?tab=tugas";
             }, 1000);
         });
     });

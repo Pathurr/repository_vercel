@@ -11,4 +11,5 @@ class Kuis extends Model
     public function guru() { return $this->belongsTo(User::class, 'guru_id'); }
     public function soal() { return $this->hasMany(SoalKuis::class); }
     public function jawaban() { return $this->hasMany(JawabanKuis::class); }
+    public function nilai_siswa() { return $this->morphMany(Nilai::class, 'nilaiable'); }
 }

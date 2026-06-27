@@ -1,38 +1,42 @@
 <?php
+
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Tugas;
-use App\Models\PengumpulanTugas;
 use App\Models\Kelas;
-use App\Models\User;
+use App\Models\Tugas;
+use Carbon\Carbon;
 
 class TugasSeeder extends Seeder
 {
+    /**
+     * Run the database seeds.
+     */
     public function run(): void
     {
-        $kelas1  = Kelas::where('kode_kelas', 'MTK-001')->first();
-        $guru1   = User::where('email', 'guru1@lms.com')->first();
-        $siswaList = User::where('role', 'siswa')->get();
+        $kelas = Kelas::all();
 
-        $tugas = Tugas::create([
-            'kelas_id'       => $kelas1->id,
-            'guru_id'        => $guru1->id,
-            'judul'          => 'Latihan Soal Aljabar',
-            'deskripsi'      => 'Kerjakan soal aljabar halaman 25-30',
-            'deadline'       => now()->addDays(7),
-            'nilai_maksimal' => 100,
-        ]);
+        foreach ($kelas as $k) {
+            $guruId = $k->guru_id;
 
-        // Buat pengumpulan dummy untuk beberapa siswa
-        foreach ($siswaList->take(3) as $siswa) {
-            PengumpulanTugas::create([
-                'tugas_id'       => $tugas->id,
-                'siswa_id'       => $siswa->id,
-                'catatan'        => 'Sudah dikerjakan semua',
-                'dikumpulkan_at' => now(),
-                'nilai'          => rand(70, 100),
-                'status'         => 'tepat_waktu',
+            // Tugas 1: Sudah Lewat Deadline (untuk testing status terlambat)
+            Tugas::create([
+                'kelas_id' => $k->id,
+                'guru_id' => $guruId,
+                'judul' => "Tugas 1: Pengenalan " . $k->mata_pelajaran,
+                'deskripsi' => "Harap buat rangkuman tentang materi pertama dari " . $k->mata_pelajaran . ". Dikumpulkan dalam format PDF maksimal 2 halaman.",
+                'deadline' => Carbon::now()->subDays(2), // 2 hari yang lalu
+                'nilai_maksimal' => 100,
+            ]);
+
+            // Tugas 2: Mendekati Deadline / Aktif
+            Tugas::create([
+                'kelas_id' => $k->id,
+                'guru_id' => $guruId,
+                'judul' => "Tugas 2: Praktikum " . $k->mata_pelajaran,
+                'deskripsi' => "Lakukan studi kasus mengenai " . $k->mata_pelajaran . " dan unggah hasil observasi Anda beserta laporannya.",
+                'deadline' => Carbon::now()->addDays(2), // 2 hari lagi
+                'nilai_maksimal' => 100,
             ]);
         }
     }

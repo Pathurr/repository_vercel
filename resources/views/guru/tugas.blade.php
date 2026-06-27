@@ -92,7 +92,12 @@
                 <td class="p-4 text-center">
                     <div class="flex gap-2 justify-center">
                         <a href="{{ route('guru.tugas.buat', ['mode' => 'edit', 'id' => $t->id]) }}" class="p-2 rounded-lg text-secondary hover:bg-secondary-container/30 transition-soft"><span class="material-symbols-outlined text-base">edit</span></a>
-                        <a href="{{ route('guru.nilai') }}" class="px-3 py-2 rounded-lg text-primary border border-primary/20 hover:bg-primary-container/30 transition-soft text-xs font-bold">Nilai</a>
+                        <form action="{{ route('guru.tugas.destroy', $t->id) }}" method="POST" class="inline" onsubmit="return confirm('Yakin ingin menghapus tugas ini?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="p-2 rounded-lg text-error hover:bg-error-container/30 transition-soft"><span class="material-symbols-outlined text-base">delete</span></button>
+                        </form>
+                        <a href="{{ route('guru.monitor.tugas', ['tugas_id' => $t->id]) }}" class="px-3 py-2 rounded-lg text-primary border border-primary/20 hover:bg-primary-container/30 transition-soft text-xs font-bold">Nilai</a>
                     </div>
                 </td>
             </tr>
