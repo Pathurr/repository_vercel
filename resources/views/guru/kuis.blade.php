@@ -87,10 +87,15 @@
                     {{ ucfirst($status) }}
                 </span>
             </div>
-            <div class="col-span-2 flex justify-center">
-                <a href="{{ route('guru.kuis.buat', ['edit' => 1, 'id' => $k->id]) }}" class="p-2 rounded-lg text-secondary hover:bg-secondary-container/30 transition-soft">
+            <div class="col-span-2 flex justify-center gap-2">
+                <a href="{{ route('guru.kuis.buat', ['mode' => 'edit', 'id' => $k->id]) }}" class="p-2 rounded-lg text-secondary hover:bg-secondary-container/30 transition-soft">
                     <span class="material-symbols-outlined text-base">edit</span>
                 </a>
+                <form action="{{ route('guru.kuis.destroy', $k->id) }}" method="POST" class="inline" onsubmit="return confirm('Yakin ingin menghapus kuis ini?');">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="p-2 rounded-lg text-error hover:bg-error-container/30 transition-soft"><span class="material-symbols-outlined text-base">delete</span></button>
+                </form>
             </div>
         </div>
         @endforeach

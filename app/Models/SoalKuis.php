@@ -6,7 +6,7 @@ class SoalKuis extends Model
 {
     protected $table = 'soal_kuis'; // tambahkan ini
     protected $fillable = [
-        'kuis_id', 'pertanyaan', 'pilihan', 'jawaban_benar', 'bobot', 'urutan'
+        'kuis_id', 'pertanyaan', 'tipe', 'pilihan', 'jawaban_benar', 'bobot', 'urutan'
     ];
 
     protected $casts = ['pilihan' => 'array'];

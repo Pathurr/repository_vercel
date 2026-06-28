@@ -30,9 +30,17 @@
                         <label class="block text-xs font-bold uppercase tracking-wider text-primary mb-2">Dokumen Materi</label>
                         <div class="border-2 border-dashed border-outline-variant rounded-xl p-4 text-center bg-surface-container-low/50 hover:bg-surface-container-low transition-soft cursor-pointer group" id="drop-area">
                             <input accept=".pdf,.ppt,.pptx,image/*" class="hidden" id="file-upload" name="file" type="file"/>
-                            <span class="material-symbols-outlined text-3xl text-primary/40 group-hover:scale-110 group-hover:text-primary transition-soft mb-1" style="display:block;">cloud_upload</span>
-                            <p class="text-sm text-on-surface-variant"><span class="text-primary font-bold">Klik untuk unggah</span> atau seret file ke sini</p>
-                            <p class="text-xs text-on-surface-variant/60 mt-1 uppercase tracking-widest">PDF, PPTX, JPG (Max. 20MB)</p>
+                            <div id="drop-prompt">
+                                <span class="material-symbols-outlined text-3xl text-primary/40 group-hover:scale-110 group-hover:text-primary transition-soft mb-1" style="display:block;">cloud_upload</span>
+                                <p class="text-sm text-on-surface-variant"><span class="text-primary font-bold">Klik untuk unggah</span> atau seret file ke sini</p>
+                                <p class="text-xs text-on-surface-variant/60 mt-1 uppercase tracking-widest">PDF, PPTX, JPG (Max. 20MB)</p>
+                            </div>
+                            <div id="file-preview" class="hidden">
+                                <span id="preview-icon" class="material-symbols-outlined text-4xl text-secondary mb-2" style="display:block;">description</span>
+                                <p id="preview-name" class="text-sm font-bold text-primary truncate px-4">filename.pdf</p>
+                                <p id="preview-size" class="text-xs text-on-surface-variant/80 mt-1">2.5 MB</p>
+                                <p class="text-[10px] text-primary/60 mt-2 hover:underline">Klik untuk mengganti file</p>
+                            </div>
                         </div>
                         <p id="file-error" class="hidden text-[11px] text-red-500 font-bold mt-1">Dokumen materi wajib diunggah.</p>
                     </div>
@@ -170,14 +178,29 @@ document.addEventListener('DOMContentLoaded', function() {
         if(files.length) {
             fileInput.files = files;
             fileError.classList.add('hidden');
+            showPreview(files[0]);
         }
     });
 
     fileInput.addEventListener('change', () => {
         if(fileInput.files.length > 0) {
             fileError.classList.add('hidden');
+            showPreview(fileInput.files[0]);
         }
     });
+
+    function showPreview(file) {
+        document.getElementById('drop-prompt').classList.add('hidden');
+        document.getElementById('file-preview').classList.remove('hidden');
+        
+        document.getElementById('preview-name').innerText = file.name;
+        document.getElementById('preview-size').innerText = (file.size / (1024 * 1024)).toFixed(2) + ' MB';
+        
+        let icon = 'description';
+        if (file.name.toLowerCase().endsWith('.pdf')) icon = 'picture_as_pdf';
+        else if (file.name.match(/\.(jpeg|jpg|png|gif)$/i)) icon = 'image';
+        document.getElementById('preview-icon').innerText = icon;
+    }
 
     // Validasi input
     const judulInput = document.getElementById('judul');

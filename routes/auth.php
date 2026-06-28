@@ -3,6 +3,8 @@
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
+use App\Http\Controllers\Auth\NewPasswordController;
+use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
 // Login page — selalu dapat diakses (publik)
@@ -26,6 +28,8 @@ Route::middleware('guest')->group(function () {
     Route::get('reset-password/{token}', function ($token) {
         return view('auth.reset-password', ['token' => $token]);
     })->name('password.reset');
+    
+    Route::post('reset-password', [NewPasswordController::class, 'store'])->name('password.update');
 });
 
 // ─── Authenticated Routes ─────────────────────────────────────
@@ -36,6 +40,11 @@ Route::middleware('auth')->group(function () {
 
     // Email Verification
     Route::get('verify-email', fn() => view('auth.verify-email'))->name('verification.notice');
+    
+    Route::get('verify-email/{id}/{hash}', VerifyEmailController::class)
+        ->middleware(['signed', 'throttle:6,1'])
+        ->name('verification.verify');
+
     Route::post('email/verification-notification', function(\Illuminate\Http\Request $request) {
         $request->user()->sendEmailVerificationNotification();
         return back()->with('status', 'verification-link-sent');

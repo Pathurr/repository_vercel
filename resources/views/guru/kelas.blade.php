@@ -72,9 +72,9 @@
         {{-- Card Header --}}
         <a href="{{ route('guru.kelas.detail', ['id' => $k->id]) }}" class="block {{ $palette['warna'] }} p-6 flex justify-between items-start relative overflow-hidden group-hover:brightness-95 transition-soft">
             <div>
-                <p class="text-xs font-bold uppercase tracking-widest {{ $palette['teks'] }} opacity-70">{{ $k->mata_pelajaran }}</p>
-                <h3 class="font-bold text-2xl {{ $palette['teks'] }} mt-1" style="font-family: var(--font-serif)">{{ $k->nama_kelas }}</h3>
-                <p class="text-xs {{ $palette['teks'] }} opacity-60 mt-1 flex items-center gap-1">
+                <h3 class="font-bold text-xl {{ $palette['teks'] }} leading-tight" style="font-family: var(--font-serif)">{{ $k->nama_kelas }}</h3>
+                <h4 class="font-bold text-lg {{ $palette['teks'] }} opacity-90 mt-1">{{ $k->mata_pelajaran }}</h4>
+                <p class="text-xs {{ $palette['teks'] }} opacity-60 mt-2 flex items-center gap-1">
                     <span class="material-symbols-outlined" style="font-size:14px">location_on</span>
                     {{ $k->kode_kelas ?? 'Kode kelas belum tersedia' }}
                 </p>
@@ -96,15 +96,15 @@
         <div class="px-6 py-4 grid grid-cols-3 gap-4 text-center border-b border-outline-variant/20">
             <div>
                 <p class="text-lg font-bold text-primary">{{ $k->siswa_count }}</p>
-                <p class="text-xs text-on-surface-variant">Siswa</p>
+                <p class="text-[10px] uppercase tracking-wider text-on-surface-variant">Siswa</p>
             </div>
             <div>
                 <p class="text-lg font-bold text-secondary">{{ $k->materi_count }}</p>
-                <p class="text-xs text-on-surface-variant">Materi</p>
+                <p class="text-[10px] uppercase tracking-wider text-on-surface-variant">Materi</p>
             </div>
             <div>
                 <p class="text-lg font-bold text-amber-600">{{ $k->tugas_count }}</p>
-                <p class="text-xs text-on-surface-variant">Tugas</p>
+                <p class="text-[10px] uppercase tracking-wider text-on-surface-variant">Tugas</p>
             </div>
         </div>
 

@@ -37,11 +37,13 @@
             <div>
                 <h1 class="font-bold text-2xl text-primary" style="font-family: var(--font-serif)">Penilaian Siswa</h1>
                 <div class="flex items-center gap-3 mt-1 flex-wrap">
-                    <span class="text-base font-semibold text-on-surface" id="studentName">Rizky Ramadhan</span>
+                    <span class="text-base font-semibold text-on-surface" id="studentName">{{ $submission->siswa->name }}</span>
+                    @if($submission->dikumpulkan_at && $submission->tugas->deadline && $submission->dikumpulkan_at->gt($submission->tugas->deadline))
                     <span class="px-2 py-0.5 bg-error-container text-on-error-container text-[11px] font-bold rounded-full flex items-center gap-1 uppercase tracking-wider">
                         <span class="material-symbols-outlined text-[13px]">schedule</span> Terlambat
                     </span>
-                    <span class="text-xs text-on-surface-variant font-medium">| XII Teknik Komputer Jaringan 1</span>
+                    @endif
+                    <span class="text-xs text-on-surface-variant font-medium">| {{ $submission->tugas->kelas->nama_kelas }}</span>
                 </div>
             </div>
         </div>
@@ -55,40 +57,51 @@
             <div class="bg-surface-container-lowest rounded-2xl p-4 card-border shadow-ambient flex-1 flex flex-col min-h-0">
                 <div class="flex justify-between items-start mb-4 border-b border-outline-variant/30 pb-3 flex-wrap gap-3 flex-shrink-0">
                     <div>
-                        <h3 class="font-bold text-lg text-primary mb-1" style="font-family: var(--font-serif)">Laporan Praktik Jaringan Dasar</h3>
-                        <p class="text-xs text-on-surface-variant">Mata Pelajaran: Dasar Kompetensi Kejuruan</p>
+                        <h3 class="font-bold text-lg text-primary mb-1" style="font-family: var(--font-serif)">{{ $submission->tugas->judul }}</h3>
+                        <p class="text-xs text-on-surface-variant">Mata Pelajaran: {{ $submission->tugas->kelas->mata_pelajaran }}</p>
                     </div>
                     <div class="text-right">
                         <p class="text-[10px] font-bold uppercase text-on-surface-variant mb-1">Waktu Submit</p>
-                        <p class="text-xs font-medium text-on-surface">14 Okt 2023, 10:45 WIB</p>
+                        <p class="text-xs font-medium text-on-surface">{{ $submission->dikumpulkan_at ? $submission->dikumpulkan_at->format('d M Y, H:i') . ' WIB' : 'Belum dikumpulkan' }}</p>
                     </div>
                 </div>
 
-                <!-- PDF Preview Mockup -->
+                <!-- File Display -->
                 <div class="relative group flex-1 w-full bg-surface-container rounded-xl overflow-hidden shadow-inner border border-outline-variant/30 min-h-0">
-                    <div class="w-full h-full flex flex-col items-center justify-center gap-4 text-on-surface-variant">
-                        <span class="material-symbols-outlined text-5xl text-primary/30">picture_as_pdf</span>
-                        <p class="text-sm font-medium">Laporan_Praktik_Rizky.pdf</p>
-                        <button class="bg-white text-primary px-4 py-1.5 rounded-full font-bold shadow text-xs border border-outline-variant flex items-center gap-1.5">
-                            <span class="material-symbols-outlined text-[13px]">fullscreen</span> Lihat File
-                        </button>
+                    <div class="w-full h-full flex flex-col items-center justify-center gap-4 text-on-surface-variant p-4 text-center">
+                        @if($submission->file_path && $submission->file_path !== '-')
+                            @php
+                                $ext = pathinfo($submission->file_path, PATHINFO_EXTENSION);
+                                $icon = in_array(strtolower($ext), ['png','jpg','jpeg','gif']) ? 'image' : (strtolower($ext) == 'pdf' ? 'picture_as_pdf' : 'description');
+                            @endphp
+                            <span class="material-symbols-outlined text-5xl text-primary/30">{{ $icon }}</span>
+                            <p class="text-sm font-medium">{{ basename($submission->file_path) }}</p>
+                            <a href="{{ \Illuminate\Support\Facades\Storage::disk(env('FILESYSTEM_DISK', 'public'))->url($submission->file_path) }}" target="_blank" class="bg-white text-primary px-4 py-1.5 rounded-full font-bold shadow text-xs border border-outline-variant flex items-center gap-1.5 hover:bg-surface-container-lowest transition-colors">
+                                <span class="material-symbols-outlined text-[13px]">open_in_new</span> Buka File
+                            </a>
+                        @else
+                            <span class="material-symbols-outlined text-5xl text-primary/30">do_not_disturb</span>
+                            <p class="text-sm font-medium">Tidak ada file yang diunggah.</p>
+                        @endif
                     </div>
                 </div>
 
+                @if($submission->file_path && $submission->file_path !== '-')
                 <div class="mt-3 flex items-center justify-between p-3 bg-surface-container rounded-lg border border-outline-variant/30 flex-shrink-0">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 bg-primary/10 rounded flex items-center justify-center">
-                            <span class="material-symbols-outlined text-primary text-xl">picture_as_pdf</span>
+                    <div class="flex items-center gap-3 overflow-hidden">
+                        <div class="w-8 h-8 bg-primary/10 rounded flex items-center justify-center flex-shrink-0">
+                            <span class="material-symbols-outlined text-primary text-xl">{{ $icon ?? 'description' }}</span>
                         </div>
-                        <div>
-                            <p class="text-xs font-bold text-on-surface">Laporan_Praktik_Rizky.pdf</p>
-                            <p class="text-[10px] text-on-surface-variant">PDF Document • 4.2 MB</p>
+                        <div class="min-w-0">
+                            <p class="text-xs font-bold text-on-surface truncate">{{ basename($submission->file_path) }}</p>
+                            <p class="text-[10px] text-on-surface-variant uppercase">{{ $ext ?? 'file' }} Document</p>
                         </div>
                     </div>
-                    <button class="text-primary hover:underline font-bold text-xs flex items-center gap-1">
+                    <a href="{{ \Illuminate\Support\Facades\Storage::disk(env('FILESYSTEM_DISK', 'public'))->url($submission->file_path) }}" download class="text-primary hover:underline font-bold text-xs flex items-center gap-1 flex-shrink-0">
                         <span class="material-symbols-outlined text-sm">download</span> Unduh
-                    </button>
+                    </a>
                 </div>
+                @endif
             </div>
         </div>
 
@@ -97,12 +110,13 @@
             <div class="bg-surface-container-high rounded-2xl p-4 shadow-ambient border-2 border-primary-container/10 flex-1 flex flex-col min-h-0">
                 <h3 class="font-bold text-lg text-primary mb-3 flex-shrink-0" style="font-family: var(--font-serif)">Penilaian</h3>
                 
-                <div class="flex-1 flex flex-col min-h-0 space-y-4">
+                <form id="gradingForm" action="{{ route('guru.penilaian.tugas.store', $submission->id) }}" method="POST" class="flex-1 flex flex-col min-h-0 space-y-4">
+                    @csrf
                     <!-- Grade Input -->
                     <div class="flex-shrink-0">
                         <label class="text-[11px] font-bold uppercase tracking-wider text-primary mb-1 block">Nilai (0-100)</label>
                         <div class="relative">
-                            <input class="w-full text-3xl font-bold p-3 bg-white border-b-2 border-primary focus:ring-0 focus:border-secondary transition-all rounded-t-xl" id="gradeInput" max="100" min="0" placeholder="0" type="number"/>
+                            <input name="nilai" value="{{ old('nilai', $submission->nilai) }}" class="w-full text-3xl font-bold p-3 bg-white border-b-2 border-primary focus:ring-0 focus:border-secondary transition-all rounded-t-xl" id="gradeInput" max="100" min="0" placeholder="0" type="number" required/>
                             <span class="absolute right-3 top-1/2 -translate-y-1/2 text-lg font-bold text-on-surface-variant/40">/ 100</span>
                         </div>
                         <p id="gradeError" class="text-error text-xs font-bold mt-1 hidden">Nilai harus diisi sebelum disimpan!</p>
@@ -111,14 +125,16 @@
                     <!-- Feedback Area -->
                     <div class="flex-1 flex flex-col min-h-0">
                         <label class="text-[11px] font-bold uppercase tracking-wider text-primary mb-1 block">Feedback Guru</label>
-                        <textarea class="flex-1 w-full bg-white border border-outline-variant rounded-xl p-3 text-xs focus:ring-2 focus:ring-secondary/30 transition-all focus:outline-none resize-none" placeholder="Berikan komentar konstruktif untuk siswa..."></textarea>
+                        <textarea name="feedback" class="flex-1 w-full bg-white border border-outline-variant rounded-xl p-3 text-xs focus:ring-2 focus:ring-secondary/30 transition-all focus:outline-none resize-none" placeholder="Berikan komentar konstruktif untuk siswa...">{{ old('feedback', $submission->feedback) }}</textarea>
                     </div>
                     
                     <!-- Late Penalty -->
+                    @if($submission->dikumpulkan_at && $submission->tugas->deadline && $submission->dikumpulkan_at->gt($submission->tugas->deadline))
                     <div class="p-3 bg-red-50 border border-red-100 rounded-xl flex items-center justify-between flex-shrink-0">
                         <span class="text-[11px] font-bold text-red-700 uppercase tracking-wider">Pinalti Terlambat</span>
-                        <span class="text-xs font-bold text-red-700">-5 Poin</span>
+                        <span class="text-xs font-bold text-red-700">Tenggat terlewati</span>
                     </div>
+                    @endif
 
                     <!-- Actions -->
                     <div class="pt-3 border-t border-outline-variant/30 flex-shrink-0">
@@ -126,7 +142,7 @@
                             <span class="material-symbols-outlined" style="font-size: 18px">save</span> Simpan Nilai
                         </button>
                     </div>
-                </div>
+                </form>
             </div>
         </div>
     </div>
@@ -198,12 +214,8 @@
         confirmModal.classList.add('hidden');
         confirmModal.classList.remove('flex');
         
-        toastSuccess.classList.remove('invisible', 'opacity-0', '-translate-y-4');
-        toastSuccess.classList.add('opacity-100', 'translate-y-0');
-        
-        setTimeout(() => {
-            window.location.href = "{{ route('guru.monitor.tugas') }}";
-        }, 1500);
+        // Actually submit the form
+        document.getElementById('gradingForm').submit();
     });
 </script>
 @endpush

@@ -21,6 +21,24 @@ class PenilaianController extends Controller
         return view('guru.penilaian-tugas', compact('submission'));
     }
 
+    public function storeTugas(Request $request, $id)
+    {
+        $request->validate([
+            'nilai' => 'required|numeric|min:0|max:100',
+            'feedback' => 'nullable|string'
+        ]);
+
+        $submission = PengumpulanTugas::whereHas('tugas', fn ($query) => $query->where('guru_id', Auth::id()))
+            ->findOrFail($id);
+
+        $submission->update([
+            'nilai' => $request->nilai,
+            'feedback' => $request->feedback
+        ]);
+
+        return redirect()->route('guru.monitor.tugas')->with('success', 'Nilai tugas berhasil disimpan!');
+    }
+
     public function kuis(Request $request)
     {
         $answers = JawabanKuis::with(['kuis.kelas', 'siswa', 'soal'])
@@ -77,5 +95,51 @@ class PenilaianController extends Controller
         ];
 
         return view('guru.penilaian-ujian', compact('submission'));
+    }
+
+    public function storeKuis(Request $request, $kuis_id, $siswa_id)
+    {
+        $request->validate([
+            'nilai' => 'required|numeric|min:0|max:100'
+        ]);
+
+        $kuis = \App\Models\Kuis::where('guru_id', Auth::id())->findOrFail($kuis_id);
+        
+        \App\Models\Nilai::updateOrCreate(
+            [
+                'siswa_id' => $siswa_id,
+                'kelas_id' => $kuis->kelas_id,
+                'nilaiable_type' => \App\Models\Kuis::class,
+                'nilaiable_id' => $kuis->id,
+            ],
+            [
+                'nilai' => $request->nilai
+            ]
+        );
+
+        return redirect()->route('guru.monitor')->with('success', 'Nilai Kuis berhasil disimpan!');
+    }
+
+    public function storeUjian(Request $request, $ujian_id, $siswa_id)
+    {
+        $request->validate([
+            'nilai' => 'required|numeric|min:0|max:100'
+        ]);
+
+        $ujian = \App\Models\Ujian::where('guru_id', Auth::id())->findOrFail($ujian_id);
+        
+        \App\Models\Nilai::updateOrCreate(
+            [
+                'siswa_id' => $siswa_id,
+                'kelas_id' => $ujian->kelas_id,
+                'nilaiable_type' => \App\Models\Ujian::class,
+                'nilaiable_id' => $ujian->id,
+            ],
+            [
+                'nilai' => $request->nilai
+            ]
+        );
+
+        return redirect()->route('guru.monitor')->with('success', 'Nilai Ujian berhasil disimpan!');
     }
 }

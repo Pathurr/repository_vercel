@@ -45,7 +45,8 @@ if (app()->environment('local')) {
             'name'     => 'Bpk. Ahmad Suherman',
             'email'    => 'guru@smkmandalahayu.sch.id',
             'password' => bcrypt('password'),
-            'role'     => 'guru'
+            'role'     => 'guru',
+            'status'   => 'active'
         ]);
         Auth::login($user);
         return redirect()->route('guru.dashboard');
@@ -60,8 +61,14 @@ if (app()->environment('local')) {
             'name'     => 'Budi Pratama',
             'email'    => 'siswa@smkmandalahayu.sch.id',
             'password' => bcrypt('password'),
-            'role'     => 'murid'
+            'role'     => 'murid',
+            'status'   => 'active'
         ]);
+        
+        // Auto-enroll to all existing classes for dev convenience
+        $allKelasIds = \App\Models\Kelas::pluck('id');
+        $user->kelas()->syncWithoutDetaching($allKelasIds);
+        
         Auth::login($user);
         return redirect()->route('siswa.dashboard');
     })->name('dev.siswa');
@@ -76,11 +83,12 @@ if (app()->environment('local')) {
             [
                 'name'     => 'Administrator',
                 'password' => bcrypt('password'),
-                'role'     => 'admin'
+                'role'     => 'admin',
+                'status'   => 'active'
             ]
         );
         Auth::login($user);
-        return redirect()->route('dashboard'); // using default dashboard for admin
+        return redirect()->route('admin.dashboard'); // using default dashboard for admin
     })->name('dev.admin');
 
     // Halaman index semua shortcut
@@ -98,7 +106,7 @@ if (app()->environment('local')) {
 Route::prefix('guru')->name('guru.')->middleware(['auth'])->group(function () {
 
     // Dashboard
-    Route::get('/dashboard', fn() => view('guru.dashboard'))->name('dashboard');
+    Route::get('/dashboard', [App\Http\Controllers\Guru\DashboardController::class, 'index'])->name('dashboard');
 
     // Kelas
     Route::get('/kelas', [KelasController::class, 'index'])->name('kelas');
@@ -110,21 +118,28 @@ Route::prefix('guru')->name('guru.')->middleware(['auth'])->group(function () {
     Route::get('/materi', [MateriController::class, 'index'])->name('materi');
     Route::get('/materi/tambah', [MateriController::class, 'create'])->name('materi.tambah');
     Route::post('/materi/store', [MateriController::class, 'store'])->name('materi.store');
+    Route::delete('/materi/{id}', [MateriController::class, 'destroy'])->name('materi.destroy');
 
     // Tugas
     Route::get('/tugas', [TugasController::class, 'index'])->name('tugas');
     Route::get('/tugas/buat', [TugasController::class, 'create'])->name('tugas.buat');
     Route::post('/tugas/store', [TugasController::class, 'store'])->name('tugas.store');
+    Route::put('/tugas/{id}', [TugasController::class, 'update'])->name('tugas.update');
+    Route::delete('/tugas/{id}', [TugasController::class, 'destroy'])->name('tugas.destroy');
 
     // Kuis
     Route::get('/kuis', [KuisController::class, 'index'])->name('kuis');
     Route::get('/kuis/buat', [KuisController::class, 'create'])->name('kuis.buat');
     Route::post('/kuis/store', [KuisController::class, 'store'])->name('kuis.store');
+    Route::put('/kuis/{id}', [KuisController::class, 'update'])->name('kuis.update');
+    Route::delete('/kuis/{id}', [KuisController::class, 'destroy'])->name('kuis.destroy');
 
     // Ujian
     Route::get('/ujian', [UjianController::class, 'index'])->name('ujian');
     Route::get('/ujian/buat', [UjianController::class, 'create'])->name('ujian.buat');
     Route::post('/ujian/store', [UjianController::class, 'store'])->name('ujian.store');
+    Route::put('/ujian/{id}', [UjianController::class, 'update'])->name('ujian.update');
+    Route::delete('/ujian/{id}', [UjianController::class, 'destroy'])->name('ujian.destroy');
 
     // Nilai & Rekap
     Route::get('/nilai', [NilaiController::class, 'index'])->name('nilai');
@@ -134,8 +149,11 @@ Route::prefix('guru')->name('guru.')->middleware(['auth'])->group(function () {
     Route::get('/monitor', [MonitoringController::class, 'index'])->name('monitor');
     Route::get('/monitor/tugas', [MonitoringController::class, 'index'])->name('monitor.tugas');
     Route::get('/penilaian/tugas', [PenilaianController::class, 'tugas'])->name('penilaian.tugas');
+    Route::post('/penilaian/tugas/{id}', [PenilaianController::class, 'storeTugas'])->name('penilaian.tugas.store');
     Route::get('/penilaian/kuis', [PenilaianController::class, 'kuis'])->name('penilaian.kuis');
+    Route::post('/penilaian/kuis/{kuis_id}/{siswa_id}', [PenilaianController::class, 'storeKuis'])->name('penilaian.kuis.store');
     Route::get('/penilaian/ujian', [PenilaianController::class, 'ujian'])->name('penilaian.ujian');
+    Route::post('/penilaian/ujian/{ujian_id}/{siswa_id}', [PenilaianController::class, 'storeUjian'])->name('penilaian.ujian.store');
 
     // Notifikasi
     Route::get('/notifikasi', [NotifikasiController::class, 'index'])->name('notifikasi');
@@ -150,6 +168,7 @@ Route::prefix('siswa')->name('siswa.')->middleware(['auth'])->group(function () 
     // Mata Pelajaran
     Route::get('/materi', [SiswaMateriController::class, 'index'])->name('materi');
     Route::get('/materi/lihat/{id}', [SiswaMateriController::class, 'show'])->name('lihat-materi');
+    Route::post('/materi/{id}/read', [SiswaMateriController::class, 'markAsRead'])->name('materi.read');
 
     // Tugas
     Route::get('/tugas', [SiswaTugasController::class, 'index'])->name('tugas');
@@ -159,27 +178,33 @@ Route::prefix('siswa')->name('siswa.')->middleware(['auth'])->group(function () 
     // Ujian
     Route::get('/ujian', [SiswaUjianController::class, 'index'])->name('ujian');
     Route::get('/ujian/{id}', [SiswaUjianController::class, 'show'])->name('pengerjaan-ujian');
+    Route::post('/ujian/{id}', [SiswaUjianController::class, 'store'])->name('kumpul-ujian');
     // Route::get('/ujian', fn() => view('siswa.ujian'))->name('ujian');
     // Route::get('/ujian/kerjakan', fn() => view('siswa.pengerjaan-ujian'))->name('pengerjaan-ujian');
     // Route::get('/kuis/kerjakan', fn() => view('siswa.pengerjaan-kuis'))->name('pengerjaan-kuis');
 
     // Kuis
+    Route::get('/kuis', [SiswaKuisController::class, 'index'])->name('kuis');
     Route::get('/kuis/{id}', [SiswaKuisController::class, 'show'])->name('pengerjaan-kuis');
+    Route::post('/kuis/{id}', [SiswaKuisController::class, 'store'])->name('kumpul-kuis');
 
     // Mata Pelajaran (Kelas)
     Route::get('/mapel', [App\Http\Controllers\Siswa\KelasController::class, 'index'])->name('mapel');
+    Route::post('/mapel/join', [App\Http\Controllers\Siswa\KelasController::class, 'join'])->name('mapel.join');
     Route::get('/mapel/{id}', [App\Http\Controllers\Siswa\KelasController::class, 'show'])->name('mapel.detail');
-    Route::get('/nilai', fn() => view('siswa.nilai'))->name('nilai');
+    Route::get('/nilai', [App\Http\Controllers\Siswa\NilaiController::class, 'index'])->name('nilai');
     Route::get('/notifikasi', fn() => view('siswa.notifikasi'))->name('notifikasi');
 });
 
 // ─── Admin Routes (Protected) ─────────────────────────────────
 Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () {
     // Dashboard
-    Route::get('/dashboard', fn() => view('admin.dashboard'))->name('dashboard');
+    Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
 
     // Manajemen Akun
-    Route::get('/akun', fn() => view('admin.manajemen-akun'))->name('akun');
+    Route::get('/akun', [App\Http\Controllers\Admin\AkunController::class, 'index'])->name('akun');
+    Route::post('/akun/status', [App\Http\Controllers\Admin\AkunController::class, 'updateStatus'])->name('akun.status');
+    Route::post('/akun/bulk', [App\Http\Controllers\Admin\AkunController::class, 'bulkUpdate'])->name('akun.bulk');
     
     // Laporan Aktivitas
     Route::get('/aktivitas', fn() => view('admin.laporan-aktivitas'))->name('aktivitas');

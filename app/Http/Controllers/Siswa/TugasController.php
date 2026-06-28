@@ -35,13 +35,36 @@ class TugasController extends Controller
 
     public function store(Request $request, $id)
     {
-        $tugas = Tugas::findOrFail($id);
-        PengumpulanTugas::create([
-            'tugas_id'  => $tugas->id,
-            'siswa_id'  => Auth::id(),
-            'file_path' => $request->file_path ?? '-',
-            'catatan'   => $request->catatan,
+        $request->validate([
+            'file' => 'required|file|mimes:pdf,zip,rar,doc,docx,xls,xlsx,ppt,pptx,jpg,jpeg,png|max:51200',
+            'catatan' => 'nullable|string'
         ]);
+
+        $tugas = Tugas::findOrFail($id);
+
+        $filePath = null;
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $disk = env('FILESYSTEM_DISK', 'public');
+            $filePath = $file->storeAs('pengumpulan_tugas', $filename, $disk);
+        }
+
+        $now = now();
+        $status = 'tepat_waktu';
+        if ($tugas->deadline && $now->greaterThan($tugas->deadline)) {
+            $status = 'terlambat';
+        }
+
+        PengumpulanTugas::updateOrCreate(
+            ['tugas_id' => $tugas->id, 'siswa_id' => Auth::id()],
+            [
+                'file_path' => $filePath, 
+                'catatan' => $request->catatan,
+                'dikumpulkan_at' => $now,
+                'status' => $status
+            ]
+        );
         return redirect()->route('siswa.tugas')->with('success', 'Tugas berhasil dikumpulkan!');
     }
 }

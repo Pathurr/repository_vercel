@@ -16,22 +16,27 @@ class PasswordResetLinkController extends Controller
         return view('auth.forgot-password');
     }
 
-    /**
-     * Kirim link reset password ke email.
-     */
     public function store(Request $request)
     {
         $request->validate([
             'email' => ['required', 'email'],
         ]);
 
-        $status = Password::sendResetLink(
-            $request->only('email')
-        );
+        $user = \App\Models\User::where('email', $request->email)->first();
 
-        return $status == Password::ResetLinkSent
-            ? response()->view('auth.verify-email', ['status' => __($status)])
-            : back()->withInput($request->only('email'))
-                    ->withErrors(['email' => __($status)]);
+        if (!$user) {
+            return back()->withInput($request->only('email'))
+                    ->withErrors(['email' => __('passwords.user')]);
+        }
+
+        // Generate token manual
+        $token = Password::broker()->createToken($user);
+        
+        // Buat URL lengkap
+        $link = route('password.reset', ['token' => $token, 'email' => $request->email]);
+
+        // Kembalikan ke halaman sebelumnya dengan membawa variabel link
+        return back()->with('reset_link', $link)
+                     ->with('status', 'Berhasil! Klik link reset password Anda di bawah ini.');
     }
 }

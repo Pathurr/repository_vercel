@@ -45,12 +45,6 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
-        Auth::login($user);
-
-        if ($user->role === 'guru') {
-            return redirect()->route('guru.dashboard');
-        }
-
-        return redirect()->route('siswa.dashboard');
+        return redirect()->route('login')->with('success', 'Registrasi berhasil! Akun Anda sedang menunggu persetujuan Admin sebelum dapat digunakan untuk login.');
     }
 }
