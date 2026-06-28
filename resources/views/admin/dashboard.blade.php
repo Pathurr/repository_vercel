@@ -64,38 +64,53 @@
             <div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm shadow-primary/5 overflow-hidden">
                 <div class="p-6 border-b border-outline-variant flex justify-between items-center bg-surface-container-low/50">
                     <h3 class="font-h3 text-[20px] text-primary">Akun Menunggu Tindakan</h3>
-                    <button class="text-secondary font-label-sm text-label-sm hover:underline">Lihat Semua</button>
                 </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
+                <div class="w-full">
+                    <table class="w-full table-fixed text-left border-collapse">
                         <thead>
-                            <tr class="bg-surface-container-lowest border-b border-outline-variant font-label-sm text-label-sm text-on-surface-variant">
-                                <th class="py-4 px-6 font-semibold">Nama Pengguna</th>
-                                <th class="py-4 px-6 font-semibold">Identitas (NIS/NRG)</th>
-                                <th class="py-4 px-6 font-semibold">Email Utama</th>
-                                <th class="py-4 px-6 font-semibold">Peran</th>
-                                <th class="py-4 px-6 font-semibold">Waktu Pendaftaran</th>
-                                <th class="py-4 px-6 font-semibold text-right">Otorisasi</th>
+                            <tr class="bg-surface-container-lowest border-b border-outline-variant font-label-sm text-[12px] leading-tight text-on-surface-variant">
+                                <th class="py-4 px-3 w-[18%] font-semibold">Nama Pengguna</th>
+                                <th class="py-4 px-3 w-[15%] font-semibold">Identitas (NIS/NRG)</th>
+                                <th class="py-4 px-3 w-[22%] font-semibold">Email Utama</th>
+                                <th class="py-4 px-3 w-[10%] font-semibold">Peran</th>
+                                <th class="py-4 px-3 w-[15%] font-semibold">Waktu Pendaftaran</th>
+                                <th class="py-4 px-3 w-[20%] font-semibold text-right">Otorisasi</th>
                             </tr>
                         </thead>
-                        <tbody class="font-body-md text-[15px]">
+                        <tbody class="font-body-md text-[13px]">
                             @forelse($pendingUsers as $pu)
+                            @php
+                                $identity = $pu->role == 'guru' ? $pu->nrg : $pu->nis;
+                                $roleLabel = ucfirst($pu->role == 'murid' ? 'Siswa' : $pu->role);
+                            @endphp
                             <tr class="border-b border-outline-variant hover:bg-surface-container-low transition-colors">
-                                <td class="py-4 px-6 font-medium text-primary">{{ $pu->name }}</td>
-                                <td class="py-4 px-6 text-on-surface-variant">{{ $pu->role == 'guru' ? $pu->nrg : $pu->nis }}</td>
-                                <td class="py-4 px-6 text-on-surface-variant">{{ $pu->email }}</td>
-                                <td class="py-4 px-6">
-                                    <span class="px-2.5 py-1 rounded-md {{ $pu->role == 'guru' ? 'bg-primary-container text-on-primary-container' : 'bg-surface-variant text-on-surface-variant' }} text-[12px] font-label-sm">{{ ucfirst($pu->role == 'murid' ? 'Siswa' : $pu->role) }}</span>
+                                <td class="py-4 px-3 font-medium text-primary">
+                                    <span class="block truncate" title="{{ $pu->name }}">{{ $pu->name }}</span>
                                 </td>
-                                <td class="py-4 px-6 text-on-surface-variant">{{ $pu->created_at->format('d M Y, H:i') }}</td>
-                                <td class="py-4 px-6 flex justify-end gap-2">
-                                    <button onclick="showModalAktifkan({{ $pu->id }})" class="px-4 py-1.5 bg-[#feae2c] text-[#6b4500] hover:brightness-110 font-bold text-xs rounded-md shadow-sm transition-soft flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">check</span> Izinkan</button>
-                                    <button onclick="showModalTolak({{ $pu->id }})" class="px-4 py-1.5 border border-[#d6c3b8] text-[#51443c] hover:bg-[#f8f3ed] font-bold text-xs rounded-md transition-soft flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">close</span> Tolak</button>
+                                <td class="py-4 px-3 text-on-surface-variant">
+                                    <span class="block truncate" title="{{ $identity ?: '-' }}">{{ $identity ?: '-' }}</span>
+                                </td>
+                                <td class="py-4 px-3 text-on-surface-variant">
+                                    <span class="block truncate" title="{{ $pu->email }}">{{ $pu->email }}</span>
+                                </td>
+                                <td class="py-4 px-3">
+                                    <span class="inline-flex max-w-full px-2 py-1 rounded-md {{ $pu->role == 'guru' ? 'bg-primary-container text-on-primary-container' : 'bg-surface-variant text-on-surface-variant' }} text-[11px] font-label-sm">
+                                        <span class="truncate">{{ $roleLabel }}</span>
+                                    </span>
+                                </td>
+                                <td class="py-4 px-3 text-on-surface-variant">
+                                    <span class="block truncate" title="{{ $pu->created_at->format('d M Y, H:i') }}">{{ $pu->created_at->format('d M Y, H:i') }}</span>
+                                </td>
+                                <td class="py-4 px-3">
+                                    <div class="flex flex-wrap justify-end gap-1.5">
+                                        <button onclick="showModalAktifkan({{ $pu->id }})" class="px-2.5 py-1.5 bg-[#feae2c] text-[#6b4500] hover:brightness-110 font-bold text-xs rounded-md shadow-sm transition-soft inline-flex items-center gap-1 whitespace-nowrap"><span class="material-symbols-outlined text-[16px]">check</span> Izinkan</button>
+                                        <button onclick="showModalTolak({{ $pu->id }})" class="px-2.5 py-1.5 border border-[#d6c3b8] text-[#51443c] hover:bg-[#f8f3ed] font-bold text-xs rounded-md transition-soft inline-flex items-center gap-1 whitespace-nowrap"><span class="material-symbols-outlined text-[16px]">close</span> Tolak</button>
+                                    </div>
                                 </td>
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="6" class="py-8 px-6 text-center text-on-surface-variant">Tidak ada akun yang menunggu persetujuan saat ini.</td>
+                                <td colspan="6" class="py-8 px-3 text-center text-on-surface-variant">Tidak ada akun yang menunggu persetujuan saat ini.</td>
                             </tr>
                             @endforelse
                         </tbody>

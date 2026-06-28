@@ -1,6 +1,65 @@
 @extends('layouts.guru')
 @section('title', 'Ujian - SMK Mandalahayu 1')
 @section('content')
+<style>
+    @media (max-width: 767px) {
+        .exam-table thead {
+            display: none;
+        }
+
+        .exam-table,
+        .exam-table tbody,
+        .exam-table tr,
+        .exam-table td {
+            display: block;
+            width: 100%;
+        }
+
+        .exam-table tbody {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            padding: 0.75rem;
+        }
+
+        .exam-table tr {
+            border: 1px solid rgba(132, 116, 107, 0.28);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            background: var(--color-surface);
+        }
+
+        .exam-table td {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 0.75rem 1rem;
+            text-align: right;
+        }
+
+        .exam-table td::before {
+            content: attr(data-label);
+            color: var(--color-on-surface-variant);
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-align: left;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .exam-table .main-cell {
+            align-items: flex-start;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        .exam-table .action-cell {
+            justify-content: flex-start;
+        }
+    }
+</style>
+
 @php
     $kelasList = $ujian->map(fn($item) => $item->kelas?->nama_kelas)
         ->filter()
@@ -17,7 +76,7 @@
     })->unique()->values();
 @endphp
 
-<div class="mb-8 flex justify-between items-center">
+<div class="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
     <div>
         <h2 class="font-bold text-4xl text-primary" style="font-family: var(--font-serif)">Manajemen Ujian</h2>
         <p class="text-on-surface-variant mt-1">Jadwalkan dan kelola ujian siswa.</p>
@@ -60,7 +119,7 @@
                 </div>
             </div>
         </div>
-    <table class="w-full text-left">
+    <table class="exam-table w-full table-fixed text-left">
         <thead class="bg-surface-container-low border-b border-surface-variant">
             <tr>
                 <th class="p-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider">Nama Ujian & Kelas</th>
@@ -81,21 +140,21 @@
                 $status = $u->selesai_at && $u->selesai_at->isPast() ? 'selesai' : ($u->mulai_at && $u->mulai_at->isFuture() ? 'terjadwal' : 'berlangsung');
             @endphp
             <tr class="hover:bg-surface-container transition-soft ujian-row" data-kelas="{{ $kelasNama }}" data-status="{{ $status }}">
-                <td class="p-4">
+                <td data-label="Ujian & Kelas" class="main-cell p-4">
                     <p class="font-bold text-on-surface">{{ $u->judul }}</p>
                     <p class="text-xs text-on-surface-variant">{{ $kelasNama }}</p>
                 </td>
-                <td class="p-4">
+                <td data-label="Jadwal & Durasi" class="main-cell p-4">
                     <p class="font-bold text-on-surface">{{ $tanggal }}</p>
                     <p class="text-xs text-on-surface-variant">{{ $waktu }} • {{ $durasiText }}</p>
                 </td>
-                <td class="p-4 text-center font-bold text-primary">{{ $peserta }}</td>
-                <td class="p-4 text-center">
+                <td data-label="Partisipasi" class="p-4 text-center font-bold text-primary">{{ $peserta }}</td>
+                <td data-label="Status" class="p-4 text-center">
                     <span class="px-3 py-1 rounded-full text-xs font-bold {{ $status==='selesai' ? 'bg-green-100 text-green-700' : ($status==='terjadwal' ? 'bg-blue-100 text-blue-700' : 'bg-amber-100 text-amber-700') }}">
                         {{ ucfirst($status) }}
                     </span>
                 </td>
-                <td class="p-4 text-center">
+                <td data-label="Aksi" class="action-cell p-4 text-center">
                     <div class="flex gap-2 justify-center">
                         <a href="{{ route('guru.ujian.buat', ['mode' => 'edit', 'id' => $u->id]) }}" class="p-2 rounded-lg text-secondary hover:bg-secondary-container/30 transition-soft"><span class="material-symbols-outlined text-base">edit</span></a>
                         <form action="{{ route('guru.ujian.destroy', $u->id) }}" method="POST" class="inline" onsubmit="return confirm('Yakin ingin menghapus ujian ini?');">

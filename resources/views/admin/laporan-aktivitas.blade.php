@@ -2,6 +2,37 @@
 @section('title', 'Laporan Aktivitas - Admin Panel SMK Mandalahayu 1 Bekasi')
 
 @section('content')
+<style>
+    @media (max-width: 767px) {
+        .responsive-activity-table thead { display: none; }
+        .responsive-activity-table,
+        .responsive-activity-table tbody,
+        .responsive-activity-table tr,
+        .responsive-activity-table td { display: block; width: 100%; }
+        .responsive-activity-table tr {
+            margin: 12px;
+            border: 1px solid #d6c3b8;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #ffffff;
+        }
+        .responsive-activity-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid rgba(214, 195, 184, 0.55);
+        }
+        .responsive-activity-table td:last-child { border-bottom: 0; }
+        .responsive-activity-table td::before {
+            content: attr(data-label);
+            display: block;
+            margin-bottom: 4px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+            color: #84746b;
+        }
+    }
+</style>
 <!-- Page Header -->
 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4 border-b border-outline-variant pb-6">
     <div>
@@ -53,66 +84,72 @@
 
 <!-- Log Login Table Area -->
 <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-xl shadow-sm shadow-primary/5 flex-1 flex flex-col">
-    <div class="overflow-x-auto">
-        <table class="w-full text-left font-body-md text-body-md whitespace-nowrap">
+    <div class="w-full">
+        <table class="responsive-activity-table w-full table-fixed text-left font-body-md text-[13px]">
             <thead class="bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm border-b border-outline-variant">
                 <tr>
-                    <th class="px-6 py-4 font-semibold">Profil Pengguna</th>
-                    <th class="px-6 py-4 font-semibold">Tingkat Akses</th>
-                    <th class="px-6 py-4 font-semibold">Stempel Waktu</th>
-                    <th class="px-6 py-4 font-semibold">Status Otorisasi</th>
-                    <th class="px-6 py-4 font-semibold">Identifikasi Perangkat</th>
+                    <th class="px-4 py-4 w-[24%] font-semibold">Profil Pengguna</th>
+                    <th class="px-4 py-4 w-[14%] font-semibold">Tingkat Akses</th>
+                    <th class="px-4 py-4 w-[20%] font-semibold">Stempel Waktu</th>
+                    <th class="px-4 py-4 w-[18%] font-semibold">Status Otorisasi</th>
+                    <th class="px-4 py-4 w-[24%] font-semibold">Identifikasi Perangkat</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-outline-variant/50 text-on-surface">
                 <tr class="activity-row hover:bg-surface-container-low/50 transition-colors" data-role="Admin" data-status="Berhasil">
-                    <td class="px-6 py-4 flex items-center gap-3">
+                    <td data-label="Profil Pengguna" class="px-4 py-4">
+                        <div class="flex items-center gap-3 min-w-0">
                         <div class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold text-sm">AS</div>
-                        <span class="font-medium activity-name">Ahmad Santoso</span>
+                        <span class="font-medium activity-name truncate">Ahmad Santoso</span>
+                        </div>
                     </td>
-                    <td class="px-6 py-4"><span class="px-2 py-1 rounded-full bg-tertiary-container/10 text-tertiary-container text-xs font-bold">Admin</span></td>
-                    <td class="px-6 py-4 text-on-surface-variant">24 Okt 2023, 08:15 WIB</td>
-                    <td class="px-6 py-4">
-                        <span class="flex items-center gap-1 text-green-700 bg-green-50 px-2 py-1 rounded-md text-sm border border-green-200">
+                    <td data-label="Tingkat Akses" class="px-4 py-4"><span class="px-2 py-1 rounded-full bg-tertiary-container/10 text-tertiary-container text-xs font-bold">Admin</span></td>
+                    <td data-label="Stempel Waktu" class="px-4 py-4 text-on-surface-variant">24 Okt 2023, 08:15 WIB</td>
+                    <td data-label="Status Otorisasi" class="px-4 py-4">
+                        <span class="inline-flex items-center gap-1 text-green-700 bg-green-50 px-2 py-1 rounded-md text-sm border border-green-200">
                             <span class="material-symbols-outlined text-[16px]" data-icon="check_circle">check_circle</span> Berhasil
                         </span>
                     </td>
-                    <td class="px-6 py-4 text-on-surface-variant">Chrome / Windows 11</td>
+                    <td data-label="Identifikasi Perangkat" class="px-4 py-4 text-on-surface-variant"><span class="block truncate" title="Chrome / Windows 11">Chrome / Windows 11</span></td>
                 </tr>
                 <tr class="activity-row hover:bg-surface-container-low/50 transition-colors" data-role="Guru" data-status="Gagal (Pass)">
-                    <td class="px-6 py-4 flex items-center gap-3">
+                    <td data-label="Profil Pengguna" class="px-4 py-4">
+                        <div class="flex items-center gap-3 min-w-0">
                         <div class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-sm">BW</div>
-                        <span class="font-medium activity-name">Budi Wijaya</span>
+                        <span class="font-medium activity-name truncate">Budi Wijaya</span>
+                        </div>
                     </td>
-                    <td class="px-6 py-4"><span class="px-2 py-1 rounded-full bg-surface-variant text-on-surface-variant text-xs font-bold border border-outline-variant">Guru</span></td>
-                    <td class="px-6 py-4 text-on-surface-variant">24 Okt 2023, 07:45 WIB</td>
-                    <td class="px-6 py-4">
-                        <span class="flex items-center gap-1 text-on-error-container bg-error-container px-2 py-1 rounded-md text-sm border border-error/20">
+                    <td data-label="Tingkat Akses" class="px-4 py-4"><span class="px-2 py-1 rounded-full bg-surface-variant text-on-surface-variant text-xs font-bold border border-outline-variant">Guru</span></td>
+                    <td data-label="Stempel Waktu" class="px-4 py-4 text-on-surface-variant">24 Okt 2023, 07:45 WIB</td>
+                    <td data-label="Status Otorisasi" class="px-4 py-4">
+                        <span class="inline-flex items-center gap-1 text-on-error-container bg-error-container px-2 py-1 rounded-md text-sm border border-error/20">
                             <span class="material-symbols-outlined text-[16px]" data-icon="error">error</span> Gagal (Pass)
                         </span>
                     </td>
-                    <td class="px-6 py-4 text-on-surface-variant">Safari / iOS</td>
+                    <td data-label="Identifikasi Perangkat" class="px-4 py-4 text-on-surface-variant"><span class="block truncate" title="Safari / iOS">Safari / iOS</span></td>
                 </tr>
                 <tr class="activity-row hover:bg-surface-container-low/50 transition-colors bg-error-container/10" data-role="Siswa" data-status="Blocked">
-                    <td class="px-6 py-4 flex items-center gap-3">
+                    <td data-label="Profil Pengguna" class="px-4 py-4">
+                        <div class="flex items-center gap-3 min-w-0">
                         <div class="w-8 h-8 rounded-full bg-outline-variant text-on-surface-variant flex items-center justify-center font-bold text-sm">XX</div>
-                        <span class="font-medium text-error activity-name">Unknown User</span>
+                        <span class="font-medium text-error activity-name truncate">Unknown User</span>
+                        </div>
                     </td>
-                    <td class="px-6 py-4"><span class="px-2 py-1 rounded-full bg-surface-variant text-on-surface-variant text-xs font-bold border border-outline-variant">Siswa</span></td>
-                    <td class="px-6 py-4 text-on-surface-variant">24 Okt 2023, 03:12 WIB</td>
-                    <td class="px-6 py-4">
-                        <span class="flex items-center gap-1 text-on-error bg-error px-2 py-1 rounded-md text-sm shadow-sm">
+                    <td data-label="Tingkat Akses" class="px-4 py-4"><span class="px-2 py-1 rounded-full bg-surface-variant text-on-surface-variant text-xs font-bold border border-outline-variant">Siswa</span></td>
+                    <td data-label="Stempel Waktu" class="px-4 py-4 text-on-surface-variant">24 Okt 2023, 03:12 WIB</td>
+                    <td data-label="Status Otorisasi" class="px-4 py-4">
+                        <span class="inline-flex items-center gap-1 text-on-error bg-error px-2 py-1 rounded-md text-sm shadow-sm">
                             <span class="material-symbols-outlined text-[16px]" data-icon="block">block</span> Blocked
                         </span>
                     </td>
-                    <td class="px-6 py-4 text-on-surface-variant">Firefox / Linux</td>
+                    <td data-label="Identifikasi Perangkat" class="px-4 py-4 text-on-surface-variant"><span class="block truncate" title="Firefox / Linux">Firefox / Linux</span></td>
                 </tr>
             </tbody>
         </table>
     </div>
     
     <!-- Pagination -->
-    <div id="pagination-container" class="p-4 border-t border-outline-variant bg-surface-container-lowest flex items-center justify-between text-sm text-on-surface-variant">
+    <div id="pagination-container" class="p-4 border-t border-outline-variant bg-surface-container-lowest flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-on-surface-variant">
         <!-- Will be populated by JS -->
     </div>
 </div>

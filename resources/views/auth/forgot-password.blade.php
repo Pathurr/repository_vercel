@@ -48,9 +48,9 @@
             </form>
 
             <div class="mt-8 text-center md:text-left">
-                <a href="{{ route('login') }}" class="text-primary font-semibold hover:underline text-sm flex items-center gap-1 justify-center md:justify-start">
-                    <span class="material-symbols-outlined" style="font-size:16px">arrow_back</span>
-                    Kembali ke Login
+                <a href="{{ route('login') }}" class="inline-flex items-center justify-center md:justify-start gap-1.5 py-1 text-primary font-semibold text-sm leading-normal transition-soft group">
+                    <span class="material-symbols-outlined shrink-0 text-[16px] leading-none transition-transform group-hover:-translate-x-0.5">arrow_back</span>
+                    <span class="leading-normal group-hover:underline underline-offset-4 decoration-primary">Kembali ke Login</span>
                 </a>
             </div>
         </div>

@@ -90,6 +90,20 @@
         }
         body.sidebar-collapsed #sidebar-toggle-btn { left: calc(72px - 14px); }
         body.sidebar-collapsed #sidebar-toggle-btn .toggle-icon { transform: rotate(180deg); }
+
+        .sidebar-mobile-backdrop { display: none; }
+        @media (max-width: 767px) {
+            #admin-sidebar {
+                width: 280px;
+                transform: translateX(-100%);
+                transition: transform 0.25s ease;
+                z-index: 70;
+            }
+            body.sidebar-mobile-open #admin-sidebar { transform: translateX(0); }
+            body.sidebar-mobile-open .sidebar-mobile-backdrop { display: block; }
+            #main-content { margin-left: 0 !important; }
+            #sidebar-toggle-btn { display: none; }
+        }
     </style>
 </head>
 <body class="text-on-surface bg-surface">
@@ -141,9 +155,10 @@
         </form>
     </div>
 </aside>
+<button type="button" class="sidebar-mobile-backdrop fixed inset-0 bg-black/45 z-[60] md:hidden" onclick="closeMobileSidebar()" aria-label="Tutup menu"></button>
 
 {{-- Floating Sidebar Toggle Button --}}
-<button id="sidebar-toggle-btn" onclick="toggleSidebar()" title="Sembunyikan / Tampilkan Sidebar">
+<button id="sidebar-toggle-btn" onclick="toggleSidebar()" title="Sembunyikan / Tampilkan Sidebar" class="hidden md:flex">
     <span class="material-symbols-outlined toggle-icon">chevron_left</span>
 </button>
 
@@ -153,7 +168,7 @@
     {{-- Top Navbar --}}
     <header class="bg-primary text-on-primary sticky top-0 w-full z-40 border-b border-primary-container flex justify-between items-center px-6 py-2">
         {{-- Mobile menu button --}}
-        <button class="md:hidden text-on-primary p-2 -ml-2">
+        <button type="button" onclick="openMobileSidebar()" class="md:hidden text-on-primary p-2 -ml-2">
             <span class="material-symbols-outlined">menu</span>
         </button>
         {{-- Page Title --}}
@@ -205,7 +220,7 @@
     </header>
 
     {{-- Page Content --}}
-    <div class="p-8 w-full flex-1">
+    <div class="p-4 md:p-8 w-full flex-1">
         @yield('content')
     </div>
 
@@ -219,11 +234,21 @@
 <script>
     // ── Sidebar Toggle ──────────────────────────────
     function toggleSidebar() {
+        if (window.innerWidth < 768) {
+            openMobileSidebar();
+            return;
+        }
         const isCollapsed = document.body.classList.toggle('sidebar-collapsed');
         localStorage.setItem('admin_sidebar_collapsed', isCollapsed ? '1' : '0');
     }
+    function openMobileSidebar() {
+        document.body.classList.add('sidebar-mobile-open');
+    }
+    function closeMobileSidebar() {
+        document.body.classList.remove('sidebar-mobile-open');
+    }
     // Restore state on page load
-    if (localStorage.getItem('admin_sidebar_collapsed') === '1') {
+    if (window.innerWidth >= 768 && localStorage.getItem('admin_sidebar_collapsed') === '1') {
         document.body.classList.add('sidebar-collapsed');
     }
 
@@ -238,6 +263,9 @@
             const dp = document.getElementById('user-dropdown');
             if(dp) dp.classList.add('hidden');
         }
+    });
+    window.addEventListener('resize', function() {
+        if (window.innerWidth >= 768) closeMobileSidebar();
     });
 </script>
 </body>

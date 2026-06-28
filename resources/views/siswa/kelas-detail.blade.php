@@ -61,7 +61,7 @@
 <!-- Content Tabs & Body -->
 <section class="max-w-[1000px] mx-auto px-2 md:px-4">
     <!-- Tabs Navigation -->
-    <div class="flex border-b border-outline-variant mb-6 relative overflow-x-auto">
+    <div class="flex flex-wrap border-b border-outline-variant mb-6 relative">
         <button class="px-4 md:px-6 py-3 text-sm text-secondary font-bold relative transition-all duration-300 whitespace-nowrap" id="tab-materi" onclick="switchTab('materi')">
             Materi
             <div class="active-tab-indicator" id="indicator-materi"></div>

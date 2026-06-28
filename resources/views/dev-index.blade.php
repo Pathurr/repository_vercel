@@ -162,7 +162,6 @@
                 <a href="{{ route('guru.monitor') }}" class="link-item"><span class="link-dot-guru"></span>Guru: Monitor Tugas</a>
                 <a href="{{ route('guru.penilaian.tugas') }}" class="link-item"><span class="link-dot-guru"></span>Guru: Penilaian Tugas</a>
                 <a href="{{ route('guru.penilaian.ujian') }}" class="link-item"><span class="link-dot-guru"></span>Guru: Penilaian Ujian</a>
-                <a href="{{ route('guru.notifikasi') }}" class="link-item"><span class="link-dot-guru"></span>Guru: Notifikasi</a>
 
                 {{-- Siswa --}}
                 <a href="{{ route('dev.siswa') }}" class="link-item"><span class="link-dot-siswa"></span>Siswa: Dashboard</a>
@@ -175,7 +174,6 @@
                 <a href="{{ route('siswa.pengerjaan-ujian', 1) }}" class="link-item"><span class="link-dot-siswa"></span>Siswa: Kerjakan Ujian</a>
                 <a href="{{ route('siswa.pengerjaan-kuis', 1) }}" class="link-item"><span class="link-dot-siswa"></span>Siswa: Kerjakan Kuis</a>
                 <a href="{{ route('siswa.nilai') }}" class="link-item"><span class="link-dot-siswa"></span>Siswa: Nilai</a>
-                <a href="{{ route('siswa.notifikasi') }}" class="link-item"><span class="link-dot-siswa"></span>Siswa: Notifikasi</a>
             </div>
         </div>
 

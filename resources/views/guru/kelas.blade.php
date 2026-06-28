@@ -10,7 +10,7 @@
     ];
 @endphp
 
-<div class="mb-8 flex justify-between items-center">
+<div class="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
     <div>
         <h2 class="font-bold text-4xl text-primary" style="font-family: var(--font-serif)">Kelas Saya</h2>
         <p class="text-on-surface-variant mt-1">Daftar kelas yang Anda ampu semester ini.</p>

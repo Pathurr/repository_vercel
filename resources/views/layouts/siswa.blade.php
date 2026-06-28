@@ -85,12 +85,27 @@
         }
         body.sidebar-collapsed #sidebar-toggle-btn { left: calc(72px - 14px); }
         body.sidebar-collapsed #sidebar-toggle-btn .toggle-icon { transform: rotate(180deg); }
+
+        .sidebar-mobile-backdrop { display: none; }
+        @media (max-width: 767px) {
+            #siswa-sidebar {
+                display: flex;
+                width: 280px;
+                transform: translateX(-100%);
+                transition: transform 0.25s ease;
+                z-index: 70;
+            }
+            body.sidebar-mobile-open #siswa-sidebar { transform: translateX(0); }
+            body.sidebar-mobile-open .sidebar-mobile-backdrop { display: block; }
+            #siswa-content { margin-left: 0 !important; }
+            #sidebar-toggle-btn { display: none; }
+        }
     </style>
 </head>
 <body class="bg-surface text-on-surface font-sans antialiased min-h-screen">
 
     {{-- Sidebar Siswa --}}
-    <aside id="siswa-sidebar" class="hidden md:flex bg-primary text-on-primary fixed left-0 top-0 h-full w-64 flex-col z-50 custom-scrollbar overflow-y-auto">
+    <aside id="siswa-sidebar" class="flex bg-primary text-on-primary fixed left-0 top-0 h-full w-64 flex-col z-50 custom-scrollbar overflow-y-auto">
         <div class="sidebar-logo p-6 flex items-center gap-3">
             <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-on-primary/10 flex items-center justify-center">
                 <span class="material-symbols-outlined text-secondary-fixed text-2xl">school</span>
@@ -117,11 +132,6 @@
                 <span class="material-symbols-outlined flex-shrink-0 text-[22px]" style="{{ request()->routeIs('siswa.nilai*') ? 'font-variation-settings:\'FILL\' 1;' : '' }}">assessment</span>
                 <span class="sidebar-label">Nilai</span>
             </a>
-            <a href="{{ route('siswa.notifikasi') }}" title="Notifikasi"
-               class="{{ request()->routeIs('siswa.notifikasi*') ? 'bg-secondary-fixed/10 text-secondary-fixed font-bold border-r-4 border-secondary' : 'text-on-primary/70 hover:bg-on-primary/10' }} flex items-center gap-3 px-4 py-2.5 rounded transition-soft text-sm">
-                <span class="material-symbols-outlined flex-shrink-0 text-[22px]" style="{{ request()->routeIs('siswa.notifikasi*') ? 'font-variation-settings:\'FILL\' 1;' : '' }}">notifications</span>
-                <span class="sidebar-label">Notifikasi</span>
-            </a>
         </nav>
         <div class="sidebar-logout mt-auto p-4 border-t border-on-primary/10">
             <form method="POST" action="{{ route('logout') }}">
@@ -134,9 +144,10 @@
             </form>
         </div>
     </aside>
+    <button type="button" class="sidebar-mobile-backdrop fixed inset-0 bg-black/45 z-[60] md:hidden" onclick="closeMobileSidebar()" aria-label="Tutup menu"></button>
 
     {{-- Floating Sidebar Toggle Button --}}
-    <button id="sidebar-toggle-btn" onclick="toggleSidebar()" title="Sembunyikan / Tampilkan Sidebar">
+    <button id="sidebar-toggle-btn" onclick="toggleSidebar()" title="Sembunyikan / Tampilkan Sidebar" class="hidden md:flex">
         <span class="material-symbols-outlined toggle-icon">chevron_left</span>
     </button>
 
@@ -146,7 +157,7 @@
         {{-- Top Navbar --}}
         <header class="bg-primary text-on-primary sticky top-0 w-full z-40 border-b border-primary-container flex justify-between items-center px-6 py-2">
             {{-- Mobile menu button --}}
-            <button class="md:hidden text-on-primary p-2 -ml-2">
+            <button type="button" onclick="openMobileSidebar()" class="md:hidden text-on-primary p-2 -ml-2">
                 <span class="material-symbols-outlined">menu</span>
             </button>
             {{-- Page Title --}}
@@ -200,11 +211,21 @@
     <script>
         // ── Sidebar Toggle ──────────────────────────────
         function toggleSidebar() {
+            if (window.innerWidth < 768) {
+                openMobileSidebar();
+                return;
+            }
             const isCollapsed = document.body.classList.toggle('sidebar-collapsed');
             localStorage.setItem('siswa_sidebar_collapsed', isCollapsed ? '1' : '0');
         }
+        function openMobileSidebar() {
+            document.body.classList.add('sidebar-mobile-open');
+        }
+        function closeMobileSidebar() {
+            document.body.classList.remove('sidebar-mobile-open');
+        }
         // Restore state on page load
-        if (localStorage.getItem('siswa_sidebar_collapsed') === '1') {
+        if (window.innerWidth >= 768 && localStorage.getItem('siswa_sidebar_collapsed') === '1') {
             document.body.classList.add('sidebar-collapsed');
         }
 
@@ -218,6 +239,9 @@
             if (wrapper && !wrapper.contains(e.target)) {
                 document.getElementById('user-dropdown').classList.add('hidden');
             }
+        });
+        window.addEventListener('resize', function() {
+            if (window.innerWidth >= 768) closeMobileSidebar();
         });
     </script>
 </body>

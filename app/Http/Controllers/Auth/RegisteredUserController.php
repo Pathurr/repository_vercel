@@ -25,22 +25,32 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name'     => ['required', 'string', 'max:255'],
             'email'    => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'password' => ['required', Rules\Password::defaults()],
+            'password_confirmation' => ['required', 'same:password'],
             'role'     => ['required', 'in:guru,murid'],
-            'nis'      => ['required_if:role,murid', 'nullable', 'numeric'],
-            'nrg'      => ['required_if:role,guru', 'nullable', 'numeric'],
+            'nis'      => ['exclude_unless:role,murid', 'required', 'digits_between:10,12', 'unique:users,nis'],
+            'nrg'      => ['exclude_unless:role,guru', 'required', 'digits:12', 'unique:users,nrg'],
+        ], [
+            'password_confirmation.required' => 'Konfirmasi password wajib diisi.',
+            'password_confirmation.same' => 'Konfirmasi password harus sama dengan password.',
+            'nis.required' => 'NIS wajib diisi untuk akun murid.',
+            'nis.digits_between' => 'NIS harus berupa angka dengan panjang 10 sampai 12 digit.',
+            'nis.unique' => 'NIS sudah terdaftar.',
+            'nrg.required' => 'NRG wajib diisi untuk akun guru.',
+            'nrg.digits' => 'NRG harus berupa angka dengan panjang tepat 12 digit.',
+            'nrg.unique' => 'NRG sudah terdaftar.',
         ]);
 
         $user = User::create([
-            'name'     => $request->name,
-            'email'    => $request->email,
-            'password' => Hash::make($request->password),
-            'role'     => $request->role,
-            'nis'      => $request->role === 'murid' ? $request->nis : null,
-            'nrg'      => $request->role === 'guru' ? $request->nrg : null,
+            'name'     => $validated['name'],
+            'email'    => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'role'     => $validated['role'],
+            'nis'      => $validated['role'] === 'murid' ? $validated['nis'] : null,
+            'nrg'      => $validated['role'] === 'guru' ? $validated['nrg'] : null,
         ]);
 
         event(new Registered($user));

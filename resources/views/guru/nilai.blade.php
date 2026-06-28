@@ -2,6 +2,55 @@
 @section('title', 'Nilai & Rekap - SMK Mandalahayu 1')
 
 @section('content')
+<style>
+    @media (max-width: 767px) {
+        .grade-table-responsive thead {
+            display: none;
+        }
+
+        .grade-table-responsive,
+        .grade-table-responsive tbody,
+        .grade-table-responsive tr,
+        .grade-table-responsive td {
+            display: block;
+            width: 100%;
+        }
+
+        .grade-table-responsive tbody {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            padding: 0.75rem;
+        }
+
+        .grade-table-responsive tr {
+            border: 1px solid rgba(132, 116, 107, 0.28);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            background: var(--color-surface);
+        }
+
+        .grade-table-responsive td {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 0.7rem 1rem;
+            text-align: right;
+        }
+
+        .grade-table-responsive td::before {
+            content: attr(data-label);
+            color: var(--color-on-surface-variant);
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-align: left;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+    }
+</style>
+
 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4 mt-4">
     <div>
         <h2 class="font-bold text-2xl text-primary" style="font-family: var(--font-serif)">Nilai &amp; Rekap</h2>
@@ -79,15 +128,15 @@
 
 <!-- Master Grade Table -->
 <section class="bg-white rounded-xl shadow-sm border border-outline-variant/30 overflow-hidden">
-    <div class="p-4 border-b border-surface-variant flex justify-between items-center bg-surface-container-low">
+    <div class="p-4 border-b border-surface-variant flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-surface-container-low">
         <h3 class="font-bold text-xl text-primary" style="font-family: var(--font-serif)">Rekapitulasi Nilai Akhir</h3>
-        <div class="relative">
+        <div class="relative w-full sm:w-auto">
             <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
-            <input id="searchInput" class="pl-9 pr-3 py-1.5 bg-white rounded-full border border-surface-variant focus:ring-2 focus:ring-secondary-container text-sm w-56" placeholder="Cari nama siswa..." type="text">
+            <input id="searchInput" class="pl-9 pr-3 py-1.5 bg-white rounded-full border border-surface-variant focus:ring-2 focus:ring-secondary-container text-sm w-full sm:w-56" placeholder="Cari nama siswa..." type="text">
         </div>
     </div>
-    <div class="overflow-x-auto">
-        <table class="w-full text-left border-collapse" id="gradesTable">
+    <div class="w-full">
+        <table class="grade-table-responsive w-full table-fixed text-left border-collapse" id="gradesTable">
             <thead>
                 <tr class="bg-surface-container text-on-surface font-bold text-xs border-b border-surface-variant">
                     <th class="py-2 px-4 w-12">No</th>
@@ -104,15 +153,15 @@
             <tbody class="text-xs text-on-background">
                 @forelse($students as $i => $item)
                 <tr class="grade-row border-b border-surface-variant hover:bg-surface-container-low transition-colors {{ $item['average'] < 75 ? 'bg-red-50/30' : '' }}">
-                    <td class="py-2 px-4 text-on-surface-variant">{{ $i + 1 }}</td>
-                    <td class="py-2 px-4 font-semibold text-primary student-name">{{ $item['siswa']->name }}</td>
-                    <td class="py-2 px-4 student-kelas">{{ $item['kelas']->nama_kelas }}</td>
-                    <td class="py-2 px-4 student-mapel">{{ $item['kelas']->mata_pelajaran }}</td>
-                    <td class="py-2 px-4 text-center">{{ $item['tugas'] }}</td>
-                    <td class="py-2 px-4 text-center">{{ $item['kuis'] }}</td>
-                    <td class="py-2 px-4 text-center">{{ $item['ujian'] }}</td>
-                    <td class="py-2 px-4 text-center font-bold">{{ $item['average'] }}</td>
-                    <td class="py-2 px-4 text-center">
+                    <td data-label="No" class="py-2 px-4 text-on-surface-variant">{{ $i + 1 }}</td>
+                    <td data-label="Nama" class="py-2 px-4 font-semibold text-primary student-name">{{ $item['siswa']->name }}</td>
+                    <td data-label="Kelas" class="py-2 px-4 student-kelas">{{ $item['kelas']->nama_kelas }}</td>
+                    <td data-label="Mapel" class="py-2 px-4 student-mapel">{{ $item['kelas']->mata_pelajaran }}</td>
+                    <td data-label="Tugas" class="py-2 px-4 text-center">{{ $item['tugas'] }}</td>
+                    <td data-label="Kuis" class="py-2 px-4 text-center">{{ $item['kuis'] }}</td>
+                    <td data-label="Ujian" class="py-2 px-4 text-center">{{ $item['ujian'] }}</td>
+                    <td data-label="Akhir" class="py-2 px-4 text-center font-bold">{{ $item['average'] }}</td>
+                    <td data-label="Status" class="py-2 px-4 text-center">
                         <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold {{ $item['status'] === 'Lulus' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
                             <span class="material-symbols-outlined text-[12px]">{{ $item['status'] === 'Lulus' ? 'check_circle' : 'cancel' }}</span> {{ $item['status'] }}
                         </span>
@@ -126,7 +175,7 @@
             </tbody>
         </table>
     </div>
-    <div class="p-3 border-t border-surface-variant flex items-center justify-between bg-surface-container-low">
+    <div class="p-3 border-t border-surface-variant flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-surface-container-low">
         <span class="text-xs text-on-surface-variant">Menampilkan {{ min($students->count(), 10) }} dari {{ $students->count() }} siswa</span>
         <div class="flex gap-1">
             <button class="p-1 rounded bg-white border border-surface-variant text-on-surface-variant hover:bg-surface-container transition-colors disabled:opacity-50" disabled>

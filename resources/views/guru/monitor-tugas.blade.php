@@ -32,6 +32,61 @@
         transition: background .15s;
     }
     .btn-lihat:hover { background: #f2ede7; }
+    @media (max-width: 767px) {
+        .monitor-table thead {
+            display: none;
+        }
+
+        .monitor-table,
+        .monitor-table tbody,
+        .monitor-table tr,
+        .monitor-table td {
+            display: block;
+            width: 100%;
+        }
+
+        .monitor-table tbody {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            padding: 0.75rem;
+        }
+
+        .monitor-table tr {
+            border: 1px solid rgba(132, 116, 107, 0.28);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            background: var(--color-surface);
+        }
+
+        .monitor-table td {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 0.75rem 1rem;
+            text-align: right;
+        }
+
+        .monitor-table td::before {
+            content: attr(data-label);
+            color: var(--color-on-surface-variant);
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-align: left;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .monitor-table .main-cell {
+            flex-direction: column;
+            text-align: left;
+        }
+
+        .monitor-table .action-cell {
+            justify-content: flex-start;
+        }
+    }
 </style>
 
 <!-- Header Compact -->
@@ -87,7 +142,7 @@
     </div>
     
     <!-- Filter Tabs (Status Pengumpulan) -->
-    <div class="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
+    <div class="flex flex-wrap items-center gap-2 pb-1">
         <button data-status="all" class="filter-tab px-4 py-1.5 rounded-full bg-primary text-on-primary font-bold text-xs shadow-md transition-all whitespace-nowrap">Semua</button>
         <button data-status="terkumpul" class="filter-tab px-4 py-1.5 rounded-full bg-surface-container-high text-on-surface-variant font-semibold text-xs hover:bg-surface-variant transition-all whitespace-nowrap">Terkumpul</button>
         <button data-status="terlambat" class="filter-tab px-4 py-1.5 rounded-full bg-surface-container-high text-on-surface-variant font-semibold text-xs hover:bg-surface-variant transition-all whitespace-nowrap">Terlambat</button>
@@ -96,7 +151,7 @@
 
 <!-- Data Table Container -->
 <div class="bg-white rounded-xl smooth-shadow border border-outline-variant/30 overflow-hidden mb-6">
-    <table class="w-full text-left border-collapse table-fixed">
+    <table class="monitor-table w-full text-left border-collapse table-fixed">
         <thead>
             <tr class="bg-surface-container-low border-b border-outline-variant">
                 <th class="px-3 py-2.5 text-[10px] font-bold text-primary uppercase tracking-wider w-[22%]">Nama Siswa</th>
@@ -119,30 +174,30 @@
                     $scoreText = $submission->nilai !== null ? $submission->nilai : '-';
                 @endphp
                 <tr class="hover:bg-surface-container-lowest transition-colors" data-name="{{ strtolower($submission->siswa->name) }}" data-type="{{ $submission->type }}" data-status="{{ $status }}" data-grade="{{ $gradeStatus }}">
-                    <td class="px-3 py-2.5">
+                    <td data-label="Nama Siswa" class="main-cell px-3 py-2.5">
                         <div class="flex items-center gap-2">
                             <div class="w-7 h-7 flex-shrink-0 bg-primary-fixed flex items-center justify-center rounded-full text-primary font-bold text-[10px]">{{ strtoupper(substr($submission->siswa->name, 0, 1)) }}</div>
                             <span class="font-semibold text-xs leading-tight">{{ $submission->siswa->name }}</span>
                         </div>
                     </td>
-                    <td class="px-3 py-2.5">
+                    <td data-label="Kelas & Mapel" class="main-cell px-3 py-2.5">
                         <p class="text-xs font-semibold text-on-surface leading-tight">{{ $submission->kelas?->nama_kelas ?? 'Kelas tidak tersedia' }} <span class="text-[10px] text-on-surface-variant font-normal">· {{ $submission->kelas?->mata_pelajaran ?? 'Mata Pelajaran belum ditentukan' }}</span></p>
                         <p class="text-[10px] text-on-surface-variant mt-0.5">{{ $submission->judul }}</p>
                     </td>
-                    <td class="px-3 py-2.5">
+                    <td data-label="Judul & Tipe" class="main-cell px-3 py-2.5">
                         <p class="text-xs font-semibold text-on-surface leading-tight truncate">{{ $submission->judul }}</p>
                         <span class="text-[10px] px-1.5 py-0.5 bg-surface-variant rounded text-on-surface-variant">{{ ucfirst($submission->type) }}</span>
                     </td>
-                    <td class="px-3 py-2.5 text-center">
+                    <td data-label="Status" class="px-3 py-2.5 text-center">
                         <span class="px-2 py-0.5 rounded-full text-[10px] font-bold inline-flex items-center gap-1 {{ $badgeClass }}">
                             <span class="w-1.5 h-1.5 {{ $dotClass }} rounded-full flex-shrink-0"></span>{{ $statusText }}
                         </span>
                     </td>
-                    <td class="px-3 py-2.5 text-center">
+                    <td data-label="Pengumpulan & Nilai" class="main-cell px-3 py-2.5 text-center">
                         <p class="text-[10px] text-on-surface-variant">{{ $submission->dikumpulkan_at?->format('d M Y') ?? '-' }}</p>
                         <p class="text-xs font-bold text-on-surface-variant">{{ $scoreText }}</p>
                     </td>
-                    <td class="px-3 py-2.5 text-right">
+                    <td data-label="Aksi" class="action-cell px-3 py-2.5 text-right">
                         <a href="{{ $submission->link }}" class="btn-nilai">Nilai</a>
                     </td>
                 </tr>
@@ -154,7 +209,7 @@
         </tbody>
     </table>
     <!-- Pagination -->
-    <div class="px-4 py-3 bg-surface-container-low border-t border-outline-variant flex items-center justify-between">
+    <div class="px-4 py-3 bg-surface-container-low border-t border-outline-variant flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <p class="text-on-surface-variant text-xs font-bold">Menampilkan 1-3 dari 32 siswa</p>
         <div class="flex items-center gap-1">
             <button class="w-7 h-7 flex items-center justify-center rounded border border-outline hover:bg-surface-variant transition-colors disabled:opacity-50" disabled>
