@@ -159,7 +159,7 @@
                 </div>
 
                 <div class="bg-surface border border-outline-variant/30 rounded-xl overflow-hidden shadow-sm">
-                    <table class="student-mobile-table w-full table-fixed text-left text-sm" id="siswaTable">
+                    <table class="responsive-card-table student-mobile-table w-full table-fixed text-left text-sm" id="siswaTable">
                     <thead class="bg-surface-container-low border-b border-outline-variant/30 text-xs text-on-surface-variant uppercase font-bold tracking-wider">
                         <tr>
                             <th class="py-4 px-4 w-12 text-center">NO</th>

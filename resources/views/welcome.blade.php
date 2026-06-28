@@ -69,6 +69,8 @@
                     "base": "8px"
                 },
                 fontFamily: {
+                    "sans": ["Manrope", "ui-sans-serif", "system-ui"],
+                    "serif": ["Noto Serif", "serif"],
                     "h3": ["Noto Serif"],
                     "body-md": ["Manrope"],
                     "body-lg": ["Manrope"],
@@ -88,6 +90,7 @@
         }
     }
 </script>
+@include('layouts.partials.ui-system')
 <style>
     .material-symbols-outlined {
         font-family: 'Material Symbols Outlined';

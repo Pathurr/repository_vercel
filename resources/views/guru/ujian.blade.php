@@ -119,7 +119,7 @@
                 </div>
             </div>
         </div>
-    <table class="exam-table w-full table-fixed text-left">
+    <table class="responsive-card-table exam-table w-full table-fixed text-left">
         <thead class="bg-surface-container-low border-b border-surface-variant">
             <tr>
                 <th class="p-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider">Nama Ujian & Kelas</th>

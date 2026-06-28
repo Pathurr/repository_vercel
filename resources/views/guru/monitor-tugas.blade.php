@@ -151,7 +151,7 @@
 
 <!-- Data Table Container -->
 <div class="bg-white rounded-xl smooth-shadow border border-outline-variant/30 overflow-hidden mb-6">
-    <table class="monitor-table w-full text-left border-collapse table-fixed">
+    <table class="responsive-card-table monitor-table w-full text-left border-collapse table-fixed">
         <thead>
             <tr class="bg-surface-container-low border-b border-outline-variant">
                 <th class="px-3 py-2.5 text-[10px] font-bold text-primary uppercase tracking-wider w-[22%]">Nama Siswa</th>

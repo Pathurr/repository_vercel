@@ -26,17 +26,21 @@
                         "outline": "#84746b", "outline-variant": "#d6c3b8",
                         "error": "#ba1a1a",
                     },
-                    fontFamily: { sans: ["Manrope", "ui-sans-serif", "system-ui"] }
+                    fontFamily: {
+                        sans: ["Manrope", "ui-sans-serif", "system-ui"],
+                        serif: ["Noto Serif", "serif"],
+                    }
                 }
             }
         }
     </script>
+    @include('layouts.partials.ui-system')
     <style>
         .material-symbols-outlined { font-family: 'Material Symbols Outlined'; font-weight: normal; font-style: normal; font-size: 24px; line-height: 1; letter-spacing: normal; text-transform: none; display: inline-block; white-space: nowrap; direction: ltr; -webkit-font-smoothing: antialiased; }
         .transition-soft { transition: all 0.2s ease; }
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #d6c3b8; border-radius: 2px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--ui-outline-variant); border-radius: 2px; }
 
         @keyframes dropdownFade {
             from { opacity: 0; transform: translateY(-8px); }
@@ -77,17 +81,17 @@
             width: 28px;
             height: 28px;
             border-radius: 50%;
-            background: #835500;
+            background: var(--ui-secondary);
             color: #fff;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             box-shadow: 0 2px 8px rgba(0,0,0,0.18);
-            border: 2px solid #fef9f3;
+            border: 2px solid var(--ui-background);
             transition: left 0.25s cubic-bezier(.4,0,.2,1), background 0.15s;
         }
-        #sidebar-toggle-btn:hover { background: #50290b; }
+        #sidebar-toggle-btn:hover { background: var(--ui-primary); }
         #sidebar-toggle-btn .toggle-icon {
             font-size: 18px;
             transition: transform 0.25s ease;
