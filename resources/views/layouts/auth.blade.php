@@ -31,11 +31,13 @@
                     },
                     fontFamily: {
                         sans: ["Manrope", "ui-sans-serif", "system-ui"],
+                        serif: ["Noto Serif", "serif"],
                     }
                 }
             }
         }
     </script>
+    @include('layouts.partials.ui-system')
     <style>
         .material-symbols-outlined {
             font-family: 'Material Symbols Outlined';

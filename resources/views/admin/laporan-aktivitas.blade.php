@@ -85,7 +85,7 @@
 <!-- Log Login Table Area -->
 <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-xl shadow-sm shadow-primary/5 flex-1 flex flex-col">
     <div class="w-full">
-        <table class="responsive-activity-table w-full table-fixed text-left font-body-md text-[13px]">
+        <table class="responsive-card-table responsive-activity-table w-full table-fixed text-left font-body-md text-[13px]">
             <thead class="bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm border-b border-outline-variant">
                 <tr>
                     <th class="px-4 py-4 w-[24%] font-semibold">Profil Pengguna</th>

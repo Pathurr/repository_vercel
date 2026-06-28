@@ -118,7 +118,7 @@
 <!-- Data Table Card -->
 <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-xl shadow-sm shadow-primary/5 flex-1 flex flex-col">
     <div class="w-full">
-        <table class="account-table w-full table-fixed text-left">
+        <table class="responsive-card-table account-table w-full table-fixed text-left">
             <thead class="bg-surface-container-low text-on-surface-variant font-label-sm text-[12px] leading-tight border-b border-outline-variant break-words">
                 <tr>
                     <th class="px-2 py-4 w-[4%] text-center rounded-tl-xl"><input type="checkbox" id="selectAll" class="w-4 h-4 rounded text-primary focus:ring-primary border-outline-variant" onchange="toggleSelectAll(this)"></th>
@@ -452,7 +452,7 @@
         'aktifkan': {
             icon: 'how_to_reg', iconColor: 'text-[#feae2c]', title: 'Aktifkan Akun?', titleColor: 'text-[#50290b]',
             desc: 'Akun akan aktif dan user dapat login ke dalam sistem.', bg: 'bg-[#fef9f3]', border: 'border-[#d6c3b8]',
-            btnBg: 'bg-[#feae2c]', btnText: 'text-[#6b4500]', btnHover: 'hover:brightness-110', label: 'Ya, Aktifkan',
+            btnBg: 'ui-btn-primary', btnText: '', btnHover: '', label: 'Ya, Aktifkan',
             toastBg: 'bg-green-100', toastBorder: 'border-green-300', toastText: 'text-green-800', toastIcon: 'check_circle', toastMsg: 'Akun berhasil diaktifkan!'
         },
         'tolak': {
@@ -486,7 +486,7 @@
         const data = actionData[action];
         
         modalAction.innerHTML = `
-            <div class="${data.bg} rounded-xl shadow-2xl p-6 w-full max-w-sm border ${data.border} text-center">
+            <div class="ui-modal-card ${data.bg} ${data.border}">
                 <span class="material-symbols-outlined ${data.iconColor} text-5xl mb-4">${data.icon}</span>
                 <h3 class="text-xl font-bold ${data.titleColor} mb-2" style="font-family: var(--font-serif)">${data.title}</h3>
                 <p class="text-xs text-on-surface-variant mb-6 opacity-80">${data.desc}</p>
@@ -497,8 +497,8 @@
                     <input type="hidden" name="action" value="${action}">
                     
                     <div class="flex gap-2 justify-center">
-                        <button type="button" onclick="closeActionModal()" class="px-4 py-2 rounded-lg font-bold text-xs text-on-surface-variant border ${data.border} hover:bg-black/5 transition-colors">Batal</button>
-                        <button type="submit" class="px-4 py-2 rounded-lg font-bold text-xs ${data.btnBg} ${data.btnText} ${data.btnHover} transition-all">${data.label}</button>
+                        <button type="button" onclick="closeActionModal()" class="ui-btn ui-btn-secondary px-4 py-2 text-xs">Batal</button>
+                        <button type="submit" class="ui-btn px-4 py-2 text-xs ${data.btnBg} ${data.btnText} ${data.btnHover}">${data.label}</button>
                     </div>
                 </form>
             </div>

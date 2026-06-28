@@ -105,7 +105,7 @@
             </div>
         </div>
     </div>
-    <table class="task-table w-full text-left table-fixed">
+    <table class="responsive-card-table task-table w-full text-left table-fixed">
         <thead class="bg-surface-container-low border-b border-surface-variant">
             <tr>
                 <th class="p-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider w-[30%]">Judul Tugas</th>

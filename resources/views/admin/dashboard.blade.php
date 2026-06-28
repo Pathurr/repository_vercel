@@ -103,8 +103,8 @@
                                 </td>
                                 <td class="py-4 px-3">
                                     <div class="flex flex-wrap justify-end gap-1.5">
-                                        <button onclick="showModalAktifkan({{ $pu->id }})" class="px-2.5 py-1.5 bg-[#feae2c] text-[#6b4500] hover:brightness-110 font-bold text-xs rounded-md shadow-sm transition-soft inline-flex items-center gap-1 whitespace-nowrap"><span class="material-symbols-outlined text-[16px]">check</span> Izinkan</button>
-                                        <button onclick="showModalTolak({{ $pu->id }})" class="px-2.5 py-1.5 border border-[#d6c3b8] text-[#51443c] hover:bg-[#f8f3ed] font-bold text-xs rounded-md transition-soft inline-flex items-center gap-1 whitespace-nowrap"><span class="material-symbols-outlined text-[16px]">close</span> Tolak</button>
+                                        <button onclick="showModalAktifkan({{ $pu->id }})" class="ui-btn ui-btn-primary px-2.5 py-1.5 text-xs shadow-sm whitespace-nowrap"><span class="material-symbols-outlined ui-icon-sm">check</span> Izinkan</button>
+                                        <button onclick="showModalTolak({{ $pu->id }})" class="ui-btn ui-btn-secondary px-2.5 py-1.5 text-xs whitespace-nowrap"><span class="material-symbols-outlined ui-icon-sm">close</span> Tolak</button>
                                     </div>
                                 </td>
                             </tr>
@@ -123,17 +123,17 @@
 
 <!-- Modal Aktifkan -->
 <div id="modal-aktifkan" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 hidden backdrop-blur-sm transition-opacity">
-    <div class="bg-[#fef9f3] rounded-xl shadow-2xl p-6 w-full max-w-sm border border-[#d6c3b8] text-center">
-        <span class="material-symbols-outlined text-[#feae2c] text-5xl mb-4">how_to_reg</span>
-        <h3 class="text-xl font-bold text-[#50290b] mb-2" style="font-family: var(--font-serif)">Otorisasi Akses?</h3>
-        <p class="text-xs text-[#51443c] mb-6">Pengguna akan mendapatkan hak akses penuh dan dapat menggunakan sistem.</p>
+    <div class="ui-modal-card">
+        <span class="material-symbols-outlined text-secondary-container text-5xl mb-4">how_to_reg</span>
+        <h3 class="text-xl font-bold text-primary mb-2 font-serif">Otorisasi Akses?</h3>
+        <p class="text-xs text-on-surface-variant mb-6">Pengguna akan mendapatkan hak akses penuh dan dapat menggunakan sistem.</p>
         <form method="POST" action="{{ route('admin.akun.status') }}">
             @csrf
             <input type="hidden" name="user_id" id="aktifkan-user-id" value="">
             <input type="hidden" name="action" value="aktifkan">
             <div class="flex gap-2 justify-center">
-                <button type="button" onclick="closeModalAktifkan()" class="px-4 py-2 rounded-lg font-bold text-xs text-[#51443c] border border-[#d6c3b8] hover:bg-[#f8f3ed] transition-colors">Batal</button>
-                <button type="submit" class="px-4 py-2 rounded-lg font-bold text-xs bg-[#feae2c] text-[#6b4500] hover:brightness-110 transition-all">Izinkan Akses</button>
+                <button type="button" onclick="closeModalAktifkan()" class="ui-btn ui-btn-secondary px-4 py-2 text-xs">Batal</button>
+                <button type="submit" class="ui-btn ui-btn-primary px-4 py-2 text-xs">Izinkan Akses</button>
             </div>
         </form>
     </div>

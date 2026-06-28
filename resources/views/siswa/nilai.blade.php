@@ -164,7 +164,7 @@
         <!-- Table Container -->
         <div class="bg-surface-container-lowest rounded-xl border border-outline-variant/30 shadow-sm overflow-hidden flex flex-col">
             <div class="hidden md:block">
-                <table class="student-grade-table w-full table-fixed text-left border-collapse">
+                <table class="responsive-card-table student-grade-table w-full table-fixed text-left border-collapse">
                     <thead class="bg-surface-container text-on-surface-variant uppercase text-[10px] font-bold tracking-widest sticky top-0 z-10">
                         <tr>
                             <th class="px-5 py-3 w-[40%]">Nama Tugas / Ujian</th>
@@ -179,7 +179,7 @@
             
             <!-- Limit to max 350px so about 7 rows are visible -->
             <div class="overflow-y-auto custom-scrollbar max-h-[350px]">
-                <table class="student-grade-table w-full table-fixed text-left border-collapse">
+                <table class="responsive-card-table student-grade-table w-full table-fixed text-left border-collapse">
                     <tbody id="table-body" class="divide-y divide-outline-variant/20">
                         <!-- Rendered by JS -->
                     </tbody>

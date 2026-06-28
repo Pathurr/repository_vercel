@@ -102,7 +102,7 @@
             <option>D</option>
         </select>
     </div>
-    <table class="rekap-table w-full table-fixed text-left">
+    <table class="responsive-card-table rekap-table w-full table-fixed text-left">
         <thead class="bg-surface-container-low border-b border-surface-variant">
             <tr>
                 <th class="p-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider">No</th>

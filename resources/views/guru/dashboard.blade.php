@@ -132,7 +132,7 @@
             <a class="text-sm font-semibold text-secondary hover:underline" href="{{ route('guru.tugas') }}">Lihat Semua</a>
         </div>
         <div class="bg-surface-container-lowest rounded-xl shadow-sm border border-surface-variant overflow-hidden">
-            <table class="dashboard-submission-table w-full table-fixed text-left">
+            <table class="responsive-card-table dashboard-submission-table w-full table-fixed text-left">
                 <thead class="bg-surface-container-low border-b border-surface-variant">
                     <tr>
                         <th class="p-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider">Nama Tugas</th>

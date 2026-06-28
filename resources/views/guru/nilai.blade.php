@@ -136,7 +136,7 @@
         </div>
     </div>
     <div class="w-full">
-        <table class="grade-table-responsive w-full table-fixed text-left border-collapse" id="gradesTable">
+        <table class="responsive-card-table grade-table-responsive w-full table-fixed text-left border-collapse" id="gradesTable">
             <thead>
                 <tr class="bg-surface-container text-on-surface font-bold text-xs border-b border-surface-variant">
                     <th class="py-2 px-4 w-12">No</th>
