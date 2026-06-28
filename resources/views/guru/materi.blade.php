@@ -3,7 +3,7 @@
 @section('content')
 //Materi dummy untuk demo, nanti diganti dengan data dari database
 
-<div class="mb-8 flex justify-between items-center">
+<div class="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
     <div>
         <h2 class="font-bold text-4xl text-primary" style="font-family: var(--font-serif)">Materi Pembelajaran</h2>
         <p class="text-on-surface-variant mt-1">Kelola semua materi yang telah Anda buat.</p>
@@ -103,7 +103,7 @@
             </div>
         </div>
         @empty
-        <div class="col-span-3 p-12 text-center text-on-surface-variant">
+        <div class="md:col-span-2 lg:col-span-3 p-12 text-center text-on-surface-variant">
             <span class="material-symbols-outlined text-5xl mb-4">book</span>
             <p class="font-bold">Belum ada materi</p>
         </div>

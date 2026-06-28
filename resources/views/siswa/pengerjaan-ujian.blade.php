@@ -9,9 +9,9 @@
     .custom-scrollbar::-webkit-scrollbar-thumb { background-color: var(--color-outline-variant); border-radius: 10px; }
 </style>
 
-<div class="flex flex-col h-[calc(100vh-170px)] -mt-2">
+<div class="flex flex-col min-h-[calc(100vh-170px)] lg:h-[calc(100vh-170px)] -mt-2">
     <!-- Custom Exam Header (Now acting as a secondary banner) -->
-    <div class="bg-surface-container-lowest shadow-sm border border-outline-variant/30 rounded-xl px-6 py-3 shrink-0 mb-4 flex items-center justify-between">
+    <div class="bg-surface-container-lowest shadow-sm border border-outline-variant/30 rounded-xl px-4 sm:px-6 py-3 shrink-0 mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div class="flex items-center gap-3">
             <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                 <span class="material-symbols-outlined text-on-primary text-[18px]" style="font-variation-settings: 'FILL' 1;">school</span>
@@ -38,9 +38,9 @@
     </div>
 
     <!-- Main Exam Area -->
-    <div class="flex-1 overflow-hidden flex gap-4 w-full">
+    <div class="flex-1 flex flex-col lg:flex-row gap-4 w-full overflow-visible lg:overflow-hidden">
         <!-- Left Column: Question & Options -->
-        <section class="flex-1 flex flex-col h-full bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/30 overflow-hidden">
+        <section class="flex-1 flex flex-col min-h-[440px] lg:h-full bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/30 overflow-hidden">
             <!-- Question Content -->
             <div class="flex-1 overflow-y-auto p-6 custom-scrollbar flex flex-col">
                 <div class="mb-4 flex items-center justify-between border-b border-outline-variant/50 pb-3">
@@ -59,7 +59,7 @@
                 </div>
             </div>
             <!-- Navigation Footer -->
-            <div class="p-4 bg-surface-container-low border-t border-outline-variant/30 flex justify-between items-center shrink-0">
+            <div class="p-4 bg-surface-container-low border-t border-outline-variant/30 flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 shrink-0">
                 <button id="btn-prev" onclick="changeQuestion(-1)" class="px-5 py-2 border-2 border-outline-variant text-on-surface-variant rounded-lg text-xs font-bold hover:bg-secondary hover:text-on-secondary hover:border-secondary transition-colors flex items-center gap-1">
                     <span class="material-symbols-outlined text-[16px]">chevron_left</span>
                     Sebelumnya

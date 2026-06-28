@@ -14,6 +14,76 @@
     .custom-scrollbar::-webkit-scrollbar { width: 6px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--color-outline-variant); border-radius: 10px; }
+    @media (max-width: 767px) {
+        .student-grade-table thead {
+            display: none;
+        }
+
+        .student-grade-table,
+        .student-grade-table tbody,
+        .student-grade-table tr,
+        .student-grade-table td {
+            display: block;
+            width: 100%;
+        }
+
+        .student-grade-table tbody {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            padding: 0.75rem;
+        }
+
+        .student-grade-table tr {
+            border: 1px solid rgba(132, 116, 107, 0.28);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            background: var(--color-surface);
+        }
+
+        .student-grade-table td {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 0.75rem 1rem;
+            text-align: right;
+        }
+
+        .student-grade-table td::before {
+            content: attr(data-label);
+            color: var(--color-on-surface-variant);
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-align: left;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .student-grade-table .primary-cell {
+            align-items: flex-start;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        .student-grade-table .action-cell {
+            justify-content: flex-start;
+        }
+
+        .student-grade-table .feedback-row {
+            margin-top: -0.75rem;
+            border-top: 0;
+        }
+
+        .student-grade-table .feedback-cell {
+            display: block;
+            text-align: left;
+        }
+
+        .student-grade-table .feedback-cell::before {
+            display: none;
+        }
+    }
 </style>
 
 <div class="space-y-6">
@@ -93,8 +163,8 @@
 
         <!-- Table Container -->
         <div class="bg-surface-container-lowest rounded-xl border border-outline-variant/30 shadow-sm overflow-hidden flex flex-col">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse min-w-[700px]">
+            <div class="hidden md:block">
+                <table class="student-grade-table w-full table-fixed text-left border-collapse">
                     <thead class="bg-surface-container text-on-surface-variant uppercase text-[10px] font-bold tracking-widest sticky top-0 z-10">
                         <tr>
                             <th class="px-5 py-3 w-[40%]">Nama Tugas / Ujian</th>
@@ -108,8 +178,8 @@
             </div>
             
             <!-- Limit to max 350px so about 7 rows are visible -->
-            <div class="overflow-x-auto overflow-y-auto custom-scrollbar max-h-[350px]">
-                <table class="w-full text-left border-collapse min-w-[700px]">
+            <div class="overflow-y-auto custom-scrollbar max-h-[350px]">
+                <table class="student-grade-table w-full table-fixed text-left border-collapse">
                     <tbody id="table-body" class="divide-y divide-outline-variant/20">
                         <!-- Rendered by JS -->
                     </tbody>
@@ -157,30 +227,30 @@
             const tr = document.createElement('tr');
             tr.className = 'hover:bg-surface-container-low transition-colors group';
             tr.innerHTML = `
-                <td class="px-5 py-3 w-[40%]">
+                <td data-label="Nama" class="primary-cell px-5 py-3 w-[40%]">
                     <div class="font-bold text-primary group-hover:text-secondary transition-colors text-[12px] truncate max-w-[280px]">${item.name}</div>
                     <div class="text-[10px] text-on-surface-variant/80 mt-0.5 truncate max-w-[280px]">${item.desc}</div>
                 </td>
-                <td class="px-4 py-3 w-[15%]">
+                <td data-label="Kategori" class="px-4 py-3 w-[15%]">
                     ${getCategoryBadge(item.category)}
                 </td>
-                <td class="px-4 py-3 text-on-surface-variant text-[11px] font-medium w-[15%]">${item.dateStr}</td>
-                <td class="px-4 py-3 w-[15%]">
+                <td data-label="Tanggal" class="px-4 py-3 text-on-surface-variant text-[11px] font-medium w-[15%]">${item.dateStr}</td>
+                <td data-label="Skor" class="px-4 py-3 w-[15%]">
                     <div class="flex flex-col items-center">
                         <span class="text-lg font-bold text-primary leading-none" style="font-family: var(--font-serif)">${item.score}</span>
                         <span class="text-[9px] text-on-surface-variant/60 font-bold">/ 100</span>
                     </div>
                 </td>
-                <td class="px-5 py-3 text-right w-[15%]">
+                <td data-label="Aksi" class="action-cell px-5 py-3 text-right w-[15%]">
                     <button class="bg-secondary text-on-secondary px-3 py-1.5 rounded-lg font-bold text-[10px] hover:brightness-110 transform active:scale-95 transition-all" onclick="toggleFeedback(${item.id})">Feedback</button>
                 </td>
             `;
 
             const trFb = document.createElement('tr');
             trFb.id = `fb${item.id}`;
-            trFb.className = 'hidden bg-surface-container-low border-t-0';
+            trFb.className = 'hidden bg-surface-container-low border-t-0 feedback-row';
             trFb.innerHTML = `
-                <td class="px-5 py-3" colspan="5">
+                <td class="feedback-cell px-5 py-3" colspan="5">
                     <div class="flex gap-3 items-start bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/30 shadow-sm ml-4">
                         <span class="material-symbols-outlined text-secondary text-[20px]">chat_bubble</span>
                         <div class="space-y-1.5">

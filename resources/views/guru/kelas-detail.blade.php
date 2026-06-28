@@ -2,6 +2,60 @@
 @section('title', 'Detail Kelas - X TKJ 1')
 
 @section('content')
+<style>
+    @media (max-width: 767px) {
+        .student-mobile-table thead {
+            display: none;
+        }
+
+        .student-mobile-table,
+        .student-mobile-table tbody,
+        .student-mobile-table tr,
+        .student-mobile-table td {
+            display: block;
+            width: 100%;
+        }
+
+        .student-mobile-table tbody {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            padding: 0.75rem;
+        }
+
+        .student-mobile-table tr {
+            border: 1px solid rgba(132, 116, 107, 0.35);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            background: var(--color-surface);
+        }
+
+        .student-mobile-table td {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 0.75rem 1rem;
+            text-align: right;
+        }
+
+        .student-mobile-table td::before {
+            content: attr(data-label);
+            flex: 0 0 auto;
+            color: var(--color-on-surface-variant);
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .student-mobile-table .student-profile-cell {
+            flex-direction: column;
+            text-align: left;
+        }
+    }
+</style>
+
 <div class="max-w-[1200px] mx-auto w-full">
     {{-- Header Section --}}
     <div class="flex flex-col md:flex-row gap-6 items-start justify-between mb-8">
@@ -61,7 +115,7 @@
 
     {{-- Tabs --}}
     <div class="border-b border-outline-variant/30 mb-8">
-        <nav class="flex gap-4 md:gap-8 px-2 overflow-x-auto custom-scrollbar" id="class-tabs">
+        <nav class="flex flex-wrap gap-3 md:gap-8 px-2" id="class-tabs">
             <button onclick="switchTab('siswa', this)" class="tab-btn border-b-4 border-secondary text-secondary font-bold py-4 flex items-center gap-2 whitespace-nowrap">
                 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">groups</span> Siswa
             </button>
@@ -104,8 +158,8 @@
                     </div>
                 </div>
 
-                <div class="bg-surface border border-outline-variant/30 rounded-xl overflow-hidden shadow-sm overflow-x-auto">
-                    <table class="w-full text-left text-sm min-w-[600px]" id="siswaTable">
+                <div class="bg-surface border border-outline-variant/30 rounded-xl overflow-hidden shadow-sm">
+                    <table class="student-mobile-table w-full table-fixed text-left text-sm" id="siswaTable">
                     <thead class="bg-surface-container-low border-b border-outline-variant/30 text-xs text-on-surface-variant uppercase font-bold tracking-wider">
                         <tr>
                             <th class="py-4 px-4 w-12 text-center">NO</th>
@@ -116,17 +170,19 @@
                     <tbody class="divide-y divide-outline-variant/30">
                         @forelse($siswa as $index => $s)
                         <tr class="hover:bg-surface-container-low/50 transition-soft">
-                            <td class="py-3 px-4 text-center text-on-surface-variant">{{ $siswa->firstItem() + $index }}</td>
-                            <td class="py-3 px-4 flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-full bg-surface-variant overflow-hidden flex-shrink-0">
-                                    <img src="https://ui-avatars.com/api/?name={{ urlencode($s->name) }}&background=random" class="w-full h-full object-cover" alt="avatar">
-                                </div>
-                                <div>
-                                    <p class="font-bold text-primary text-base">{{ $s->name }}</p>
-                                    <p class="text-xs text-on-surface-variant">{{ $s->email }}</p>
+                            <td data-label="No" class="py-3 px-4 text-center text-on-surface-variant">{{ $siswa->firstItem() + $index }}</td>
+                            <td data-label="Profil" class="student-profile-cell py-3 px-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-full bg-surface-variant overflow-hidden flex-shrink-0">
+                                        <img src="https://ui-avatars.com/api/?name={{ urlencode($s->name) }}&background=random" class="w-full h-full object-cover" alt="avatar">
+                                    </div>
+                                    <div class="min-w-0">
+                                        <p class="font-bold text-primary text-base truncate">{{ $s->name }}</p>
+                                        <p class="text-xs text-on-surface-variant truncate">{{ $s->email }}</p>
+                                    </div>
                                 </div>
                             </td>
-                            <td class="py-3 px-4 text-on-surface-variant">{{ \Carbon\Carbon::parse($s->pivot->joined_at)->format('d M Y') }}</td>
+                            <td data-label="Bergabung" class="py-3 px-4 text-on-surface-variant">{{ \Carbon\Carbon::parse($s->pivot->joined_at)->format('d M Y') }}</td>
                         </tr>
                         @empty
                         <tr>

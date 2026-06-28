@@ -9,9 +9,9 @@
     .custom-scrollbar::-webkit-scrollbar-thumb { background-color: var(--color-outline-variant); border-radius: 10px; }
 </style>
 
-<div class="flex-1 overflow-hidden flex gap-4 w-full h-[calc(100vh-120px)] -mt-2">
+<div class="flex-1 flex flex-col md:flex-row gap-4 w-full min-h-[calc(100vh-120px)] md:h-[calc(100vh-120px)] overflow-visible md:overflow-hidden -mt-2">
     <!-- LEFT PANEL: Task Details -->
-    <section class="w-full md:w-1/2 flex flex-col h-full bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/30 overflow-hidden">
+    <section class="w-full md:w-1/2 flex flex-col min-h-[420px] md:h-full bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/30 overflow-hidden">
         <div class="p-5 border-b border-outline-variant/30 shrink-0">
             <div class="inline-flex items-center gap-2 bg-surface-container-low text-primary px-2.5 py-0.5 rounded-full mb-3">
                 <span class="material-symbols-outlined text-[14px]">menu_book</span>
@@ -61,7 +61,7 @@
     </section>
 
     <!-- RIGHT PANEL: Submission Area -->
-    <section class="w-full md:w-1/2 flex flex-col h-full gap-4">
+    <section class="w-full md:w-1/2 flex flex-col min-h-[420px] md:h-full gap-4">
         <div class="bg-surface-container-lowest rounded-xl p-4 shadow-sm border border-outline-variant/30 flex justify-between items-center shrink-0">
             <div>
                 <p class="font-bold text-[10px] text-on-surface-variant">Status Pengumpulan</p>

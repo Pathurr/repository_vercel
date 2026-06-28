@@ -50,14 +50,22 @@
                 {{-- NIS Field (for Murid) --}}
                 <div id="nis-field">
                     <label class="block text-sm font-semibold text-primary mb-1" for="nis">NIS (Nomor Induk Siswa)</label>
-                    <input class="w-full bg-surface-container-low border-0 border-b-2 border-primary/20 text-on-surface focus:ring-0 focus:border-secondary-container transition-soft py-2 px-3 text-sm"
-                           id="nis" name="nis" placeholder="Masukkan NIS" type="number" value="{{ old('nis') }}" required/>
+                    <input class="w-full bg-surface-container-low border-0 border-b-2 {{ $errors->has('nis') ? 'border-error' : 'border-primary/20' }} text-on-surface focus:ring-0 focus:border-secondary-container transition-soft py-2 px-3 text-sm"
+                           id="nis" name="nis" placeholder="Masukkan NIS" type="text" inputmode="numeric" pattern="[0-9]{10,12}" minlength="10" maxlength="12" title="NIS harus berupa angka dengan panjang 10 sampai 12 digit." value="{{ old('nis') }}" required/>
+                    <p class="text-[11px] text-on-surface-variant mt-1">Gunakan angka saja, 10-12 digit.</p>
+                    @error('nis')
+                        <p class="text-[11px] text-error font-semibold mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
                 {{-- NRG Field (for Guru) --}}
                 <div id="nrg-field" style="display: none;">
                     <label class="block text-sm font-semibold text-primary mb-1" for="nrg">NRG (Nomor Registrasi Guru)</label>
-                    <input class="w-full bg-surface-container-low border-0 border-b-2 border-primary/20 text-on-surface focus:ring-0 focus:border-secondary-container transition-soft py-2 px-3 text-sm"
-                           id="nrg" name="nrg" placeholder="Masukkan NRG" type="number" value="{{ old('nrg') }}"/>
+                    <input class="w-full bg-surface-container-low border-0 border-b-2 {{ $errors->has('nrg') ? 'border-error' : 'border-primary/20' }} text-on-surface focus:ring-0 focus:border-secondary-container transition-soft py-2 px-3 text-sm"
+                           id="nrg" name="nrg" placeholder="Masukkan NRG" type="text" inputmode="numeric" pattern="[0-9]{12}" minlength="12" maxlength="12" title="NRG harus berupa angka dengan panjang tepat 12 digit." value="{{ old('nrg') }}"/>
+                    <p class="text-[11px] text-on-surface-variant mt-1">Gunakan angka saja, tepat 12 digit.</p>
+                    @error('nrg')
+                        <p class="text-[11px] text-error font-semibold mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-primary mb-1" for="email">Email</label>
@@ -66,13 +74,20 @@
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-primary mb-1" for="password">Password</label>
-                    <input class="w-full bg-surface-container-low border-0 border-b-2 border-primary/20 text-on-surface focus:ring-0 focus:border-secondary-container transition-soft py-2 px-3 text-sm"
+                    <input class="w-full bg-surface-container-low border-0 border-b-2 {{ $errors->has('password') ? 'border-error' : 'border-primary/20' }} text-on-surface focus:ring-0 focus:border-secondary-container transition-soft py-2 px-3 text-sm"
                            id="password" name="password" placeholder="Buat password" type="password" required minlength="8"/>
+                    @error('password')
+                        <p class="text-[11px] text-error font-semibold mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-primary mb-1" for="password_confirmation">Konfirmasi Password</label>
-                    <input class="w-full bg-surface-container-low border-0 border-b-2 border-primary/20 text-on-surface focus:ring-0 focus:border-secondary-container transition-soft py-2 px-3 text-sm"
+                    <input class="w-full bg-surface-container-low border-0 border-b-2 {{ $errors->has('password_confirmation') ? 'border-error' : 'border-primary/20' }} text-on-surface focus:ring-0 focus:border-secondary-container transition-soft py-2 px-3 text-sm"
                            id="password_confirmation" name="password_confirmation" placeholder="Ulangi password" type="password" required minlength="8"/>
+                    <p id="password-match-error" class="hidden text-[11px] text-error font-semibold mt-1">Konfirmasi password harus sama dengan password.</p>
+                    @error('password_confirmation')
+                        <p class="text-[11px] text-error font-semibold mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
                 <div class="pt-2">
                     <button class="w-full bg-secondary-container text-on-secondary-container font-bold py-4 px-6 rounded hover:bg-secondary-fixed transition-soft flex justify-center items-center gap-2" type="submit">
@@ -91,6 +106,7 @@
 </div>
 @endsection
 
+@push('scripts')
 <script>
     function toggleIdentifier() {
         const role = document.querySelector('input[name="role"]:checked')?.value;
@@ -98,22 +114,57 @@
         const nisInput = document.getElementById('nis');
         const nrgField = document.getElementById('nrg-field');
         const nrgInput = document.getElementById('nrg');
+        const nisPattern = '[0-9]{10,12}';
+        const nrgPattern = '[0-9]{12}';
         
         if (role === 'guru') {
             nisField.style.display = 'none';
             nisInput.removeAttribute('required');
+            nisInput.removeAttribute('pattern');
+            nisInput.setAttribute('disabled', 'disabled');
             
             nrgField.style.display = 'block';
+            nrgInput.removeAttribute('disabled');
             nrgInput.setAttribute('required', 'required');
+            nrgInput.setAttribute('pattern', nrgPattern);
         } else {
             nisField.style.display = 'block';
+            nisInput.removeAttribute('disabled');
             nisInput.setAttribute('required', 'required');
+            nisInput.setAttribute('pattern', nisPattern);
             
             nrgField.style.display = 'none';
             nrgInput.removeAttribute('required');
+            nrgInput.removeAttribute('pattern');
+            nrgInput.setAttribute('disabled', 'disabled');
         }
     }
 
+    function keepDigitsOnly(event) {
+        const maxLength = event.target.maxLength > 0 ? event.target.maxLength : 20;
+        event.target.value = event.target.value.replace(/\D/g, '').slice(0, maxLength);
+    }
+
+    function validatePasswordMatch() {
+        const passwordInput = document.getElementById('password');
+        const confirmationInput = document.getElementById('password_confirmation');
+        const matchError = document.getElementById('password-match-error');
+        if (!passwordInput || !confirmationInput || !matchError) return;
+
+        const hasMismatch = confirmationInput.value !== '' && passwordInput.value !== confirmationInput.value;
+        confirmationInput.setCustomValidity(hasMismatch ? 'Konfirmasi password harus sama dengan password.' : '');
+        matchError.classList.toggle('hidden', !hasMismatch);
+        confirmationInput.classList.toggle('border-error', hasMismatch);
+        confirmationInput.classList.toggle('border-primary/20', !hasMismatch);
+    }
+
     // Panggil saat pertama kali load agar validasi menyesuaikan pilihan default
-    document.addEventListener('DOMContentLoaded', toggleIdentifier);
+    document.addEventListener('DOMContentLoaded', () => {
+        toggleIdentifier();
+        document.getElementById('nis')?.addEventListener('input', keepDigitsOnly);
+        document.getElementById('nrg')?.addEventListener('input', keepDigitsOnly);
+        document.getElementById('password')?.addEventListener('input', validatePasswordMatch);
+        document.getElementById('password_confirmation')?.addEventListener('input', validatePasswordMatch);
+    });
 </script>
+@endpush

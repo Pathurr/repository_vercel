@@ -30,7 +30,7 @@
     </div>
 </div>
 
-<div class="h-[calc(100vh-100px)] flex flex-col">
+<div class="min-h-[calc(100vh-100px)] lg:h-[calc(100vh-100px)] flex flex-col">
     <!-- Header Section -->
     <div class="mb-4 flex-shrink-0">
         <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">

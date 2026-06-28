@@ -2,6 +2,46 @@
 @section('title', 'Manajemen Akun - Admin Panel SMK Mandalahayu 1 Bekasi')
 
 @section('content')
+<style>
+    @media (max-width: 767px) {
+        .account-table thead { display: none; }
+        .account-table,
+        .account-table tbody,
+        .account-table tr,
+        .account-table td { display: block; width: 100%; }
+        .account-table tr {
+            margin: 12px;
+            border: 1px solid #d6c3b8;
+            border-radius: 12px;
+            background: #ffffff;
+            overflow: visible;
+        }
+        .account-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid rgba(214, 195, 184, 0.55);
+            text-align: left;
+        }
+        .account-table td:last-child { border-bottom: 0; }
+        .account-table td::before {
+            content: attr(data-label);
+            display: block;
+            margin-bottom: 4px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+            color: #84746b;
+        }
+        .account-table td[data-label="Pilih"] {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .account-table td[data-label="Pilih"]::before { margin-bottom: 0; }
+        .account-table .mobile-action-cell { text-align: left; }
+        .account-table .mobile-action-cell > div { justify-content: flex-start; }
+    }
+</style>
 <!-- Page Header & Primary Action -->
 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-outline-variant pb-6 mb-6">
     <div>
@@ -76,28 +116,29 @@
 </div>
 
 <!-- Data Table Card -->
-<div class="bg-surface-container-lowest border border-outline-variant/30 rounded-xl shadow-sm shadow-primary/5 overflow-hidden flex-1 flex flex-col">
-    <div class="overflow-x-auto table-scrollbar">
-        <table class="w-full text-left whitespace-nowrap">
-            <thead class="bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm border-b border-outline-variant">
+<div class="bg-surface-container-lowest border border-outline-variant/30 rounded-xl shadow-sm shadow-primary/5 flex-1 flex flex-col">
+    <div class="w-full">
+        <table class="account-table w-full table-fixed text-left">
+            <thead class="bg-surface-container-low text-on-surface-variant font-label-sm text-[12px] leading-tight border-b border-outline-variant break-words">
                 <tr>
-                    <th class="px-3 py-4 w-10 text-center"><input type="checkbox" id="selectAll" class="w-4 h-4 rounded text-primary focus:ring-primary border-outline-variant" onchange="toggleSelectAll(this)"></th>
-                    <th class="px-3 py-4 font-semibold">No</th>
-                    <th class="px-3 py-4 font-semibold">Nama Lengkap</th>
-                    <th class="px-3 py-4 font-semibold">Identitas (NIS/NRG)</th>
-                    <th class="px-3 py-4 font-semibold">Email Utama</th>
-                    <th class="px-3 py-4 font-semibold">Peran</th>
-                    <th class="px-3 py-4 font-semibold">Otorisasi</th>
-                    <th class="px-3 py-4 font-semibold">Terdaftar</th>
-                    <th class="px-3 py-4 font-semibold">Login Terakhir</th>
-                    <th class="px-3 py-4 font-semibold text-right">Aksi</th>
+                    <th class="px-2 py-4 w-[4%] text-center rounded-tl-xl"><input type="checkbox" id="selectAll" class="w-4 h-4 rounded text-primary focus:ring-primary border-outline-variant" onchange="toggleSelectAll(this)"></th>
+                    <th class="px-2 py-4 w-[5%] font-semibold text-center">No</th>
+                    <th class="px-2 py-4 w-[17%] font-semibold">Nama Lengkap</th>
+                    <th class="px-2 py-4 w-[13%] font-semibold">Identitas (NIS/NRG)</th>
+                    <th class="px-2 py-4 w-[18%] font-semibold">Email Utama</th>
+                    <th class="px-2 py-4 w-[8%] font-semibold">Peran</th>
+                    <th class="px-2 py-4 w-[10%] font-semibold">Otorisasi</th>
+                    <th class="px-2 py-4 w-[10%] font-semibold">Terdaftar</th>
+                    <th class="px-2 py-4 w-[10%] font-semibold">Login Terakhir</th>
+                    <th class="px-2 py-4 w-[5%] font-semibold text-right rounded-tr-xl">Aksi</th>
                 </tr>
             </thead>
-            <tbody class="font-body-md text-body-md text-on-surface divide-y divide-outline-variant/50">
+            <tbody class="font-body-md text-[13px] text-on-surface divide-y divide-outline-variant/50">
                 @foreach($users as $i => $u)
                 @php
                     $roleLabel = ucfirst($u->role);
                     if($u->role == 'murid') $roleLabel = 'Siswa';
+                    $identity = $u->role == 'guru' ? $u->nrg : $u->nis;
                     
                     $statusConfig = [
                         'active' => ['bg' => 'bg-green-100', 'text' => 'text-green-600', 'border' => 'border-green-200', 'label' => 'Active'],
@@ -112,33 +153,47 @@
                     if($u->status == 'suspended' || $u->status == 'rejected') $rowClass .= " bg-error-container/10";
                 @endphp
                 <tr class="{{ $rowClass }}" data-role="{{ $roleLabel }}" data-status="{{ $sc['label'] }}">
-                    <td class="px-3 py-3 text-center"><input type="checkbox" class="user-checkbox w-4 h-4 rounded text-primary focus:ring-primary border-outline-variant" value="{{ $u->id }}" onchange="updateBulkActionState()"></td>
-                    <td class="px-3 py-3">{{ $i + 1 }}</td>
-                    <td class="px-3 py-3 font-medium account-name">{{ $u->name }}</td>
-                    <td class="px-3 py-3 text-on-surface-variant">{{ $u->role == 'guru' ? $u->nrg : $u->nis }}</td>
-                    <td class="px-3 py-3 text-on-surface-variant account-email truncate max-w-[150px]" title="{{ $u->email }}">{{ $u->email }}</td>
-                    <td class="px-3 py-3">{{ $roleLabel }}</td>
-                    <td class="px-3 py-3">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold {{ $sc['bg'] }} {{ $sc['text'] }} border {{ $sc['border'] }}">{{ $sc['label'] }}</span>
+                    <td data-label="Pilih" class="px-2 py-3 text-center"><input type="checkbox" class="user-checkbox w-4 h-4 rounded text-primary focus:ring-primary border-outline-variant" value="{{ $u->id }}" onchange="updateBulkActionState()"></td>
+                    <td data-label="No" class="px-2 py-3 text-center text-on-surface-variant">{{ $i + 1 }}</td>
+                    <td data-label="Nama Lengkap" class="px-2 py-3 font-medium account-name">
+                        <span class="block truncate" title="{{ $u->name }}">{{ $u->name }}</span>
                     </td>
-                    <td class="px-3 py-3 text-on-surface-variant">{{ $u->created_at->format('d M Y') }}</td>
-                    <td class="px-3 py-3 text-on-surface-variant">-</td>
-                    <td class="px-3 py-3 text-right relative">
-                        <button onclick="toggleActionMenu({{ $u->id }})" class="text-on-surface-variant hover:text-primary p-1 rounded-full hover:bg-surface-container transition-colors">
-                            <span class="material-symbols-outlined text-[20px]" data-icon="more_vert">more_vert</span>
-                        </button>
-                        <div id="actionMenu{{ $u->id }}" class="hidden absolute right-6 top-8 w-36 bg-surface-container-lowest rounded-lg border border-outline-variant/30 shadow-lg py-1 z-10 text-left">
+                    <td data-label="Identitas" class="px-2 py-3 text-on-surface-variant">
+                        <span class="block truncate" title="{{ $identity ?: '-' }}">{{ $identity ?: '-' }}</span>
+                    </td>
+                    <td data-label="Email Utama" class="px-2 py-3 text-on-surface-variant account-email">
+                        <span class="block truncate" title="{{ $u->email }}">{{ $u->email }}</span>
+                    </td>
+                    <td data-label="Peran" class="px-2 py-3">
+                        <span class="block truncate" title="{{ $roleLabel }}">{{ $roleLabel }}</span>
+                    </td>
+                    <td data-label="Otorisasi" class="px-2 py-3">
+                        <span class="inline-flex max-w-full items-center px-2 py-0.5 rounded-full text-[11px] font-bold {{ $sc['bg'] }} {{ $sc['text'] }} border {{ $sc['border'] }}">
+                            <span class="truncate">{{ $sc['label'] }}</span>
+                        </span>
+                    </td>
+                    <td data-label="Terdaftar" class="px-2 py-3 text-on-surface-variant">
+                        <span class="block truncate" title="{{ $u->created_at->format('d M Y') }}">{{ $u->created_at->format('d M Y') }}</span>
+                    </td>
+                    <td data-label="Login Terakhir" class="px-2 py-3 text-on-surface-variant">-</td>
+                    <td data-label="Aksi" class="mobile-action-cell px-2 py-3 text-right relative">
+                        <div class="relative inline-flex">
+                            <button type="button" data-action-toggle="{{ $u->id }}" onclick="toggleActionMenu(event, {{ $u->id }})" aria-label="Aksi {{ $u->name }}" class="w-8 h-8 inline-flex items-center justify-center text-on-surface-variant hover:text-primary rounded-full hover:bg-surface-container transition-colors">
+                                <span class="material-symbols-outlined text-[20px]" data-icon="more_vert">more_vert</span>
+                            </button>
+                            <div id="actionMenu{{ $u->id }}" class="hidden absolute right-0 top-full mt-1 w-44 bg-surface-container-lowest rounded-lg border border-outline-variant/30 shadow-xl py-1 z-[80] text-left overflow-hidden">
                             @if($u->status != 'active')
-                            <button onclick="showActionModal('aktifkan', {{ $u->id }})" class="w-full text-left px-4 py-2 text-sm hover:bg-green-50 text-green-600 transition-colors">Aktifkan</button>
+                            <button type="button" onclick="showActionModal('aktifkan', {{ $u->id }})" class="w-full text-left px-4 py-2 text-sm hover:bg-green-50 text-green-600 transition-colors whitespace-nowrap">Aktifkan</button>
                             @endif
                             @if($u->status == 'pending')
-                            <button onclick="showActionModal('tolak', {{ $u->id }})" class="w-full text-left px-4 py-2 text-sm hover:bg-red-50 text-red-600 transition-colors">Tolak</button>
+                            <button type="button" onclick="showActionModal('tolak', {{ $u->id }})" class="w-full text-left px-4 py-2 text-sm hover:bg-red-50 text-red-600 transition-colors whitespace-nowrap">Tolak</button>
                             @endif
                             @if($u->status == 'active')
-                            <button onclick="showActionModal('nonaktif', {{ $u->id }})" class="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 text-gray-700 transition-colors">Nonaktif</button>
-                            <button onclick="showActionModal('suspend', {{ $u->id }})" class="w-full text-left px-4 py-2 text-sm hover:bg-orange-50 text-orange-600 transition-colors">Suspend (Block)</button>
+                            <button type="button" onclick="showActionModal('nonaktif', {{ $u->id }})" class="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 text-gray-700 transition-colors whitespace-nowrap">Nonaktif</button>
+                            <button type="button" onclick="showActionModal('suspend', {{ $u->id }})" class="w-full text-left px-4 py-2 text-sm hover:bg-orange-50 text-orange-600 transition-colors whitespace-nowrap">Suspend (Block)</button>
                             @endif
-                            <button onclick="showActionModal('hapus', {{ $u->id }})" class="w-full text-left px-4 py-2 text-sm hover:bg-red-50 text-red-600 transition-colors">Hapus Akun</button>
+                            <button type="button" onclick="showActionModal('hapus', {{ $u->id }})" class="w-full text-left px-4 py-2 text-sm hover:bg-red-50 text-red-600 transition-colors whitespace-nowrap">Hapus Akun</button>
+                            </div>
                         </div>
                     </td>
                 </tr>
@@ -148,7 +203,7 @@
     </div>
     
     <!-- Pagination Footer -->
-    <div id="pagination-container" class="bg-surface-container-low border-t border-outline-variant p-4 flex items-center justify-between">
+    <div id="pagination-container" class="bg-surface-container-low border-t border-outline-variant p-4 flex flex-col sm:flex-row items-center justify-between gap-3 rounded-b-xl">
         <!-- Will be populated by JS -->
     </div>
 </div>
@@ -306,8 +361,8 @@
         const startText = totalRows === 0 ? 0 : start + 1;
         const endText = Math.min(end, totalRows);
         
-        let html = `<span class="font-body-md text-body-md text-on-surface-variant text-sm">Menampilkan ${startText}-${endText} dari ${totalRows} akun (Maksimal 10 per halaman)</span>`;
-        html += `<div class="flex items-center gap-1">`;
+        let html = `<span class="font-body-md text-body-md text-on-surface-variant text-sm text-center sm:text-left">Menampilkan ${startText}-${endText} dari ${totalRows} akun (Maksimal 10 per halaman)</span>`;
+        html += `<div class="flex flex-wrap items-center justify-center gap-1">`;
         
         // Prev
         if (currentPage === 1) {
@@ -340,13 +395,25 @@
         filterTable();
     });
     
-    function toggleActionMenu(id) {
+    function toggleActionMenu(event, id) {
+        if (event) event.stopPropagation();
         const menus = document.querySelectorAll('[id^="actionMenu"]');
         menus.forEach(menu => {
-            if(menu.id !== 'actionMenu'+id) menu.classList.add('hidden');
+            if(menu.id !== 'actionMenu'+id) {
+                menu.classList.add('hidden');
+                const row = menu.closest('tr');
+                if (row) row.classList.remove('relative', 'z-30');
+            }
         });
         const target = document.getElementById('actionMenu'+id);
+        const row = target.closest('tr');
+        const willOpen = target.classList.contains('hidden');
+
         target.classList.toggle('hidden');
+        if (row) {
+            row.classList.toggle('relative', willOpen);
+            row.classList.toggle('z-30', willOpen);
+        }
     }
 
     document.addEventListener('click', function (event) {
@@ -367,9 +434,11 @@
         const actionMenus = document.querySelectorAll('[id^="actionMenu"]');
         actionMenus.forEach(menu => {
             const userId = menu.id.replace('actionMenu', '');
-            const btn = document.querySelector(`[onclick="toggleActionMenu(${userId})"]`);
+            const btn = document.querySelector(`[data-action-toggle="${userId}"]`);
             if (!event.target.closest(`#actionMenu${userId}`) && event.target !== btn && (btn && !btn.contains(event.target))) {
                 menu.classList.add('hidden');
+                const row = menu.closest('tr');
+                if (row) row.classList.remove('relative', 'z-30');
             }
         });
     });
@@ -437,7 +506,11 @@
         
         modalAction.classList.remove('hidden');
         const menus = document.querySelectorAll('[id^="actionMenu"]');
-        menus.forEach(menu => menu.classList.add('hidden'));
+        menus.forEach(menu => {
+            menu.classList.add('hidden');
+            const row = menu.closest('tr');
+            if (row) row.classList.remove('relative', 'z-30');
+        });
     }
 
     function closeActionModal() {

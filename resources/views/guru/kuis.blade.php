@@ -54,7 +54,7 @@
                 </div>
             </div>
         </div>
-        <div class="grid grid-cols-12 gap-4 bg-surface-container-low border-b border-surface-variant px-4 py-3 text-xs font-bold text-on-surface-variant uppercase tracking-wider">
+        <div class="hidden md:grid grid-cols-12 gap-4 bg-surface-container-low border-b border-surface-variant px-4 py-3 text-xs font-bold text-on-surface-variant uppercase tracking-wider">
             <div class="col-span-4">Kuis</div>
             <div class="col-span-2">Kelas</div>
             <div class="col-span-2">Durasi</div>
@@ -71,23 +71,26 @@
             $durationText = $k->durasi_menit ? $k->durasi_menit.' menit' : '-';
             $createdDate = $k->created_at ? $k->created_at->format('d M Y') : '-';
         @endphp
-        <div class="grid grid-cols-12 gap-4 px-4 py-4 border-b border-surface-variant last:border-b-0 hover:bg-surface-container transition-soft" data-kelas="{{ $kelasNama }}" data-status="{{ $status }}">
-            <div class="col-span-4">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-4 px-4 py-4 border-b border-surface-variant last:border-b-0 hover:bg-surface-container transition-soft" data-kelas="{{ $kelasNama }}" data-status="{{ $status }}">
+            <div class="md:col-span-4">
                 <p class="font-bold text-on-surface">{{ $k->judul }}</p>
                 <p class="text-xs text-on-surface-variant">{{ $soalCount }} soal • {{ $createdDate }}</p>
             </div>
-            <div class="col-span-2">
+            <div class="md:col-span-2 flex md:block items-center justify-between gap-3">
+                <span class="md:hidden text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">Kelas</span>
                 <p class="text-sm text-on-surface-variant">{{ $kelasNama }}</p>
             </div>
-            <div class="col-span-2">
+            <div class="md:col-span-2 flex md:block items-center justify-between gap-3">
+                <span class="md:hidden text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">Durasi</span>
                 <p class="text-sm text-on-surface-variant">{{ $durationText }}</p>
             </div>
-            <div class="col-span-2">
+            <div class="md:col-span-2 flex md:block items-center justify-between gap-3">
+                <span class="md:hidden text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">Status</span>
                 <span class="px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-700">
                     {{ ucfirst($status) }}
                 </span>
             </div>
-            <div class="col-span-2 flex justify-center gap-2">
+            <div class="md:col-span-2 flex justify-start md:justify-center gap-2">
                 <a href="{{ route('guru.kuis.buat', ['mode' => 'edit', 'id' => $k->id]) }}" class="p-2 rounded-lg text-secondary hover:bg-secondary-container/30 transition-soft">
                     <span class="material-symbols-outlined text-base">edit</span>
                 </a>

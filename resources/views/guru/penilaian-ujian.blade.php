@@ -75,7 +75,7 @@
 
     <div class="flex flex-col lg:flex-row gap-6 flex-1">
         <!-- Left Column: 70% -->
-        <div class="flex-1 min-w-0 flex flex-col" style="flex: 0 0 68%; max-width: 68%;">
+        <div class="w-full lg:basis-[68%] lg:max-w-[68%] min-w-0 flex flex-col">
 
             <!-- Exam Header Card -->
             <div class="bg-surface-container-lowest p-3 rounded-xl shadow-ambient border border-outline-variant/30 mb-3">
@@ -151,7 +151,7 @@
         </div>
 
         <!-- Right: Grading Sidebar 30% -->
-        <aside class="flex-shrink-0 lg:sticky lg:top-4" style="flex: 0 0 30%; max-width: 30%; height: calc(100vh - 88px);">
+        <aside class="w-full lg:basis-[30%] lg:max-w-[30%] flex-shrink-0 lg:sticky lg:top-4 lg:h-[calc(100vh-88px)]">
             <form id="gradingForm" method="POST" action="{{ route('guru.penilaian.ujian.store', ['ujian_id' => $submission['ujian']->id, 'siswa_id' => $submission['siswa']->id]) }}" class="bg-surface-container-highest p-4 rounded-xl shadow-ambient border border-outline-variant/30 h-full flex flex-col">
                 @csrf
                 <h3 class="font-bold text-[15px] text-primary mb-3 flex-shrink-0" style="font-family: var(--font-serif)">Ringkasan Nilai</h3>
