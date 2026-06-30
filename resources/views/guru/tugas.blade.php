@@ -1,6 +1,59 @@
 @extends('layouts.guru')
 @section('title', 'Tugas - SMK Mandalahayu 1')
 @section('content')
+<style>
+    @media (max-width: 767px) {
+        .task-table thead {
+            display: none;
+        }
+
+        .task-table,
+        .task-table tbody,
+        .task-table tr,
+        .task-table td {
+            display: block;
+            width: 100%;
+        }
+
+        .task-table tbody {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            padding: 0.75rem;
+        }
+
+        .task-table tr {
+            border: 1px solid rgba(132, 116, 107, 0.28);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            background: var(--color-surface);
+        }
+
+        .task-table td {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 0.75rem 1rem;
+            text-align: right;
+        }
+
+        .task-table td::before {
+            content: attr(data-label);
+            color: var(--color-on-surface-variant);
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-align: left;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .task-table .action-cell {
+            justify-content: flex-start;
+        }
+    }
+</style>
+
 @php
     $kelasList = $tugas->map(fn($item) => $item->kelas?->nama_kelas)
         ->filter()
@@ -8,7 +61,7 @@
         ->values();
 @endphp
 
-<div class="mb-8 flex justify-between items-center">
+<div class="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
     <div>
         <h2 class="font-bold text-4xl text-primary" style="font-family: var(--font-serif)">Manajemen Tugas</h2>
         <p class="text-on-surface-variant mt-1">Buat dan kelola tugas untuk siswa Anda.</p>
@@ -52,7 +105,7 @@
             </div>
         </div>
     </div>
-    <table class="w-full text-left table-fixed">
+    <table class="responsive-card-table task-table w-full text-left table-fixed">
         <thead class="bg-surface-container-low border-b border-surface-variant">
             <tr>
                 <th class="p-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider w-[30%]">Judul Tugas</th>
@@ -73,10 +126,10 @@
                 $status = $t->status ?? ($t->deadline?->isPast() ? 'selesai' : 'aktif');
             @endphp
             <tr class="hover:bg-surface-container transition-soft" data-kelas="{{ $kelasNama }}" data-status="{{ $status }}">
-                <td class="p-4 font-bold text-on-surface">{{ $t->judul }}</td>
-                <td class="p-4 text-sm text-on-surface-variant">{{ $kelasNama }}</td>
-                <td class="p-4 text-sm text-on-surface-variant">{{ $t->deadline?->format('d M Y') ?? '-' }}</td>
-                <td class="p-4 text-center">
+                <td data-label="Judul" class="p-4 font-bold text-on-surface">{{ $t->judul }}</td>
+                <td data-label="Kelas" class="p-4 text-sm text-on-surface-variant">{{ $kelasNama }}</td>
+                <td data-label="Deadline" class="p-4 text-sm text-on-surface-variant">{{ $t->deadline?->format('d M Y') ?? '-' }}</td>
+                <td data-label="Pengumpulan" class="p-4 text-center">
                     <div class="flex items-center gap-2 justify-center">
                         <span class="font-bold text-primary">{{ $submittedCount }}/{{ $totalSiswa ?: '-' }}</span>
                         <div class="w-16 h-2 bg-surface-variant rounded-full overflow-hidden">
@@ -84,12 +137,12 @@
                         </div>
                     </div>
                 </td>
-                <td class="p-4 text-center">
+                <td data-label="Status" class="p-4 text-center">
                     <span class="px-3 py-1 rounded-full text-xs font-bold {{ $status === 'selesai' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700' }}">
                         {{ ucfirst($status) }}
                     </span>
                 </td>
-                <td class="p-4 text-center">
+                <td data-label="Aksi" class="action-cell p-4 text-center">
                     <div class="flex gap-2 justify-center">
                         <a href="{{ route('guru.tugas.buat', ['mode' => 'edit', 'id' => $t->id]) }}" class="p-2 rounded-lg text-secondary hover:bg-secondary-container/30 transition-soft"><span class="material-symbols-outlined text-base">edit</span></a>
                         <form action="{{ route('guru.tugas.destroy', $t->id) }}" method="POST" class="inline" onsubmit="return confirm('Yakin ingin menghapus tugas ini?');">

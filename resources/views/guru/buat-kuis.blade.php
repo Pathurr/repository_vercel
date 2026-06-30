@@ -123,10 +123,10 @@
                 </div>
                 
                 <div class="pt-6 border-t border-outline-variant/30 flex flex-col-reverse md:flex-row gap-3 justify-end mt-4">
-                    <button type="button" class="px-6 py-2 border border-[#d6c3b8] text-[#51443c] text-sm text-center font-bold rounded-lg hover:bg-[#f8f3ed] transition-soft w-full md:w-auto" onclick="openActionModal('cancel')">
+                    <button type="button" class="ui-btn ui-btn-secondary px-6 py-2 text-sm w-full md:w-auto" onclick="openActionModal('cancel')">
                         Batal
                     </button>
-                    <button type="button" class="px-6 py-2 bg-[#feae2c] text-[#6b4500] text-sm font-bold rounded-lg flex items-center justify-center gap-1 hover:brightness-110 transition-soft w-full md:w-auto" onclick="openActionModal('save')">
+                    <button type="button" class="ui-btn ui-btn-primary px-6 py-2 text-sm w-full md:w-auto" onclick="openActionModal('save')">
                         <span class="material-symbols-outlined" style="font-size: 18px">save</span> {{ request('edit') ? 'Perbarui Kuis' : 'Simpan Kuis' }}
                     </button>
                 </div>
@@ -235,13 +235,13 @@
 
 <!-- Modal Confirm Action -->
 <div id="actionModal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 hidden backdrop-blur-sm transition-opacity opacity-0">
-    <div class="bg-[#fef9f3] rounded-xl shadow-2xl p-6 w-full max-w-sm border border-[#d6c3b8] text-center transform scale-95 transition-soft">
+    <div class="ui-modal-card transform scale-95 transition-soft">
         <span class="material-symbols-outlined text-[#feae2c] text-5xl mb-4" id="actionModalIcon">help</span>
         <h3 class="text-xl font-bold text-[#50290b] mb-2" style="font-family: var(--font-serif)" id="actionModalTitle">Simpan Kuis?</h3>
         <p class="text-xs text-[#51443c] mb-6" id="actionModalDesc">Apakah Anda yakin data kuis sudah benar dan siap disimpan?</p>
         <div class="flex gap-2 justify-center" id="actionModalButtons">
-            <button type="button" onclick="closeActionModal()" class="px-4 py-2 rounded-lg font-bold text-xs text-[#51443c] border border-[#d6c3b8] hover:bg-[#f8f3ed] transition-colors">Periksa Lagi</button>
-            <button type="button" id="confirmActionBtn" class="px-4 py-2 rounded-lg font-bold text-xs bg-[#feae2c] text-[#6b4500] hover:brightness-110 transition-all">Ya, Simpan</button>
+            <button type="button" onclick="closeActionModal()" class="ui-btn ui-btn-secondary px-4 py-2 text-xs">Periksa Lagi</button>
+            <button type="button" id="confirmActionBtn" class="ui-btn ui-btn-primary px-4 py-2 text-xs">Ya, Simpan</button>
         </div>
     </div>
 </div>
@@ -416,7 +416,7 @@
             
             document.getElementById('confirmActionBtn').addEventListener('click', confirmAction);
         } else if (action === 'save') {
-            modalCard.className = 'bg-[#fef9f3] rounded-xl shadow-2xl p-6 w-full max-w-sm border border-[#d6c3b8] text-center transform scale-95 transition-soft';
+            modalCard.className = 'ui-modal-card transform scale-95 transition-soft';
             icon.className = 'material-symbols-outlined text-[#feae2c] text-5xl mb-4';
             icon.textContent = 'help';
             title.className = 'text-xl font-bold text-[#50290b] mb-2';
@@ -425,8 +425,8 @@
             desc.textContent = 'Apakah Anda yakin data kuis sudah benar dan siap disimpan?';
             
             buttonsContainer.innerHTML = `
-                <button type="button" onclick="closeActionModal()" class="px-4 py-2 rounded-lg font-bold text-xs text-[#51443c] border border-[#d6c3b8] hover:bg-[#f8f3ed] transition-colors">Periksa Lagi</button>
-                <button type="button" id="confirmActionBtn" class="px-4 py-2 rounded-lg font-bold text-xs bg-[#feae2c] text-[#6b4500] hover:brightness-110 transition-all">Ya, Simpan</button>
+                <button type="button" onclick="closeActionModal()" class="ui-btn ui-btn-secondary px-4 py-2 text-xs">Periksa Lagi</button>
+                <button type="button" id="confirmActionBtn" class="ui-btn ui-btn-primary px-4 py-2 text-xs">Ya, Simpan</button>
             `;
             
             document.getElementById('confirmActionBtn').addEventListener('click', confirmAction);
@@ -737,4 +737,3 @@
     });
 </script>
 @endpush
-

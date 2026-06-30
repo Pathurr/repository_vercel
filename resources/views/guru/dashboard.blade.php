@@ -3,7 +3,66 @@
 @section('title', 'Dashboard Guru - SMK Mandalahayu 1')
 
 @section('content')
-<div class="flex justify-between items-end mb-8">
+<style>
+    @media (max-width: 767px) {
+        .dashboard-submission-table thead {
+            display: none;
+        }
+
+        .dashboard-submission-table,
+        .dashboard-submission-table tbody,
+        .dashboard-submission-table tr,
+        .dashboard-submission-table td {
+            display: block;
+            width: 100%;
+        }
+
+        .dashboard-submission-table tbody {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            padding: 0.75rem;
+        }
+
+        .dashboard-submission-table tr {
+            border: 1px solid rgba(132, 116, 107, 0.28);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            background: var(--color-surface);
+        }
+
+        .dashboard-submission-table td {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 0.75rem 1rem;
+            text-align: right;
+        }
+
+        .dashboard-submission-table td::before {
+            content: attr(data-label);
+            color: var(--color-on-surface-variant);
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-align: left;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .dashboard-submission-table .submission-main-cell {
+            align-items: flex-start;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        .dashboard-submission-table .submission-action-cell {
+            justify-content: flex-start;
+        }
+    }
+</style>
+
+<div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-8">
     <div>
         <h2 class="font-bold text-4xl text-primary mb-2" style="font-family: var(--font-serif)">Selamat Datang, {{ Auth::user()->name ?? 'Bapak Budi' }}</h2>
         <p class="text-on-surface-variant text-lg">Ringkasan aktivitas mengajar Anda hari ini.</p>
@@ -65,7 +124,7 @@
 
 <div class="space-y-8">
     <section>
-        <div class="flex justify-between items-center mb-6">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6">
             <h3 class="font-bold text-2xl text-primary flex items-center gap-2" style="font-family: var(--font-serif)">
                 <span class="material-symbols-outlined text-secondary">pending_actions</span>
                 Submission Menunggu Penilaian
@@ -73,7 +132,7 @@
             <a class="text-sm font-semibold text-secondary hover:underline" href="{{ route('guru.tugas') }}">Lihat Semua</a>
         </div>
         <div class="bg-surface-container-lowest rounded-xl shadow-sm border border-surface-variant overflow-hidden">
-            <table class="w-full text-left">
+            <table class="responsive-card-table dashboard-submission-table w-full table-fixed text-left">
                 <thead class="bg-surface-container-low border-b border-surface-variant">
                     <tr>
                         <th class="p-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider">Nama Tugas</th>
@@ -85,10 +144,10 @@
                 <tbody class="divide-y divide-surface-variant">
                     @forelse($submissionsList as $s)
                     <tr class="hover:bg-surface-container transition-soft">
-                        <td class="p-4"><p class="font-bold text-primary">{{ $s->tugas->judul ?? 'Tugas' }}</p><p class="text-sm text-on-surface-variant">Siswa: {{ $s->siswa->name ?? '-' }} | Disubmit: {{ \Carbon\Carbon::parse($s->dikumpulkan_at)->diffForHumans() }}</p></td>
-                        <td class="p-4 text-on-surface">{{ $s->tugas->kelas->nama_kelas ?? '-' }}</td>
-                        <td class="p-4 text-center"><span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-error-container text-error font-bold">1</span></td>
-                        <td class="p-4 text-right"><a href="{{ route('guru.penilaian.tugas') }}" class="px-4 py-2 border-2 border-secondary text-secondary text-xs font-bold rounded-lg hover:bg-secondary hover:text-on-secondary transition-soft">Nilai Sekarang</a></td>
+                        <td data-label="Nama Tugas" class="submission-main-cell p-4"><p class="font-bold text-primary">{{ $s->tugas->judul ?? 'Tugas' }}</p><p class="text-sm text-on-surface-variant">Siswa: {{ $s->siswa->name ?? '-' }} | Disubmit: {{ \Carbon\Carbon::parse($s->dikumpulkan_at)->diffForHumans() }}</p></td>
+                        <td data-label="Kelas" class="p-4 text-on-surface">{{ $s->tugas->kelas->nama_kelas ?? '-' }}</td>
+                        <td data-label="Menunggu" class="p-4 text-center"><span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-error-container text-error font-bold">1</span></td>
+                        <td data-label="Aksi" class="submission-action-cell p-4 text-right"><a href="{{ route('guru.penilaian.tugas') }}" class="px-4 py-2 border-2 border-secondary text-secondary text-xs font-bold rounded-lg hover:bg-secondary hover:text-on-secondary transition-soft">Nilai Sekarang</a></td>
                     </tr>
                     @empty
                     <tr>

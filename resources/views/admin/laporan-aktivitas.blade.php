@@ -2,6 +2,37 @@
 @section('title', 'Laporan Aktivitas - Admin Panel SMK Mandalahayu 1 Bekasi')
 
 @section('content')
+<style>
+    @media (max-width: 767px) {
+        .responsive-activity-table thead { display: none; }
+        .responsive-activity-table,
+        .responsive-activity-table tbody,
+        .responsive-activity-table tr,
+        .responsive-activity-table td { display: block; width: 100%; }
+        .responsive-activity-table tr {
+            margin: 12px;
+            border: 1px solid #d6c3b8;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #ffffff;
+        }
+        .responsive-activity-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid rgba(214, 195, 184, 0.55);
+        }
+        .responsive-activity-table td:last-child { border-bottom: 0; }
+        .responsive-activity-table td::before {
+            content: attr(data-label);
+            display: block;
+            margin-bottom: 4px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+            color: #84746b;
+        }
+    }
+</style>
 <!-- Page Header -->
 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4 border-b border-outline-variant pb-6">
     <div>
@@ -54,15 +85,15 @@
 
 <!-- Log Login Table Area -->
 <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-xl shadow-sm shadow-primary/5 flex-1 flex flex-col">
-    <div class="overflow-x-auto">
-        <table class="w-full text-left font-body-md text-body-md whitespace-nowrap">
+    <div class="w-full">
+        <table class="responsive-card-table responsive-activity-table w-full table-fixed text-left font-body-md text-[13px]">
             <thead class="bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm border-b border-outline-variant">
                 <tr>
-                    <th class="px-6 py-4 font-semibold">Profil Pengguna</th>
-                    <th class="px-6 py-4 font-semibold">Tingkat Akses</th>
-                    <th class="px-6 py-4 font-semibold">Stempel Waktu</th>
-                    <th class="px-6 py-4 font-semibold">Status Otorisasi</th>
-                    <th class="px-6 py-4 font-semibold">Identifikasi Perangkat</th>
+                    <th class="px-4 py-4 w-[24%] font-semibold">Profil Pengguna</th>
+                    <th class="px-4 py-4 w-[14%] font-semibold">Tingkat Akses</th>
+                    <th class="px-4 py-4 w-[20%] font-semibold">Stempel Waktu</th>
+                    <th class="px-4 py-4 w-[18%] font-semibold">Status Otorisasi</th>
+                    <th class="px-4 py-4 w-[24%] font-semibold">Identifikasi Perangkat</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-outline-variant/50 text-on-surface">
@@ -71,21 +102,23 @@
                         $name = $log->user ? $log->user->name : ($log->email ?: 'Unknown');
                         $initials = strtoupper(substr($name, 0, 2));
                         $isError = in_array($log->status, ['Gagal', 'Blocked']);
-                        $bgRow = $isError ? 'bg-error-container/5' : 'hover:bg-surface-container-low/50';
+                        $bgRow = $isError ? 'bg-error-container/10' : 'hover:bg-surface-container-low/50';
                     @endphp
-                    <tr class="{{ $bgRow }} transition-colors">
-                        <td class="px-6 py-4 flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-full {{ $isError ? 'bg-outline-variant text-on-surface-variant' : 'bg-secondary-container text-on-secondary-container' }} flex items-center justify-center font-bold text-sm">
-                                {{ $initials }}
-                            </div>
-                            <div class="flex flex-col">
-                                <span class="font-medium {{ $isError && !$log->user ? 'text-error' : '' }}">{{ $name }}</span>
-                                @if($log->user && $log->email !== $log->user->email)
-                                    <span class="text-xs text-on-surface-variant">{{ $log->email }}</span>
-                                @endif
+                    <tr class="activity-row {{ $bgRow }} transition-colors" data-role="{{ $log->role }}" data-status="{{ $log->status }}">
+                        <td data-label="Profil Pengguna" class="px-4 py-4">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <div class="w-8 h-8 rounded-full {{ $isError ? 'bg-outline-variant text-on-surface-variant' : 'bg-secondary-container text-on-secondary-container' }} flex items-center justify-center font-bold text-sm">
+                                    {{ $initials }}
+                                </div>
+                                <div class="flex flex-col min-w-0">
+                                    <span class="font-medium activity-name truncate {{ $isError && !$log->user ? 'text-error' : '' }}">{{ $name }}</span>
+                                    @if($log->user && $log->email !== $log->user->email)
+                                        <span class="text-xs text-on-surface-variant truncate">{{ $log->email }}</span>
+                                    @endif
+                                </div>
                             </div>
                         </td>
-                        <td class="px-6 py-4">
+                        <td data-label="Tingkat Akses" class="px-4 py-4">
                             @if($log->role === 'admin')
                                 <span class="px-2 py-1 rounded-full bg-tertiary-container/10 text-tertiary-container text-xs font-bold">Admin</span>
                             @elseif($log->role === 'guru')
@@ -96,25 +129,25 @@
                                 <span class="px-2 py-1 rounded-full bg-outline-variant text-on-surface-variant text-xs font-bold">{{ $log->role ?: 'N/A' }}</span>
                             @endif
                         </td>
-                        <td class="px-6 py-4 text-on-surface-variant">{{ \Carbon\Carbon::parse($log->created_at)->isoFormat('D MMM Y, HH:mm') }} WIB</td>
-                        <td class="px-6 py-4">
+                        <td data-label="Stempel Waktu" class="px-4 py-4 text-on-surface-variant">{{ \Carbon\Carbon::parse($log->created_at)->isoFormat('D MMM Y, HH:mm') }} WIB</td>
+                        <td data-label="Status Otorisasi" class="px-4 py-4">
                             @if($log->status === 'Berhasil')
-                                <span class="flex items-center gap-1 w-max text-green-700 bg-green-50 px-2 py-1 rounded-md text-sm border border-green-200">
-                                    <span class="material-symbols-outlined text-[16px]">check_circle</span> Berhasil
+                                <span class="inline-flex items-center gap-1 text-green-700 bg-green-50 px-2 py-1 rounded-md text-sm border border-green-200">
+                                    <span class="material-symbols-outlined text-[16px]" data-icon="check_circle">check_circle</span> Berhasil
                                 </span>
                             @elseif($log->status === 'Gagal')
-                                <span class="flex items-center gap-1 w-max text-on-error-container bg-error-container px-2 py-1 rounded-md text-sm border border-error/20">
-                                    <span class="material-symbols-outlined text-[16px]">error</span> Gagal
+                                <span class="inline-flex items-center gap-1 text-on-error-container bg-error-container px-2 py-1 rounded-md text-sm border border-error/20">
+                                    <span class="material-symbols-outlined text-[16px]" data-icon="error">error</span> Gagal
                                 </span>
                             @elseif($log->status === 'Blocked')
-                                <span class="flex items-center gap-1 w-max text-on-error bg-error px-2 py-1 rounded-md text-sm shadow-sm">
-                                    <span class="material-symbols-outlined text-[16px]">block</span> Blocked
+                                <span class="inline-flex items-center gap-1 text-on-error bg-error px-2 py-1 rounded-md text-sm shadow-sm">
+                                    <span class="material-symbols-outlined text-[16px]" data-icon="block">block</span> Blocked
                                 </span>
                             @else
                                 <span class="px-2 py-1 rounded-md text-sm border border-outline-variant">{{ $log->status }}</span>
                             @endif
                         </td>
-                        <td class="px-6 py-4 text-on-surface-variant text-sm">{{ $log->user_agent ? \Illuminate\Support\Str::limit($log->user_agent, 40) : 'Unknown' }}</td>
+                        <td data-label="Identifikasi Perangkat" class="px-4 py-4 text-on-surface-variant"><span class="block truncate" title="{{ $log->user_agent }}">{{ $log->user_agent ? \Illuminate\Support\Str::limit($log->user_agent, 40) : 'Unknown' }}</span></td>
                     </tr>
                 @empty
                     <tr>
@@ -126,7 +159,7 @@
     </div>
     
     <!-- Pagination -->
-    <div class="p-4 border-t border-outline-variant bg-surface-container-lowest">
+    <div class="p-4 border-t border-outline-variant bg-surface-container-lowest flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-on-surface-variant">
         {{ $logs->links() }}
     </div>
 </div>

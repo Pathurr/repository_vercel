@@ -11,6 +11,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Tambahkan baris ini agar Laravel mempercayai ngrok
+        $middleware->trustProxies(at: '*');
+
         // Jika sudah login tapi akses halaman guest (login/register),
         // redirect ke dashboard guru (sementara, bisa disesuaikan per role nanti)
         $middleware->redirectUsersTo(fn() => route('guru.dashboard'));

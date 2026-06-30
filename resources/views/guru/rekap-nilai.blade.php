@@ -1,12 +1,61 @@
 @extends('layouts.guru')
 @section('title', 'Rekap Nilai - SMK Mandalahayu 1')
 @section('content')
-<div class="mb-8 flex justify-between items-center flex-wrap gap-4">
+<style>
+    @media (max-width: 767px) {
+        .rekap-table thead {
+            display: none;
+        }
+
+        .rekap-table,
+        .rekap-table tbody,
+        .rekap-table tr,
+        .rekap-table td {
+            display: block;
+            width: 100%;
+        }
+
+        .rekap-table tbody {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            padding: 0.75rem;
+        }
+
+        .rekap-table tr {
+            border: 1px solid rgba(132, 116, 107, 0.28);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            background: var(--color-surface);
+        }
+
+        .rekap-table td {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 0.7rem 1rem;
+            text-align: right;
+        }
+
+        .rekap-table td::before {
+            content: attr(data-label);
+            color: var(--color-on-surface-variant);
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-align: left;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+    }
+</style>
+
+<div class="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
     <div>
         <h2 class="font-bold text-4xl text-primary" style="font-family: var(--font-serif)">Rekap Nilai Siswa</h2>
         <p class="text-on-surface-variant mt-1">Ringkasan lengkap nilai seluruh siswa per semester.</p>
     </div>
-    <div class="flex gap-3">
+    <div class="flex flex-wrap gap-3">
         <a href="#" class="border border-secondary text-secondary font-bold py-2 px-4 rounded-xl flex items-center gap-2 text-sm hover:bg-secondary/5 transition-soft">
             <span class="material-symbols-outlined text-base">print</span> Cetak
         </a>
@@ -53,7 +102,7 @@
             <option>D</option>
         </select>
     </div>
-    <table class="w-full text-left">
+    <table class="responsive-card-table rekap-table w-full table-fixed text-left">
         <thead class="bg-surface-container-low border-b border-surface-variant">
             <tr>
                 <th class="p-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider">No</th>
@@ -71,16 +120,16 @@
         <tbody class="divide-y divide-surface-variant">
             @forelse($students as $i => $item)
             <tr class="hover:bg-surface-container transition-soft {{ $item['average'] < 75 ? 'bg-red-50/30' : '' }}">
-                <td class="p-4 text-on-surface-variant text-sm">{{ $i + 1 }}</td>
-                <td class="p-4 font-bold text-primary">{{ $item['siswa']->name }}</td>
-                <td class="p-4 text-sm text-on-surface-variant">{{ $item['siswa']->id }}</td>
-                <td class="p-4 text-sm text-on-surface-variant">{{ $item['kelas']->nama_kelas }}</td>
-                <td class="p-4 text-center font-bold">{{ $item['tugas'] }}</td>
-                <td class="p-4 text-center font-bold">{{ $item['kuis'] }}</td>
-                <td class="p-4 text-center font-bold">{{ $item['ujian'] }}</td>
-                <td class="p-4 text-center"><span class="font-bold text-lg text-primary">{{ $item['average'] }}</span></td>
-                <td class="p-4 text-center"><span class="px-3 py-1 rounded-full text-xs font-bold {{ $item['predikat'] === 'A' ? 'bg-green-100 text-green-700' : ($item['predikat'] === 'B+' ? 'bg-secondary-container/40 text-secondary' : ($item['predikat'] === 'B' ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700')) }}">{{ $item['predikat'] }}</span></td>
-                <td class="p-4 text-center">
+                <td data-label="No" class="p-4 text-on-surface-variant text-sm">{{ $i + 1 }}</td>
+                <td data-label="Nama" class="p-4 font-bold text-primary">{{ $item['siswa']->name }}</td>
+                <td data-label="NIS" class="p-4 text-sm text-on-surface-variant">{{ $item['siswa']->id }}</td>
+                <td data-label="Kelas" class="p-4 text-sm text-on-surface-variant">{{ $item['kelas']->nama_kelas }}</td>
+                <td data-label="Tugas" class="p-4 text-center font-bold">{{ $item['tugas'] }}</td>
+                <td data-label="Kuis" class="p-4 text-center font-bold">{{ $item['kuis'] }}</td>
+                <td data-label="Ujian" class="p-4 text-center font-bold">{{ $item['ujian'] }}</td>
+                <td data-label="Rata-rata" class="p-4 text-center"><span class="font-bold text-lg text-primary">{{ $item['average'] }}</span></td>
+                <td data-label="Predikat" class="p-4 text-center"><span class="px-3 py-1 rounded-full text-xs font-bold {{ $item['predikat'] === 'A' ? 'bg-green-100 text-green-700' : ($item['predikat'] === 'B+' ? 'bg-secondary-container/40 text-secondary' : ($item['predikat'] === 'B' ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700')) }}">{{ $item['predikat'] }}</span></td>
+                <td data-label="Keterangan" class="p-4 text-center">
                     <span class="px-3 py-1 rounded-full text-xs font-bold {{ $item['status'] === 'Lulus' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
                         {{ $item['status'] }}
                     </span>

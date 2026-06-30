@@ -9,9 +9,9 @@
     .custom-scrollbar::-webkit-scrollbar-thumb { background-color: var(--color-outline-variant); border-radius: 10px; }
 </style>
 
-<div class="flex-1 overflow-hidden flex gap-4 w-full h-[calc(100vh-120px)] -mt-2">
+<div class="flex-1 flex flex-col md:flex-row gap-4 w-full min-h-[calc(100vh-120px)] md:h-[calc(100vh-120px)] overflow-visible md:overflow-hidden -mt-2">
     <!-- LEFT PANEL: Task Details -->
-    <section class="w-full md:w-1/2 flex flex-col h-full bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/30 overflow-hidden">
+    <section class="w-full md:w-1/2 flex flex-col min-h-[420px] md:h-full bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/30 overflow-hidden">
         <div class="p-5 border-b border-outline-variant/30 shrink-0">
             <div class="inline-flex items-center gap-2 bg-surface-container-low text-primary px-2.5 py-0.5 rounded-full mb-3">
                 <span class="material-symbols-outlined text-[14px]">menu_book</span>
@@ -61,7 +61,7 @@
     </section>
 
     <!-- RIGHT PANEL: Submission Area -->
-    <section class="w-full md:w-1/2 flex flex-col h-full gap-4">
+    <section class="w-full md:w-1/2 flex flex-col min-h-[420px] md:h-full gap-4">
         <div class="bg-surface-container-lowest rounded-xl p-4 shadow-sm border border-outline-variant/30 flex justify-between items-center shrink-0">
             <div>
                 <p class="font-bold text-[10px] text-on-surface-variant">Status Pengumpulan</p>
@@ -102,10 +102,10 @@
 
                 <div class="mt-4 pt-3 border-t border-surface-container flex flex-col gap-3 shrink-0">
                     <div class="flex flex-col-reverse sm:flex-row justify-end gap-3 w-full">
-                        <button type="button" id="btn-trigger-batal" class="px-6 py-2 border border-[#d6c3b8] text-[#51443c] text-sm text-center font-bold rounded-lg hover:bg-[#f8f3ed] transition-soft">
+                        <button type="button" id="btn-trigger-batal" class="ui-btn ui-btn-secondary px-6 py-2 text-sm">
                             Batalkan
                         </button>
-                        <button type="button" id="btn-trigger-simpan" class="px-6 py-2 bg-[#feae2c] text-[#6b4500] text-sm font-bold rounded-lg flex items-center justify-center gap-1 hover:brightness-110 transition-soft">
+                        <button type="button" id="btn-trigger-simpan" class="ui-btn ui-btn-primary px-6 py-2 text-sm">
                             <span class="material-symbols-outlined" style="font-size: 18px">send</span> Kumpulkan
                         </button>
                     </div>
@@ -117,13 +117,13 @@
 
 <!-- Modal Konfirmasi Kumpulkan -->
 <div id="modal-confirm-simpan" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 hidden backdrop-blur-sm transition-opacity">
-    <div class="bg-[#fef9f3] rounded-xl shadow-2xl p-6 w-full max-w-sm border border-[#d6c3b8] text-center">
+    <div class="ui-modal-card">
         <span class="material-symbols-outlined text-[#feae2c] text-5xl mb-4">help</span>
         <h3 class="text-xl font-bold text-[#50290b] mb-2" style="font-family: var(--font-serif)">Kumpulkan Tugas?</h3>
         <p class="text-xs text-[#51443c] mb-6">Pastikan berkas sudah lengkap karena tidak bisa diubah lagi.</p>
         <div class="flex gap-2 justify-center">
-            <button type="button" id="btn-cancel-simpan" class="px-4 py-2 rounded-lg font-bold text-xs text-[#51443c] border border-[#d6c3b8] hover:bg-[#f8f3ed] transition-colors">Periksa Lagi</button>
-            <button type="button" id="btn-confirm-simpan" class="px-4 py-2 rounded-lg font-bold text-xs bg-[#feae2c] text-[#6b4500] hover:brightness-110 transition-all">Ya, Kumpulkan</button>
+            <button type="button" id="btn-cancel-simpan" class="ui-btn ui-btn-secondary px-4 py-2 text-xs">Periksa Lagi</button>
+            <button type="button" id="btn-confirm-simpan" class="ui-btn ui-btn-primary px-4 py-2 text-xs">Ya, Kumpulkan</button>
         </div>
     </div>
 </div>

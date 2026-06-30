@@ -69,6 +69,8 @@
                     "base": "8px"
                 },
                 fontFamily: {
+                    "sans": ["Manrope", "ui-sans-serif", "system-ui"],
+                    "serif": ["Noto Serif", "serif"],
                     "h3": ["Noto Serif"],
                     "body-md": ["Manrope"],
                     "body-lg": ["Manrope"],
@@ -88,6 +90,7 @@
         }
     }
 </script>
+@include('layouts.partials.ui-system')
 <style>
     .material-symbols-outlined {
         font-family: 'Material Symbols Outlined';
@@ -111,8 +114,8 @@
 
 <!-- TopNavBar -->
 <header class="bg-[#6B3F1F] fixed top-0 w-full z-50 shadow-lg">
-    <div class="max-w-[1200px] mx-auto flex justify-between items-center px-8 py-4">
-        <div class="text-xl font-black text-white font-['Noto_Serif']">SMK Mandalahayu 1</div>
+    <div class="max-w-[1200px] mx-auto flex justify-between items-center px-4 sm:px-6 lg:px-8 py-4">
+        <div class="text-lg sm:text-xl font-black text-white font-['Noto_Serif']">SMK Mandalahayu 1</div>
         <nav class="hidden md:flex gap-6 items-center" id="main-nav">
             <a class="nav-link text-[#F5A623] border-b-2 border-[#F5A623] pb-1 font-['Noto_Serif'] font-bold text-sm tracking-wide transition-colors duration-300" href="#tentang">Tentang Kami</a>
             <a class="nav-link text-white/90 border-b-2 border-transparent pb-1 hover:text-[#F5A623] transition-colors duration-300 font-['Noto_Serif'] font-bold text-sm tracking-wide" href="#program">Program Keahlian</a>
@@ -123,6 +126,21 @@
             <a href="{{ route('login') }}" class="text-[#F5A623] border-2 border-[#F5A623] px-4 py-2 rounded font-['Noto_Serif'] font-bold text-sm tracking-wide hover:bg-[#F5A623]/10 transition-colors">Masuk E-Learning</a>
             <a href="#ppdb" class="bg-[#F5A623] text-[#311300] px-4 py-2 rounded font-['Noto_Serif'] font-bold text-sm tracking-wide hover:bg-[#F5A623]/90 transition-colors">Daftar PPDB</a>
         </div>
+        <button type="button" onclick="toggleWelcomeMenu()" class="md:hidden w-10 h-10 inline-flex items-center justify-center rounded-lg border border-[#F5A623]/50 text-[#F5A623] hover:bg-[#F5A623]/10 transition-colors" aria-label="Buka menu">
+            <span class="material-symbols-outlined" id="welcome-menu-icon">menu</span>
+        </button>
+    </div>
+    <div id="welcome-mobile-menu" class="hidden md:hidden border-t border-[#F5A623]/20 bg-[#6B3F1F] px-4 pb-4">
+        <nav class="max-w-[1200px] mx-auto grid gap-2 pt-3">
+            <a onclick="closeWelcomeMenu()" class="text-white/90 rounded-lg px-3 py-2 font-['Noto_Serif'] font-bold text-sm hover:bg-white/10 transition-colors" href="#tentang">Tentang Kami</a>
+            <a onclick="closeWelcomeMenu()" class="text-white/90 rounded-lg px-3 py-2 font-['Noto_Serif'] font-bold text-sm hover:bg-white/10 transition-colors" href="#program">Program Keahlian</a>
+            <a onclick="closeWelcomeMenu()" class="text-white/90 rounded-lg px-3 py-2 font-['Noto_Serif'] font-bold text-sm hover:bg-white/10 transition-colors" href="#kegiatan">Kegiatan</a>
+            <a onclick="closeWelcomeMenu()" class="text-white/90 rounded-lg px-3 py-2 font-['Noto_Serif'] font-bold text-sm hover:bg-white/10 transition-colors" href="#kontak">Kontak</a>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2">
+                <a onclick="closeWelcomeMenu()" href="{{ route('login') }}" class="text-center text-[#F5A623] border border-[#F5A623] px-4 py-2 rounded font-['Noto_Serif'] font-bold text-sm hover:bg-[#F5A623]/10 transition-colors">Masuk E-Learning</a>
+                <a onclick="closeWelcomeMenu()" href="#ppdb" class="text-center bg-[#F5A623] text-[#311300] px-4 py-2 rounded font-['Noto_Serif'] font-bold text-sm hover:bg-[#F5A623]/90 transition-colors">Daftar PPDB</a>
+            </div>
+        </nav>
     </div>
 </header>
 
@@ -252,6 +270,22 @@
     </section>
 
 </main>
+
+<script>
+    function toggleWelcomeMenu() {
+        const menu = document.getElementById('welcome-mobile-menu');
+        const icon = document.getElementById('welcome-menu-icon');
+        const isHidden = menu.classList.toggle('hidden');
+        icon.textContent = isHidden ? 'menu' : 'close';
+    }
+
+    function closeWelcomeMenu() {
+        const menu = document.getElementById('welcome-mobile-menu');
+        const icon = document.getElementById('welcome-menu-icon');
+        menu.classList.add('hidden');
+        icon.textContent = 'menu';
+    }
+</script>
 
 <!-- Footer -->
 <footer id="kontak" class="bg-[#6B3F1F] w-full py-12 px-8 border-t border-[#F5A623]/20">

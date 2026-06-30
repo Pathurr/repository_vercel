@@ -9,9 +9,9 @@
     .custom-scrollbar::-webkit-scrollbar-thumb { background-color: var(--color-outline-variant); border-radius: 10px; }
 </style>
 
-<div class="flex flex-col h-[calc(100vh-170px)] -mt-2">
+<div class="flex flex-col min-h-[calc(100vh-170px)] lg:h-[calc(100vh-170px)] -mt-2">
     <!-- Custom Exam Header (Now acting as a secondary banner) -->
-    <div class="bg-surface-container-lowest shadow-sm border border-outline-variant/30 rounded-xl px-6 py-3 shrink-0 mb-4 flex items-center justify-between">
+    <div class="bg-surface-container-lowest shadow-sm border border-outline-variant/30 rounded-xl px-4 sm:px-6 py-3 shrink-0 mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div class="flex items-center gap-3">
             <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                 <span class="material-symbols-outlined text-on-primary text-[18px]" style="font-variation-settings: 'FILL' 1;">quiz</span>
@@ -38,9 +38,9 @@
     </div>
 
     <!-- Main Exam Area -->
-    <div class="flex-1 overflow-hidden flex gap-4 w-full">
+    <div class="flex-1 flex flex-col lg:flex-row gap-4 w-full overflow-visible lg:overflow-hidden">
         <!-- Left Column: Question & Options -->
-        <section class="flex-1 flex flex-col h-full bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/30 overflow-hidden">
+        <section class="flex-1 flex flex-col min-h-[440px] lg:h-full bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/30 overflow-hidden">
             <!-- Question Content -->
             <div class="flex-1 overflow-y-auto p-6 custom-scrollbar flex flex-col">
                 <div class="mb-4 flex items-center justify-between border-b border-outline-variant/50 pb-3">
@@ -59,7 +59,7 @@
                 </div>
             </div>
             <!-- Navigation Footer -->
-            <div class="p-4 bg-surface-container-low border-t border-outline-variant/30 flex justify-between items-center shrink-0">
+            <div class="p-4 bg-surface-container-low border-t border-outline-variant/30 flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 shrink-0">
                 <button id="btn-prev" onclick="changeQuestion(-1)" class="px-5 py-2 border-2 border-outline-variant text-on-surface-variant rounded-lg text-xs font-bold hover:bg-secondary hover:text-on-secondary hover:border-secondary transition-colors flex items-center gap-1">
                     <span class="material-symbols-outlined text-[16px]">chevron_left</span>
                     Sebelumnya
@@ -100,7 +100,7 @@
             <div class="bg-surface-container-lowest rounded-xl p-4 shadow-sm border border-outline-variant/30 shrink-0">
                 <p class="text-[10px] text-on-surface-variant mb-3 text-center">Pastikan semua terjawab.</p>
                 <div class="flex flex-col gap-2">
-                    <button type="button" id="btn-trigger-simpan" class="w-full bg-[#feae2c] text-[#6b4500] hover:brightness-110 py-2.5 rounded-lg text-xs font-bold shadow-sm flex items-center justify-center gap-2 transition-soft">
+                    <button type="button" id="btn-trigger-simpan" class="ui-btn ui-btn-primary w-full py-2.5 text-xs shadow-sm">
                         <span class="material-symbols-outlined text-[16px]">task_alt</span> Selesai & Kumpulkan
                     </button>
                 </div>
@@ -111,13 +111,13 @@
 
 <!-- Modal Konfirmasi Kumpulkan -->
 <div id="modal-confirm-simpan" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 hidden backdrop-blur-sm transition-opacity">
-    <div class="bg-[#fef9f3] rounded-xl shadow-2xl p-6 w-full max-w-sm border border-[#d6c3b8] text-center">
+    <div class="ui-modal-card">
         <span class="material-symbols-outlined text-[#feae2c] text-5xl mb-4">help</span>
         <h3 class="text-xl font-bold text-[#50290b] mb-2" style="font-family: var(--font-serif)">Kumpulkan Kuis?</h3>
         <p class="text-xs text-[#51443c] mb-6">Apakah Anda yakin ingin menyelesaikan kuis ini? Jawaban tidak dapat diubah setelah dikumpulkan.</p>
         <div class="flex gap-2 justify-center">
-            <button type="button" id="btn-cancel-simpan" class="px-4 py-2 rounded-lg font-bold text-xs text-[#51443c] border border-[#d6c3b8] hover:bg-[#f8f3ed] transition-colors">Periksa Lagi</button>
-            <button type="button" id="btn-confirm-simpan" class="px-4 py-2 rounded-lg font-bold text-xs bg-[#feae2c] text-[#6b4500] hover:brightness-110 transition-all">Ya, Kumpulkan</button>
+            <button type="button" id="btn-cancel-simpan" class="ui-btn ui-btn-secondary px-4 py-2 text-xs">Periksa Lagi</button>
+            <button type="button" id="btn-confirm-simpan" class="ui-btn ui-btn-primary px-4 py-2 text-xs">Ya, Kumpulkan</button>
         </div>
     </div>
 </div>

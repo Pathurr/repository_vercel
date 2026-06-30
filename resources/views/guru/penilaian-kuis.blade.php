@@ -51,13 +51,13 @@
 
 <!-- Modal Konfirmasi Simpan -->
 <div id="modal-confirm-simpan" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 hidden backdrop-blur-sm transition-opacity">
-    <div class="bg-[#fef9f3] rounded-xl shadow-2xl p-6 w-full max-w-sm border border-[#d6c3b8] text-center">
+    <div class="ui-modal-card">
         <span class="material-symbols-outlined text-[#feae2c] text-5xl mb-4">help</span>
         <h3 class="text-xl font-bold text-[#50290b] mb-2" style="font-family: var(--font-serif)">Simpan Nilai?</h3>
         <p class="text-xs text-[#51443c] mb-6">Apakah Anda yakin nilai yang diberikan sudah benar dan siap disimpan?</p>
         <div class="flex gap-2 justify-center">
-            <button type="button" id="btn-cancel-simpan" class="px-4 py-2 rounded-lg font-bold text-xs text-[#51443c] border border-[#d6c3b8] hover:bg-[#f8f3ed] transition-colors">Periksa Lagi</button>
-            <button type="button" id="btn-confirm-simpan" class="px-4 py-2 rounded-lg font-bold text-xs bg-[#feae2c] text-[#6b4500] hover:brightness-110 transition-all">Ya, Simpan</button>
+            <button type="button" id="btn-cancel-simpan" class="ui-btn ui-btn-secondary px-4 py-2 text-xs">Periksa Lagi</button>
+            <button type="button" id="btn-confirm-simpan" class="ui-btn ui-btn-primary px-4 py-2 text-xs">Ya, Simpan</button>
         </div>
     </div>
 </div>
@@ -76,7 +76,7 @@
     <!-- Header Card (same width as questions area) -->
     <div class="flex flex-col lg:flex-row gap-6 flex-1">
         <!-- Left Column: 70% -->
-        <div class="flex-1 min-w-0 flex flex-col" style="flex: 0 0 68%; max-width: 68%;">
+        <div class="w-full lg:basis-[68%] lg:max-w-[68%] min-w-0 flex flex-col">
 
             <!-- Quiz Header Card -->
             <div class="bg-surface-container-lowest p-3 rounded-xl shadow-ambient border border-outline-variant/30 mb-3">
@@ -152,7 +152,7 @@
         </div>
 
         <!-- Right: Grading Sidebar 30% -->
-        <aside class="flex-shrink-0 lg:sticky lg:top-4" style="flex: 0 0 30%; max-width: 30%; height: calc(100vh - 88px);">
+        <aside class="w-full lg:basis-[30%] lg:max-w-[30%] flex-shrink-0 lg:sticky lg:top-4 lg:h-[calc(100vh-88px)]">
             <form id="gradingForm" method="POST" action="{{ route('guru.penilaian.kuis.store', ['kuis_id' => $submission['kuis']->id, 'siswa_id' => $submission['siswa']->id]) }}" class="bg-surface-container-highest p-4 rounded-xl shadow-ambient border border-outline-variant/30 h-full flex flex-col">
                 @csrf
                 <h3 class="font-bold text-[15px] text-primary mb-3 flex-shrink-0" style="font-family: var(--font-serif)">Ringkasan Nilai</h3>
@@ -188,7 +188,7 @@
                 <div class="space-y-2 flex-1 flex flex-col min-h-0 justify-end">
                     <!-- Actions -->
                     <div class="pt-3 border-t border-outline-variant/30 flex-shrink-0">
-                        <button type="button" id="btn-trigger-simpan" class="w-full px-6 py-2.5 bg-[#feae2c] text-[#6b4500] text-sm font-bold rounded-lg flex items-center justify-center gap-2 hover:brightness-110 transition-soft">
+                        <button type="button" id="btn-trigger-simpan" class="ui-btn ui-btn-primary w-full px-6 py-2.5 text-sm">
                             <span class="material-symbols-outlined" style="font-size: 18px">save</span> Simpan Nilai
                         </button>
                     </div>

@@ -9,7 +9,6 @@ use App\Http\Controllers\Guru\KuisController;
 use App\Http\Controllers\Guru\UjianController;
 use App\Http\Controllers\Guru\KelasController;
 use App\Http\Controllers\Guru\NilaiController;
-use App\Http\Controllers\Guru\NotifikasiController;
 use App\Http\Controllers\Guru\MonitoringController;
 use App\Http\Controllers\Guru\PenilaianController;
 use App\Http\Controllers\Siswa\MateriController as SiswaMateriController;
@@ -155,8 +154,6 @@ Route::prefix('guru')->name('guru.')->middleware(['auth'])->group(function () {
     Route::get('/penilaian/ujian', [PenilaianController::class, 'ujian'])->name('penilaian.ujian');
     Route::post('/penilaian/ujian/{ujian_id}/{siswa_id}', [PenilaianController::class, 'storeUjian'])->name('penilaian.ujian.store');
 
-    // Notifikasi
-    Route::get('/notifikasi', [NotifikasiController::class, 'index'])->name('notifikasi');
 });
 
 // ─── Siswa Routes (Protected) ─────────────────────────────────
@@ -193,7 +190,6 @@ Route::prefix('siswa')->name('siswa.')->middleware(['auth'])->group(function () 
     Route::post('/mapel/join', [App\Http\Controllers\Siswa\KelasController::class, 'join'])->name('mapel.join');
     Route::get('/mapel/{id}', [App\Http\Controllers\Siswa\KelasController::class, 'show'])->name('mapel.detail');
     Route::get('/nilai', [App\Http\Controllers\Siswa\NilaiController::class, 'index'])->name('nilai');
-    Route::get('/notifikasi', fn() => view('siswa.notifikasi'))->name('notifikasi');
 });
 
 // ─── Admin Routes (Protected) ─────────────────────────────────
@@ -209,4 +205,3 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
     // Laporan Aktivitas
     Route::get('/aktivitas', [App\Http\Controllers\Admin\AktivitasController::class, 'index'])->name('aktivitas');
 });
-
