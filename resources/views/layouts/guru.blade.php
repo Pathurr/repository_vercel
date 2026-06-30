@@ -133,9 +133,7 @@
               <div id="submenu-kelas" class="hidden flex flex-col mt-1 mb-1 pl-12 pr-4 sidebar-label">
                   <a href="{{ route('guru.kelas') }}" class="text-on-primary/70 hover:text-secondary-fixed text-xs py-2 transition-soft border-l border-on-primary/20 pl-3 hover:border-secondary-fixed mb-1">Semua Kelas</a>
                   @php
-                      $guruClasses = app()->environment('local') 
-                          ? \App\Models\Kelas::all() 
-                          : \App\Models\Kelas::where('guru_id', Auth::id())->get();
+                      $guruClasses = \App\Models\Kelas::where('guru_id', Auth::id())->get();
                   @endphp
                   @foreach($guruClasses as $c)
                   <a href="{{ route('guru.kelas.detail', ['id' => $c->id]) }}" class="text-on-primary/70 hover:text-secondary-fixed text-[10px] py-1.5 transition-soft border-l border-on-primary/20 pl-3 hover:border-secondary-fixed truncate block" title="{{ $c->mata_pelajaran }} - {{ $c->nama_kelas }}">

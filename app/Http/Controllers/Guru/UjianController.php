@@ -10,7 +10,7 @@ class UjianController extends Controller
 {
     public function index()
     {
-        $ujian = Ujian::with(['kelas.siswa', 'soal', 'jawaban'])->latest()->get();
+        $ujian = Ujian::with(['kelas.siswa', 'soal', 'jawaban'])->where('guru_id', Auth::id())->latest()->get();
         return view('guru.ujian', compact('ujian'));
     }
 

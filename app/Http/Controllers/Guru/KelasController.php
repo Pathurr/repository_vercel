@@ -14,7 +14,7 @@ class KelasController extends Controller
         $guruId = Auth::id();
 
         $kelas = Kelas::withCount(['siswa', 'materi', 'tugas', 'kuis', 'ujian'])
-            ->when(!app()->environment('local'), fn($query) => $query->where('guru_id', $guruId))
+            ->where('guru_id', $guruId)
             ->latest()
             ->get();
 
@@ -39,7 +39,7 @@ class KelasController extends Controller
                 'kuis',
                 'ujian',
             ])
-            ->when(!app()->environment('local'), fn($query) => $query->where('guru_id', $guruId))
+            ->where('guru_id', $guruId)
             ->when($request->id, fn ($query, $id) => $query->where('id', $id))
             ->firstOrFail();
 

@@ -10,7 +10,7 @@ class KuisController extends Controller
 {
     public function index()
     {
-        $kuis = Kuis::with(['kelas.siswa', 'soal', 'jawaban'])->latest()->get();
+        $kuis = Kuis::with(['kelas.siswa', 'soal', 'jawaban'])->where('guru_id', Auth::id())->latest()->get();
         return view('guru.kuis', compact('kuis'));
     }
 

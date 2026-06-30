@@ -11,7 +11,7 @@ class MateriController extends Controller
     public function index()
     {
         // Ambil semua materi dari Supabase agar data lama langsung tampil di halaman guru.
-        $materi = Materi::latest()->get();
+        $materi = Materi::with('kelas')->where('guru_id', Auth::id())->latest()->get();
         return view('guru.materi', compact('materi'));
     }
 
