@@ -10,7 +10,7 @@ class MateriController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $kelasIds = app()->environment('local') ? \App\Models\Kelas::pluck('id') : $user->kelas()->pluck('kelas.id');
+        $kelasIds = $user->kelas()->pluck('kelas.id');
 
         $materi = Materi::whereIn('kelas_id', $kelasIds)->latest()->get();
         return view('siswa.materi', compact('materi'));
@@ -19,7 +19,7 @@ class MateriController extends Controller
     public function show($id)
     {
         $user = Auth::user();
-        $kelasIds = app()->environment('local') ? \App\Models\Kelas::pluck('id') : $user->kelas()->pluck('kelas.id');
+        $kelasIds = $user->kelas()->pluck('kelas.id');
 
         $materi = Materi::whereIn('kelas_id', $kelasIds)->findOrFail($id);
         
@@ -34,7 +34,7 @@ class MateriController extends Controller
     public function markAsRead($id)
     {
         $user = Auth::user();
-        $kelasIds = app()->environment('local') ? \App\Models\Kelas::pluck('id') : $user->kelas()->pluck('kelas.id');
+        $kelasIds = $user->kelas()->pluck('kelas.id');
 
         $materi = Materi::whereIn('kelas_id', $kelasIds)->findOrFail($id);
 

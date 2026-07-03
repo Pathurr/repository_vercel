@@ -203,5 +203,5 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
     Route::post('/akun/bulk', [App\Http\Controllers\Admin\AkunController::class, 'bulkUpdate'])->name('akun.bulk');
     
     // Laporan Aktivitas
-    Route::get('/aktivitas', fn() => view('admin.laporan-aktivitas'))->name('aktivitas');
+    Route::get('/aktivitas', [App\Http\Controllers\Admin\AktivitasController::class, 'index'])->name('aktivitas');
 });

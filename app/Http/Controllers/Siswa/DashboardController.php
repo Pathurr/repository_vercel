@@ -19,9 +19,7 @@ class DashboardController extends Controller
         $user = Auth::user();
         
         // Get IDs of classes the student is enrolled in (if dev, see all)
-        $kelasIds = app()->environment('local') 
-            ? \App\Models\Kelas::pluck('id') 
-            : $user->kelas()->pluck('kelas.id');
+        $kelasIds = $user->kelas()->pluck('kelas.id');
 
         $kelasAktifCount = $kelasIds->count();
 

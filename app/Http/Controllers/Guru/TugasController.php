@@ -10,7 +10,7 @@ class TugasController extends Controller
 {
     public function index()
     {
-        $tugas = Tugas::with(['kelas', 'pengumpulan'])->latest()->get();
+        $tugas = Tugas::with(['kelas', 'pengumpulan'])->where('guru_id', Auth::id())->latest()->get();
         return view('guru.tugas', compact('tugas'));
     }
 

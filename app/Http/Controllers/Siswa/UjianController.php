@@ -12,7 +12,7 @@ class UjianController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $kelasIds = app()->environment('local') ? \App\Models\Kelas::pluck('id') : $user->kelas()->pluck('kelas.id');
+        $kelasIds = $user->kelas()->pluck('kelas.id');
 
         $ujian = Ujian::whereIn('kelas_id', $kelasIds)->latest()->get();
         return view('siswa.ujian', compact('ujian'));
@@ -21,7 +21,7 @@ class UjianController extends Controller
     public function show($id)
     {
         $user = Auth::user();
-        $kelasIds = app()->environment('local') ? \App\Models\Kelas::pluck('id') : $user->kelas()->pluck('kelas.id');
+        $kelasIds = $user->kelas()->pluck('kelas.id');
 
         $ujian = Ujian::with('soal')->whereIn('kelas_id', $kelasIds)->findOrFail($id);
         return view('siswa.pengerjaan-ujian', compact('ujian'));

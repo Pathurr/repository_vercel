@@ -12,7 +12,7 @@ class TugasController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $kelasIds = app()->environment('local') ? \App\Models\Kelas::pluck('id') : $user->kelas()->pluck('kelas.id');
+        $kelasIds = $user->kelas()->pluck('kelas.id');
 
         $tugas = Tugas::with(['pengumpulan' => function ($query) use ($user) {
             $query->where('siswa_id', $user->id);
@@ -24,7 +24,7 @@ class TugasController extends Controller
     public function show($id)
     {
         $user = Auth::user();
-        $kelasIds = app()->environment('local') ? \App\Models\Kelas::pluck('id') : $user->kelas()->pluck('kelas.id');
+        $kelasIds = $user->kelas()->pluck('kelas.id');
 
         $tugas = Tugas::with(['pengumpulan' => function ($query) use ($user) {
             $query->where('siswa_id', $user->id);
