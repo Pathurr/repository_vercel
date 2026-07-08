@@ -42,23 +42,23 @@
 </div>
 
 <!-- Controls: Filters & Search -->
-<form method="GET" action="{{ route('admin.aktivitas') }}" id="filterForm" class="bg-surface rounded-xl border border-outline-variant/30 shadow-sm mb-6 z-10 relative">
+<div id="filterForm" class="bg-surface rounded-xl border border-outline-variant/30 shadow-sm mb-6 z-10 relative">
     <div class="p-4 bg-surface-container-low border-b border-surface-variant flex flex-col md:flex-row gap-4 items-center rounded-t-xl">
         <!-- Search Input -->
         <div class="relative flex-1 w-full group">
             <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-secondary pointer-events-none transition-soft" style="font-size: 20px">search</span>
-            <input id="searchInput" name="search" value="{{ request('search') }}" onchange="document.getElementById('filterForm').submit()" class="w-full bg-surface border-2 border-outline-variant/50 rounded-xl pl-10 pr-4 py-2.5 text-sm text-on-surface focus:outline-none focus:border-secondary focus:ring-0 transition-soft hover:border-secondary/50 placeholder-on-surface-variant/50" placeholder="Cari nama user atau email..." type="text">
+            <input id="searchInput" onkeyup="filterTable()" class="w-full bg-surface border-2 border-outline-variant/50 rounded-xl pl-10 pr-4 py-2.5 text-sm text-on-surface focus:outline-none focus:border-secondary focus:ring-0 transition-soft hover:border-secondary/50 placeholder-on-surface-variant/50" placeholder="Cari nama user atau email..." type="text">
         </div>
         <!-- Filter Role -->
         <div class="relative w-full md:w-auto md:min-w-[170px] shrink-0">
-            <input type="hidden" name="role" id="filterRole" value="{{ request('role') }}">
+            <input type="hidden" id="filterRole" value="Semua">
             <button type="button" onclick="toggleDropdown('role')" class="w-full bg-surface border-2 border-outline-variant/50 rounded-xl pl-10 pr-10 py-2.5 text-sm font-medium text-on-surface text-left focus:outline-none focus:border-secondary focus:ring-0 transition-soft hover:border-secondary/50">
                 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none transition-soft" style="font-size: 20px">badge</span>
-                <span id="filterRoleLabel">{{ request('role') ?: 'Semua Role' }}</span>
+                <span id="filterRoleLabel">Semua Role</span>
                 <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none transition-soft" style="font-size: 20px">expand_more</span>
             </button>
             <div id="dropdownRole" class="hidden absolute z-20 mt-2 w-full md:min-w-[170px] bg-surface rounded-xl border border-outline-variant/30 shadow-xl overflow-hidden">
-                <button type="button" onclick="selectDropdown('role','','Semua Role')" class="w-full text-left px-4 py-2.5 text-sm text-on-surface hover:bg-surface-variant/60 transition-soft">Semua Role</button>
+                <button type="button" onclick="selectDropdown('role','Semua','Semua Role')" class="w-full text-left px-4 py-2.5 text-sm text-on-surface hover:bg-surface-variant/60 transition-soft">Semua Role</button>
                 <button type="button" onclick="selectDropdown('role','siswa','Siswa')" class="w-full text-left px-4 py-2.5 text-sm text-on-surface hover:bg-surface-variant/60 transition-soft">Siswa</button>
                 <button type="button" onclick="selectDropdown('role','guru','Guru')" class="w-full text-left px-4 py-2.5 text-sm text-on-surface hover:bg-surface-variant/60 transition-soft">Guru</button>
                 <button type="button" onclick="selectDropdown('role','admin','Admin')" class="w-full text-left px-4 py-2.5 text-sm text-on-surface hover:bg-surface-variant/60 transition-soft">Admin</button>
@@ -66,22 +66,21 @@
         </div>
         <!-- Filter Status -->
         <div class="relative w-full md:w-auto md:min-w-[170px] shrink-0">
-            <input type="hidden" name="status" id="filterStatus" value="{{ request('status') }}">
+            <input type="hidden" id="filterStatus" value="Semua">
             <button type="button" onclick="toggleDropdown('status')" class="w-full bg-surface border-2 border-outline-variant/50 rounded-xl pl-10 pr-10 py-2.5 text-sm font-medium text-on-surface text-left focus:outline-none focus:border-secondary focus:ring-0 transition-soft hover:border-secondary/50">
                 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none transition-soft" style="font-size: 20px">login</span>
-                <span id="filterStatusLabel">{{ request('status') ?: 'Semua Status' }}</span>
+                <span id="filterStatusLabel">Semua Status</span>
                 <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none transition-soft" style="font-size: 20px">expand_more</span>
             </button>
             <div id="dropdownStatus" class="hidden absolute z-20 mt-2 w-full md:min-w-[170px] bg-surface rounded-xl border border-outline-variant/30 shadow-xl overflow-hidden">
-                <button type="button" onclick="selectDropdown('status','','Semua Status')" class="w-full text-left px-4 py-2.5 text-sm text-on-surface hover:bg-surface-variant/60 transition-soft">Semua Status</button>
+                <button type="button" onclick="selectDropdown('status','Semua','Semua Status')" class="w-full text-left px-4 py-2.5 text-sm text-on-surface hover:bg-surface-variant/60 transition-soft">Semua Status</button>
                 <button type="button" onclick="selectDropdown('status','Berhasil','Berhasil')" class="w-full text-left px-4 py-2.5 text-sm text-on-surface hover:bg-surface-variant/60 transition-soft">Berhasil</button>
                 <button type="button" onclick="selectDropdown('status','Gagal','Gagal')" class="w-full text-left px-4 py-2.5 text-sm text-on-surface hover:bg-surface-variant/60 transition-soft">Gagal</button>
                 <button type="button" onclick="selectDropdown('status','Blocked','Blocked')" class="w-full text-left px-4 py-2.5 text-sm text-on-surface hover:bg-surface-variant/60 transition-soft">Blocked</button>
             </div>
         </div>
-        <button type="submit" class="hidden">Submit</button>
     </div>
-</form>
+</div>
 
 <!-- Log Login Table Area -->
 <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-xl shadow-sm shadow-primary/5 flex-1 flex flex-col">
@@ -147,7 +146,33 @@
                                 <span class="px-2 py-1 rounded-md text-sm border border-outline-variant">{{ $log->status }}</span>
                             @endif
                         </td>
-                        <td data-label="Identifikasi Perangkat" class="px-4 py-4 text-on-surface-variant"><span class="block truncate" title="{{ $log->user_agent }}">{{ $log->user_agent ? \Illuminate\Support\Str::limit($log->user_agent, 40) : 'Unknown' }}</span></td>
+                        <td data-label="Identifikasi Perangkat" class="px-4 py-4 text-on-surface-variant">
+                            @if($log->user_agent)
+                                @php
+                                    $agent = new \Jenssegers\Agent\Agent();
+                                    $agent->setUserAgent($log->user_agent);
+                                    $platform = $agent->platform() ?: 'Unknown OS';
+                                    $browser = $agent->browser() ?: 'Unknown Browser';
+                                    $deviceInfo = "{$platform} - {$browser}";
+                                    
+                                    if ($agent->isDesktop()) {
+                                        $icon = 'computer';
+                                    } elseif ($agent->isTablet()) {
+                                        $icon = 'tablet_mac';
+                                    } elseif ($agent->isMobile()) {
+                                        $icon = 'smartphone';
+                                    } else {
+                                        $icon = 'device_unknown';
+                                    }
+                                @endphp
+                                <div class="flex items-center gap-2" title="{{ $log->user_agent }}">
+                                    <span class="material-symbols-outlined text-[18px]">{{ $icon }}</span>
+                                    <span class="block truncate">{{ $deviceInfo }}</span>
+                                </div>
+                            @else
+                                <span class="block truncate">Unknown</span>
+                            @endif
+                        </td>
                     </tr>
                 @empty
                     <tr>
@@ -159,8 +184,8 @@
     </div>
     
     <!-- Pagination -->
-    <div class="p-4 border-t border-outline-variant bg-surface-container-lowest flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-on-surface-variant">
-        {{ $logs->links() }}
+    <div id="pagination-container" class="bg-surface-container-low border-t border-outline-variant p-4 flex flex-col sm:flex-row items-center justify-between gap-3 rounded-b-xl">
+        <!-- Will be populated by JS -->
     </div>
 </div>
 
@@ -187,7 +212,8 @@
             document.getElementById('filterStatusLabel').textContent = label;
             document.getElementById('dropdownStatus').classList.add('hidden');
         }
-        document.getElementById('filterForm').submit();
+        filterTable();
+        currentPage = 1;
     }
 
     document.addEventListener('click', function (event) {
@@ -199,6 +225,95 @@
         if (!event.target.closest('[onclick="toggleDropdown(\'status\')"]') && statusWrapper && !statusWrapper.classList.contains('hidden')) {
             statusWrapper.classList.add('hidden');
         }
+    });
+
+    let currentPage = 1;
+    const rowsPerPage = 10;
+
+    function filterTable() {
+        const query = document.getElementById('searchInput').value.toLowerCase();
+        const role = document.getElementById('filterRole').value;
+        const status = document.getElementById('filterStatus').value;
+        
+        const rows = document.querySelectorAll('.activity-row');
+        let visibleRows = [];
+        
+        rows.forEach(row => {
+            const rowRole = row.getAttribute('data-role');
+            const rowStatus = row.getAttribute('data-status');
+            const rowName = row.querySelector('.activity-name') ? row.querySelector('.activity-name').textContent.toLowerCase() : '';
+            
+            const matchSearch = query === '' || rowName.includes(query);
+            const matchRole = role === 'Semua' || rowRole === role;
+            const matchStatus = status === 'Semua' || rowStatus === status;
+            
+            if(matchSearch && matchRole && matchStatus) {
+                visibleRows.push(row);
+            } else {
+                row.style.display = 'none';
+            }
+        });
+        
+        const totalRows = visibleRows.length;
+        const totalPages = Math.ceil(totalRows / rowsPerPage) || 1;
+        
+        if (currentPage > totalPages) currentPage = totalPages;
+        
+        const start = (currentPage - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+        
+        visibleRows.forEach((row, index) => {
+            if (index >= start && index < end) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+        
+        renderPagination(totalRows, totalPages, start, end);
+    }
+    
+    function changePage(page) {
+        currentPage = page;
+        filterTable();
+    }
+    
+    function renderPagination(totalRows, totalPages, start, end) {
+        const container = document.getElementById('pagination-container');
+        if (!container) return;
+        
+        const startText = totalRows === 0 ? 0 : start + 1;
+        const endText = Math.min(end, totalRows);
+        
+        let html = `<span class="font-body-md text-body-md text-on-surface-variant text-sm text-center sm:text-left">Menampilkan ${startText}-${endText} dari ${totalRows} aktivitas (Maksimal 10 per halaman)</span>`;
+        html += `<div class="flex flex-wrap items-center justify-center gap-1">`;
+        
+        if (currentPage === 1) {
+            html += `<button class="p-1 rounded text-outline hover:bg-surface-container opacity-50 cursor-not-allowed"><span class="material-symbols-outlined" data-icon="chevron_left">chevron_left</span></button>`;
+        } else {
+            html += `<button onclick="changePage(${currentPage - 1})" class="p-1 rounded text-on-surface-variant hover:text-primary hover:bg-surface-container"><span class="material-symbols-outlined" data-icon="chevron_left">chevron_left</span></button>`;
+        }
+        
+        for (let i = 1; i <= totalPages; i++) {
+            if (i === currentPage) {
+                html += `<button class="w-8 h-8 rounded bg-primary text-on-primary font-label-sm text-sm flex items-center justify-center">${i}</button>`;
+            } else {
+                html += `<button onclick="changePage(${i})" class="w-8 h-8 rounded text-on-surface-variant hover:bg-surface-container font-label-sm text-sm flex items-center justify-center">${i}</button>`;
+            }
+        }
+        
+        if (currentPage === totalPages) {
+            html += `<button class="p-1 rounded text-outline hover:bg-surface-container opacity-50 cursor-not-allowed"><span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span></button>`;
+        } else {
+            html += `<button onclick="changePage(${currentPage + 1})" class="p-1 rounded text-on-surface-variant hover:text-primary hover:bg-surface-container"><span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span></button>`;
+        }
+        
+        html += `</div>`;
+        container.innerHTML = html;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        filterTable();
     });
 </script>
 @endpush
