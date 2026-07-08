@@ -31,75 +31,7 @@ Route::get('/', function () {
 // ─── Auth Routes (Laravel Breeze / Manual) ────────────────────
 require __DIR__.'/auth.php';
 
-// ─── DEV SHORTCUTS: Akses Langsung Tanpa Login ────────────────
-// ⚠️ HAPUS bagian ini sebelum deploy ke production!
-if (app()->environment('local')) {
 
-    // Masuk sebagai Guru (auto-login user pertama atau buat user dummy)
-    Route::get('/dev/guru', function () {
-        Auth::logout();
-        session()->invalidate();
-        session()->regenerateToken();
-        $user = User::where('role', 'guru')->first() ?? User::create([
-            'name'     => 'Bpk. Ahmad Suherman',
-            'email'    => 'guru@smkmandalahayu.sch.id',
-            'password' => bcrypt('password'),
-            'role'     => 'guru',
-            'status'   => 'active'
-        ]);
-        Auth::login($user);
-        return redirect()->route('guru.dashboard');
-    })->name('dev.guru');
-
-    // Masuk sebagai Siswa (auto-login user kedua atau buat user dummy)
-    Route::get('/dev/siswa', function () {
-        Auth::logout();
-        session()->invalidate();
-        session()->regenerateToken();
-        $user = User::where('role', 'murid')->first() ?? User::create([
-            'name'     => 'Budi Pratama',
-            'email'    => 'siswa@smkmandalahayu.sch.id',
-            'password' => bcrypt('password'),
-            'role'     => 'murid',
-            'status'   => 'active'
-        ]);
-        
-        // Auto-enroll to all existing classes for dev convenience
-        $allKelasIds = \App\Models\Kelas::pluck('id');
-        $user->kelas()->syncWithoutDetaching($allKelasIds);
-        
-        Auth::login($user);
-        return redirect()->route('siswa.dashboard');
-    })->name('dev.siswa');
-
-    // Masuk sebagai Admin (buat user dummy admin)
-    Route::get('/dev/admin', function () {
-        Auth::logout();
-        session()->invalidate();
-        session()->regenerateToken();
-        $user = User::firstOrCreate(
-            ['email' => 'admin@smkmandalahayu.sch.id'],
-            [
-                'name'     => 'Administrator',
-                'password' => bcrypt('password'),
-                'role'     => 'admin',
-                'status'   => 'active'
-            ]
-        );
-        Auth::login($user);
-        return redirect()->route('admin.dashboard'); // using default dashboard for admin
-    })->name('dev.admin');
-
-    // Halaman index semua shortcut
-    Route::get('/dev', function () {
-        return response()->view('dev-index');
-    })->name('dev.index');
-
-    // Cek langsung halaman verifikasi email tanpa login
-    Route::get('/dev/verify-email', function () {
-        return view('auth.verify-email');
-    })->name('dev.verify-email');
-}
 
 // ─── Guru Routes (Protected) ──────────────────────────────────
 Route::prefix('guru')->name('guru.')->middleware(['auth'])->group(function () {
