@@ -42,6 +42,8 @@ class UjianController extends Controller
                 'mulai_at'  => now(),
                 'selesai_at'=> now()->addHours(2),
                 'durasi_menit' => $request->durasi ?? 90,
+                'batas_percobaan' => $request->batas ?? 1,
+                'acak_soal' => $request->has('acak_soal') ? 'true' : 'false',
             ]);
 
             if ($request->questions_data) {
@@ -53,7 +55,7 @@ class UjianController extends Controller
                             'pertanyaan' => $q['pertanyaan'],
                             'tipe' => $q['tipe'] ?? 'pilihan_ganda',
                             'pilihan' => $q['pilihan'],
-                            'jawaban_benar' => (string) $q['jawaban_benar'],
+                            'jawaban_benar' => is_array($q['jawaban_benar']) ? json_encode($q['jawaban_benar']) : (string) $q['jawaban_benar'],
                             'bobot' => $q['bobot'],
                             'urutan' => $q['urutan']
                         ]);
@@ -81,6 +83,8 @@ class UjianController extends Controller
             'judul'     => $request->judul,
             'deskripsi' => $request->deskripsi,
             'durasi_menit' => $request->durasi ?? 90,
+            'batas_percobaan' => $request->batas ?? 1,
+            'acak_soal' => $request->has('acak_soal') ? 'true' : 'false',
         ]);
 
         if ($request->questions_data) {
@@ -96,7 +100,7 @@ class UjianController extends Controller
                         'pertanyaan' => $q['pertanyaan'],
                         'tipe' => $q['tipe'] ?? 'pilihan_ganda',
                         'pilihan' => $q['pilihan'],
-                        'jawaban_benar' => (string) $q['jawaban_benar'],
+                        'jawaban_benar' => is_array($q['jawaban_benar']) ? json_encode($q['jawaban_benar']) : (string) $q['jawaban_benar'],
                         'bobot' => $q['bobot'],
                         'urutan' => $q['urutan']
                     ]);

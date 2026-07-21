@@ -33,9 +33,10 @@ class NilaiController extends Controller
         foreach ($nilaiUjianKuis as $n) {
             $type = class_basename($n->nilaiable_type) === 'Ujian' ? 'ujian' : 'kuis';
             $guruName = $n->nilaiable->guru->name ?? '-';
+            $attemptSuffix = ($type === 'ujian' && isset($n->attempt) && $n->attempt > 1) ? ' (Percobaan ' . $n->attempt . ')' : '';
             $dataNilai[] = [
                 'id' => $idCounter++,
-                'name' => $n->nilaiable->judul ?? 'Tidak diketahui',
+                'name' => ($n->nilaiable->judul ?? 'Tidak diketahui') . $attemptSuffix,
                 'desc' => $type === 'ujian' ? 'Ujian Kelas' : 'Kuis Kelas',
                 'category' => $type,
                 'dateStr' => $n->created_at->format('d M Y'),

@@ -82,14 +82,14 @@
                     <div class="space-y-2 relative">
                         <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Durasi (Menit)</label>
                         <div class="relative">
-                            <input class="w-full p-3 bg-surface-container-low border border-outline rounded-lg focus:ring-2 focus:ring-secondary-container pr-12" id="ujianDuration" name="durasi" type="number" value="{{ old('durasi', $ujian->durasi_menit ?? request('durasi', 90)) }}"/>
+                            <input class="w-full p-3 bg-surface-container-low border border-outline rounded-lg focus:ring-2 focus:ring-secondary-container pr-12" id="ujianDuration" name="durasi" type="number" min="0" value="{{ old('durasi', $ujian->durasi_menit ?? request('durasi', 90)) }}"/>
                             <span class="absolute right-4 top-3 text-on-surface-variant/60 text-xs font-bold uppercase tracking-wider">Mnt</span>
                         </div>
                         <p class="text-xs text-error font-bold hidden" id="err-ujianDurasi"></p>
                     </div>
                     <div class="space-y-2 relative">
                         <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Batas Percobaan</label>
-                        <input id="ujianBatas" name="batas" class="w-full p-3 bg-surface-container-low border border-outline rounded-lg focus:ring-2 focus:ring-secondary-container" type="number" value="{{ old('batas', $ujian->batas_percobaan ?? 1) }}"/>
+                        <input id="ujianBatas" name="batas" class="w-full p-3 bg-surface-container-low border border-outline rounded-lg focus:ring-2 focus:ring-secondary-container" type="number" min="0" value="{{ old('batas', $ujian->batas_percobaan ?? 1) }}"/>
                         <p class="text-xs text-error font-bold hidden" id="err-ujianBatas"></p>
                     </div>
                 </div>
@@ -202,7 +202,7 @@
                             </div>
                             <div class="space-y-2">
                                 <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Bobot Nilai</label>
-                                <input class="w-full p-3 bg-surface-container-low border border-outline rounded-lg question-weight" type="number" value="10"/>
+                                <input class="w-full p-3 bg-surface-container-low border border-outline rounded-lg question-weight" type="number" min="0" value="10"/>
                             </div>
                         </div>
                         <div class="space-y-6">
@@ -212,37 +212,51 @@
                                 <p class="text-xs text-error font-bold hidden err-text"></p>
                             </div>
                             <div class="pg-options space-y-4" id="options-1">
-                                <p class="text-xs text-on-surface-variant italic mb-2">Tentukan opsi jawaban dan pilih jawaban yang benar:</p>
+                                <div class="flex justify-between items-center mb-2">
+                                    <p class="text-xs text-on-surface-variant italic">Tentukan opsi jawaban dan pilih jawaban yang benar:</p>
+                                    <div class="flex gap-2">
+                                        <button type="button" class="text-secondary hover:text-primary transition-colors flex items-center gap-1" onclick="addOption(1)">
+                                            <span class="material-symbols-outlined text-[16px]">add</span> <span class="text-xs font-bold">Tambah</span>
+                                        </button>
+                                        <button type="button" class="text-red-500 hover:text-red-700 transition-colors flex items-center gap-1" onclick="removeOption(1)">
+                                            <span class="material-symbols-outlined text-[16px]">remove</span> <span class="text-xs font-bold">Kurangi</span>
+                                        </button>
+                                    </div>
+                                </div>
                                 <p class="text-xs text-error font-bold hidden err-options"></p>
-                                <div class="flex items-center gap-4">
-                                    <input class="w-5 h-5 text-secondary border-outline opt-input-1 question-correct" name="q1-correct" type="radio" value="A"/>
-                                    <span class="font-bold text-on-surface-variant">A.</span>
-                                    <input class="flex-1 stationery-input py-1 question-option-text" value="Mentransmisi data via IP" type="text"/>
+                                <div id="options-list-1" class="space-y-4">
+                                    <div class="flex items-center gap-4 option-item-1" data-opt="A">
+                                        <input class="w-5 h-5 text-secondary border-outline opt-input-1 question-correct" name="q1-correct" type="radio" value="A"/>
+                                        <span class="font-bold text-on-surface-variant opt-label-1">A.</span>
+                                        <input class="flex-1 stationery-input py-1 question-option-text" value="Mentransmisi data via IP" type="text"/>
+                                    </div>
+                                    <div class="flex items-center gap-4 option-item-1" data-opt="B">
+                                        <input class="w-5 h-5 text-secondary border-outline opt-input-1 question-correct" name="q1-correct" type="radio" value="B" checked/>
+                                        <span class="font-bold text-on-surface-variant opt-label-1">B.</span>
+                                        <input class="flex-1 stationery-input py-1 question-option-text" value="Memberikan IP address otomatis" type="text"/>
+                                    </div>
+                                    <div class="flex items-center gap-4 option-item-1" data-opt="C">
+                                        <input class="w-5 h-5 text-secondary border-outline opt-input-1 question-correct" name="q1-correct" type="radio" value="C"/>
+                                        <span class="font-bold text-on-surface-variant opt-label-1">C.</span>
+                                        <input class="flex-1 stationery-input py-1 question-option-text" value="Mengenkripsi lalu lintas data" type="text"/>
+                                    </div>
+                                    <div class="flex items-center gap-4 option-item-1" data-opt="D">
+                                        <input class="w-5 h-5 text-secondary border-outline opt-input-1 question-correct" name="q1-correct" type="radio" value="D"/>
+                                        <span class="font-bold text-on-surface-variant opt-label-1">D.</span>
+                                        <input class="flex-1 stationery-input py-1 question-option-text" value="Mengelola nama domain" type="text"/>
+                                    </div>
+                                    <div class="flex items-center gap-4 option-item-1" data-opt="E">
+                                        <input class="w-5 h-5 text-secondary border-outline opt-input-1 question-correct" name="q1-correct" type="radio" value="E"/>
+                                        <span class="font-bold text-on-surface-variant opt-label-1">E.</span>
+                                        <input class="flex-1 stationery-input py-1 question-option-text" placeholder="Opsi E" type="text"/>
+                                    </div>
                                 </div>
-                                <div class="flex items-center gap-4">
-                                    <input class="w-5 h-5 text-secondary border-outline opt-input-1 question-correct" name="q1-correct" type="radio" value="B" checked/>
-                                    <span class="font-bold text-on-surface-variant">B.</span>
-                                    <input class="flex-1 stationery-input py-1 question-option-text" value="Memberikan IP address otomatis" type="text"/>
-                                </div>
-                                <div class="flex items-center gap-4">
-                                    <input class="w-5 h-5 text-secondary border-outline opt-input-1 question-correct" name="q1-correct" type="radio" value="C"/>
-                                    <span class="font-bold text-on-surface-variant">C.</span>
-                                    <input class="flex-1 stationery-input py-1 question-option-text" value="Mengenkripsi lalu lintas data" type="text"/>
-                                </div>
-                                <div class="flex items-center gap-4">
-                                    <input class="w-5 h-5 text-secondary border-outline opt-input-1 question-correct" name="q1-correct" type="radio" value="D"/>
-                                    <span class="font-bold text-on-surface-variant">D.</span>
-                                    <input class="flex-1 stationery-input py-1 question-option-text" value="Mengelola nama domain" type="text"/>
-                                </div>
-                            </div>
-                            <div class="essay-note hidden bg-surface-container-highest p-4 rounded-lg flex items-start gap-3 text-on-surface-variant" id="note-1">
-                                <span class="material-symbols-outlined text-primary">edit_square</span>
-                                <p class="text-sm italic">Soal bertipe Esai akan dinilai secara manual oleh guru setelah ujian selesai dikerjakan.</p>
                             </div>
                         </div>
                     </div>
+                </div>
                     
-                    <button class="w-full py-5 border-2 border-dashed border-outline-variant hover:border-secondary-container hover:bg-secondary-container/5 transition-all rounded-xl flex flex-col items-center justify-center gap-2 group" onclick="addQuestion()" type="button">
+                <button class="w-full py-5 border-2 border-dashed border-outline-variant hover:border-secondary-container hover:bg-secondary-container/5 transition-all rounded-xl flex flex-col items-center justify-center gap-2 group" onclick="addQuestion()" type="button">
                         <span class="material-symbols-outlined text-4xl text-outline-variant group-hover:text-secondary-container transition-colors">add_circle</span>
                         <span class="font-bold text-on-surface-variant group-hover:text-primary transition-colors">Tambah Soal Baru</span>
                     </button>
@@ -291,12 +305,12 @@
 
         if (selectElement.value === 'essay') {
             optionsDiv.classList.add('hidden');
-            noteDiv.classList.remove('hidden');
-            if(multiDiv) multiDiv.classList.add('hidden');
+            if (noteDiv) noteDiv.classList.remove('hidden');
+            if (multiDiv) multiDiv.classList.add('hidden');
         } else {
             optionsDiv.classList.remove('hidden');
-            noteDiv.classList.add('hidden');
-            if(multiDiv) multiDiv.classList.remove('hidden');
+            if (noteDiv) noteDiv.classList.add('hidden');
+            if (multiDiv) multiDiv.classList.remove('hidden');
         }
     }
 
@@ -344,7 +358,7 @@
                 </div>
                 <div class="space-y-2">
                     <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Bobot Nilai</label>
-                    <input type="number" value="10" class="w-full p-3 bg-surface-container-low border border-outline rounded-lg question-weight">
+                    <input type="number" min="0" value="10" class="w-full p-3 bg-surface-container-low border border-outline rounded-lg question-weight">
                 </div>
             </div>
 
@@ -356,26 +370,65 @@
                 </div>
 
                 <div class="pg-options space-y-4" id="options-${questionCount}">
-                    <p class="text-xs text-on-surface-variant italic mb-2">Tentukan opsi jawaban dan pilih jawaban yang benar:</p>
-                    <p class="text-xs text-error font-bold hidden err-options"></p>
-                    ${['A', 'B', 'C', 'D', 'E'].map(letter => `
-                        <div class="flex items-center gap-4">
-                            <input type="radio" name="q${questionCount}-correct" class="w-5 h-5 text-secondary border-outline opt-input-${questionCount} question-correct" value="${letter}">
-                            <span class="font-bold text-on-surface-variant">${letter}.</span>
-                            <input type="text" placeholder="Opsi ${letter}" class="flex-1 stationery-input py-1 question-option-text">
+                    <div class="flex justify-between items-center mb-2">
+                        <p class="text-xs text-on-surface-variant italic">Tentukan opsi jawaban dan pilih jawaban yang benar:</p>
+                        <div class="flex gap-2">
+                            <button type="button" class="text-secondary hover:text-primary transition-colors flex items-center gap-1" onclick="addOption(${questionCount})">
+                                <span class="material-symbols-outlined text-[16px]">add</span> <span class="text-xs font-bold">Tambah</span>
+                            </button>
+                            <button type="button" class="text-red-500 hover:text-red-700 transition-colors flex items-center gap-1" onclick="removeOption(${questionCount})">
+                                <span class="material-symbols-outlined text-[16px]">remove</span> <span class="text-xs font-bold">Kurangi</span>
+                            </button>
                         </div>
-                    `).join('')}
+                    </div>
+                    <p class="text-xs text-error font-bold hidden err-options"></p>
+                    <div id="options-list-${questionCount}" class="space-y-4">
+                        ${['A', 'B', 'C', 'D', 'E'].map(letter => `
+                            <div class="flex items-center gap-4 option-item-${questionCount}" data-opt="${letter}">
+                                <input type="radio" name="q${questionCount}-correct" class="w-5 h-5 text-secondary border-outline opt-input-${questionCount} question-correct" value="${letter}">
+                                <span class="font-bold text-on-surface-variant opt-label-${questionCount}">${letter}.</span>
+                                <input type="text" placeholder="Opsi ${letter}" class="flex-1 stationery-input py-1 question-option-text">
+                            </div>
+                        `).join('')}
+                    </div>
                 </div>
-
-                <div class="essay-note hidden bg-surface-container-highest p-4 rounded-lg flex items-start gap-3 text-on-surface-variant" id="note-${questionCount}">
-                    <span class="material-symbols-outlined text-primary">edit_square</span>
-                    <p class="text-sm italic">Soal bertipe Esai akan dinilai secara manual oleh guru setelah ujian selesai dikerjakan.</p>
-                </div>
-            </div>
         `;
 
         container.insertBefore(newCard, btn);
         newCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    // Dynamic options logic
+    function addOption(questionId) {
+        const list = document.getElementById(`options-list-${questionId}`);
+        const items = list.querySelectorAll(`.option-item-${questionId}`);
+        if (items.length >= 10) return; // limit to J
+        
+        const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const nextLetter = alphabet[items.length];
+        
+        const isMulti = document.querySelector(`#multi-${questionId} input`).checked;
+        const inputType = isMulti ? 'checkbox' : 'radio';
+        const inputName = isMulti ? `q${questionId}-correct[]` : `q${questionId}-correct`;
+        
+        const div = document.createElement('div');
+        div.className = `flex items-center gap-4 option-item-${questionId}`;
+        div.dataset.opt = nextLetter;
+        
+        div.innerHTML = `
+            <input class="w-5 h-5 text-secondary border-outline opt-input-${questionId} question-correct" name="${inputName}" type="${inputType}" value="${nextLetter}"/>
+            <span class="font-bold text-on-surface-variant opt-label-${questionId}">${nextLetter}.</span>
+            <input class="flex-1 stationery-input py-1 question-option-text" placeholder="Opsi ${nextLetter}" type="text"/>
+        `;
+        list.appendChild(div);
+    }
+
+    function removeOption(questionId) {
+        const list = document.getElementById(`options-list-${questionId}`);
+        const items = list.querySelectorAll(`.option-item-${questionId}`);
+        if (items.length <= 2) return; // minimum 2 options
+        
+        list.removeChild(items[items.length - 1]);
     }
 
     // Modal Delete Logic
@@ -566,20 +619,45 @@
                 newCard.querySelector('.question-weight').value = soal.bobot;
                 newCard.querySelector('.question-text').value = soal.pertanyaan;
                 
-                if (soal.tipe === 'pg' && soal.pilihan) {
+                if ((soal.tipe === 'pg' || soal.tipe === 'multiple_select') && soal.pilihan) {
                     const opts = newCard.querySelectorAll('.question-option-text');
                     const choices = soal.pilihan;
                     opts.forEach((opt, idx) => {
                         if (choices[idx]) opt.value = choices[idx];
                     });
                     
-                    const correctMapRev = { 0: 'A', 1: 'B', 2: 'C', 3: 'D', 4: 'E', '0': 'A', '1': 'B', '2': 'C', '3': 'D', '4': 'E' };
-                    // if jawaban_benar is 'A', 'B' instead of 0, 1
-                    let correctChar = correctMapRev[soal.jawaban_benar] || soal.jawaban_benar;
-                    if (!['A', 'B', 'C', 'D', 'E'].includes(correctChar)) correctChar = 'A';
-                    
-                    const radio = newCard.querySelector(`.question-correct[value="${correctChar}"]`);
-                    if (radio) radio.checked = true;
+                    if (soal.tipe === 'multiple_select') {
+                        // Switch type in dropdown to 'pg' (because multiple_select is just pg + checkbox)
+                        newCard.querySelector('.question-type').value = 'pg';
+                        const multiCheck = newCard.querySelector('.pg-multi-option input[type="checkbox"]');
+                        if (multiCheck) {
+                            multiCheck.checked = true;
+                            toggleMultiAnswer(multiCheck, questionCount);
+                        }
+                        
+                        let answers = soal.jawaban_benar;
+                        if (!Array.isArray(answers)) {
+                            // Try parsing if stringified JSON
+                            try { answers = JSON.parse(answers); } catch(e) { answers = [answers]; }
+                        }
+                        if (!Array.isArray(answers)) answers = [answers];
+                        
+                        const correctMapRev = { 0: 'A', 1: 'B', 2: 'C', 3: 'D', 4: 'E', '0': 'A', '1': 'B', '2': 'C', '3': 'D', '4': 'E' };
+                        answers.forEach(ans => {
+                            let correctChar = correctMapRev[ans] || ans;
+                            if (['A', 'B', 'C', 'D', 'E'].includes(correctChar)) {
+                                const check = newCard.querySelector(`.question-correct[value="${correctChar}"]`);
+                                if (check) check.checked = true;
+                            }
+                        });
+                    } else {
+                        const correctMapRev = { 0: 'A', 1: 'B', 2: 'C', 3: 'D', 4: 'E', '0': 'A', '1': 'B', '2': 'C', '3': 'D', '4': 'E' };
+                        let correctChar = correctMapRev[soal.jawaban_benar] || soal.jawaban_benar;
+                        if (!['A', 'B', 'C', 'D', 'E'].includes(correctChar)) correctChar = 'A';
+                        
+                        const radio = newCard.querySelector(`.question-correct[value="${correctChar}"]`);
+                        if (radio) radio.checked = true;
+                    }
                 }
             });
         @endif
@@ -614,7 +692,7 @@
         const classes = document.querySelectorAll('.class-checkbox:checked');
         if (classes.length === 0) showError('err-ujianKelas', 'Pilih minimal satu Kelas.');
 
-        const durasi = document.getElementById('ujianDurasi').value;
+        const durasi = document.getElementById('ujianDuration').value;
         if (!durasi || durasi <= 0) showError('err-ujianDurasi', 'Durasi tidak valid.');
 
         const batas = document.getElementById('ujianBatas').value;
@@ -737,18 +815,31 @@
                     qCards.forEach((q, idx) => {
                         const text = q.querySelector('.question-text').value.trim();
                         const opts = Array.from(q.querySelectorAll('.question-option-text')).map(o => o.value.trim());
-                        const correctMap = { 'A': 0, 'B': 1, 'C': 2, 'D': 3 };
-                        const checkedEl = q.querySelector('.question-correct:checked');
-                        const correctVal = checkedEl ? checkedEl.value : 'A';
+                        let type = q.querySelector('.question-type').value;
+                        const multiCheck = q.querySelector('.pg-multi-option input[type="checkbox"]');
+                        if (type === 'pg' && multiCheck && multiCheck.checked) {
+                            type = 'multiple_select';
+                        }
                         
-                        const type = q.querySelector('.question-type').value;
+                        let jawabanBenar;
+                        if (type === 'multiple_select') {
+                            const checkedEls = q.querySelectorAll('.question-correct:checked');
+                            jawabanBenar = Array.from(checkedEls).map(el => Math.max(0, el.value.charCodeAt(0) - 65));
+                            if (jawabanBenar.length === 0) jawabanBenar = [0]; // fallback
+                        } else {
+                            const checkedEl = q.querySelector('.question-correct:checked');
+                            const correctVal = checkedEl ? checkedEl.value : 'A';
+                            jawabanBenar = Math.max(0, correctVal.charCodeAt(0) - 65);
+                        }
+                        
+                        const weight = parseFloat(q.querySelector('.question-weight').value) || 1;
                         
                         qData.push({
                             pertanyaan: text,
                             tipe: type,
                             pilihan: opts,
-                            jawaban_benar: correctMap[correctVal] ?? 0,
-                            bobot: 1,
+                            jawaban_benar: jawabanBenar,
+                            bobot: weight,
                             urutan: idx + 1
                         });
                     });

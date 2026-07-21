@@ -74,9 +74,10 @@ class PenilaianController extends Controller
             ->whereHas('ujian', fn ($query) => $query->where('guru_id', Auth::id()))
             ->orderBy('siswa_id')
             ->orderBy('ujian_id')
+            ->orderBy('attempt')
             ->get();
 
-        $groups = $answers->groupBy(fn ($item) => $item->siswa_id . '_' . $item->ujian_id);
+        $groups = $answers->groupBy(fn ($item) => $item->siswa_id . '_' . $item->ujian_id . '_' . $item->attempt);
         $keys = $groups->keys();
         $index = (int) $request->query('s', 0);
 
@@ -89,6 +90,7 @@ class PenilaianController extends Controller
         $submission = [
             'siswa' => $first->siswa,
             'ujian' => $first->ujian,
+            'attempt' => $first->attempt,
             'answers' => $selected,
             'score' => $selected->where('benar', true)->sum('nilai') ?: $selected->where('benar', true)->count(),
             'total' => $selected->count(),
@@ -134,6 +136,7 @@ class PenilaianController extends Controller
                 'kelas_id' => $ujian->kelas_id,
                 'nilaiable_type' => \App\Models\Ujian::class,
                 'nilaiable_id' => $ujian->id,
+                'attempt' => $request->attempt ?? 1,
             ],
             [
                 'nilai' => $request->nilai

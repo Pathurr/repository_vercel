@@ -11,8 +11,8 @@ class AkunController extends Controller
 {
     public function index()
     {
-        // Get all users except the current admin
-        $users = User::where('id', '!=', Auth::id())
+        // Get all users except admins (only show students & teachers)
+        $users = User::where('role', '!=', 'admin')
                     ->orderBy('created_at', 'desc')
                     ->get();
                     

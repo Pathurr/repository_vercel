@@ -24,6 +24,20 @@ class UjianController extends Controller
         $kelasIds = $user->kelas()->pluck('kelas.id');
 
         $ujian = Ujian::with('soal')->whereIn('kelas_id', $kelasIds)->findOrFail($id);
+
+        if ($ujian->acak_soal) {
+            // Shuffle the soal collection but maintain it as a collection
+            $ujian->setRelation('soal', $ujian->soal->shuffle());
+        }
+
+        $attemptsCount = JawabanUjian::where('ujian_id', $ujian->id)
+                            ->where('siswa_id', $user->id)
+                            ->max('attempt') ?? 0;
+
+        if ($attemptsCount >= $ujian->batas_percobaan) {
+            return redirect()->route('siswa.mapel.detail', $ujian->kelas_id)->with('error', 'Anda telah mencapai batas maksimal percobaan untuk ujian ini.');
+        }
+
         return view('siswa.pengerjaan-ujian', compact('ujian'));
     }
 
@@ -33,11 +47,15 @@ class UjianController extends Controller
         $answers = json_decode($request->answers, true);
         $user = Auth::user();
 
-        // Cek jika sudah pernah mengerjakan
-        $sudah = JawabanUjian::where('ujian_id', $ujian->id)->where('siswa_id', $user->id)->exists();
-        if ($sudah) {
-            return redirect()->route('siswa.mapel.detail', $ujian->kelas_id)->with('error', 'Anda sudah mengerjakan ujian ini.');
+        $latestAttempt = JawabanUjian::where('ujian_id', $ujian->id)
+                            ->where('siswa_id', $user->id)
+                            ->max('attempt') ?? 0;
+
+        if ($latestAttempt >= $ujian->batas_percobaan) {
+            return redirect()->route('siswa.mapel.detail', $ujian->kelas_id)->with('error', 'Anda telah mencapai batas maksimal percobaan untuk ujian ini.');
         }
+        
+        $currentAttempt = $latestAttempt + 1;
 
         $totalSoal = $ujian->soal->count();
         $benar = 0;
@@ -49,16 +67,36 @@ class UjianController extends Controller
                 if ($soal) {
                     $isBenar = null;
                     if ($soal->tipe !== 'essay') {
-                        $isBenar = ((string) $ans['jawaban'] === (string) $soal->jawaban_benar);
-                        if ($isBenar) $benar++;
+                        $correctAns = (string) $soal->jawaban_benar;
+                        $points = 0;
+                        if (is_array($ans['jawaban']) || $soal->tipe === 'multiple_select') {
+                            $c = json_decode($correctAns, true);
+                            if (is_array($c) && count($c) > 0) {
+                                $s = is_array($ans['jawaban']) ? $ans['jawaban'] : [$ans['jawaban']];
+                                $c = array_map('strval', $c);
+                                $s = array_map('strval', $s);
+                                
+                                $correctCount = count(array_intersect($s, $c));
+                                $points = $correctCount / count($c);
+                                $isBenar = ($points > 0);
+                            } else {
+                                $isBenar = false;
+                            }
+                        } else {
+                            $isBenar = ((string) $ans['jawaban'] === $correctAns);
+                            $points = $isBenar ? 1 : 0;
+                        }
+                        
+                        $benar += $points;
                     }
 
                     JawabanUjian::create([
                         'ujian_id' => $ujian->id,
                         'siswa_id' => $user->id,
                         'soal_id'  => $soal->id,
-                        'jawaban'  => (string) $ans['jawaban'],
-                        'benar'    => $isBenar
+                        'attempt'  => $currentAttempt,
+                        'jawaban'  => is_array($ans['jawaban']) ? json_encode($ans['jawaban']) : (string) $ans['jawaban'],
+                        'benar'    => $isBenar === null ? null : ($isBenar ? 'true' : 'false')
                     ]);
                 }
             }
@@ -73,6 +111,7 @@ class UjianController extends Controller
             'kelas_id' => $ujian->kelas_id,
             'nilaiable_type' => Ujian::class,
             'nilaiable_id' => $ujian->id,
+            'attempt' => $currentAttempt,
             'nilai' => $skor,
         ]);
 

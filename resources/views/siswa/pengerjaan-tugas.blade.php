@@ -63,11 +63,22 @@
     <!-- RIGHT PANEL: Submission Area -->
     <section class="w-full md:w-1/2 flex flex-col min-h-[420px] md:h-full gap-4">
         <div class="bg-surface-container-lowest rounded-xl p-4 shadow-sm border border-outline-variant/30 flex justify-between items-center shrink-0">
+            @php $submission = $tugas->pengumpulan->first(); @endphp
             <div>
                 <p class="font-bold text-[10px] text-on-surface-variant">Status Pengumpulan</p>
                 <div class="flex items-center gap-1.5 mt-1">
-                    <span class="material-symbols-outlined text-[16px] text-outline">pending_actions</span>
-                    <p class="font-bold text-xs text-on-surface">Belum diserahkan</p>
+                    @if($submission)
+                        @if($submission->nilai !== null)
+                            <span class="material-symbols-outlined text-[16px] text-green-600">verified</span>
+                            <p class="font-bold text-xs text-green-600">Sudah Dinilai</p>
+                        @else
+                            <span class="material-symbols-outlined text-[16px] text-secondary">task_alt</span>
+                            <p class="font-bold text-xs text-secondary">Sudah diserahkan</p>
+                        @endif
+                    @else
+                        <span class="material-symbols-outlined text-[16px] text-outline">pending_actions</span>
+                        <p class="font-bold text-xs text-on-surface">Belum diserahkan</p>
+                    @endif
                 </div>
             </div>
         </div>
@@ -75,6 +86,7 @@
         <div class="bg-surface-container-lowest rounded-xl p-5 shadow-sm border border-outline-variant/30 flex-1 flex flex-col overflow-hidden">
             <h3 class="font-bold text-sm text-primary mb-3" style="font-family: var(--font-serif)">Area Pengumpulan</h3>
             
+            @if(!$submission)
             <form id="form-pengumpulan" action="{{ route('siswa.kumpul-tugas', $tugas->id) }}" method="POST" enctype="multipart/form-data" class="flex-1 flex flex-col min-h-0">
                 @csrf
                 <div class="flex-1 overflow-y-auto custom-scrollbar flex flex-col pr-1 gap-3">
@@ -85,19 +97,47 @@
                         </div>
                     </div>
                     
+                    @php
+                        $formats = $tugas->format_pengumpulan;
+                        if(is_string($formats)) $formats = json_decode($formats, true);
+                        if(!is_array($formats)) $formats = ['pdf', 'gambar', 'dokumen']; // fallback
+
+                        $acceptArr = [];
+                        $labelArr = [];
+                        if (in_array('pdf', $formats)) { $acceptArr[] = '.pdf'; $labelArr[] = 'PDF'; }
+                        if (in_array('gambar', $formats)) { array_push($acceptArr, '.jpg', '.jpeg', '.png'); $labelArr[] = 'JPG/PNG'; }
+                        if (in_array('dokumen', $formats)) { array_push($acceptArr, '.doc', '.docx'); $labelArr[] = 'DOCX'; }
+
+                        $acceptStr = !empty($acceptArr) ? implode(',', $acceptArr) : '.pdf,.zip,.rar,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png';
+                        $labelStr = !empty($labelArr) ? implode('/', $labelArr) : 'PDF/DOCX/ZIP/RAR/JPG/PNG';
+                        
+                        $isLinkAllowed = in_array('link', $formats);
+                        $isFileAllowed = count(array_diff($formats, ['link'])) > 0 || empty($formats);
+                    @endphp
+                    
+                    @if($isLinkAllowed)
+                    <div class="flex-1 flex flex-col mb-4">
+                        <label class="block font-bold text-[10px] text-on-surface mb-1.5">Tautan / Link Tugas {!! !$isFileAllowed ? '<span class="text-error">*</span>' : '' !!}</label>
+                        <input type="url" name="link" id="link-upload" class="w-full bg-white border border-outline-variant rounded-xl p-3 text-xs focus:ring-2 focus:ring-secondary/30 transition-all focus:outline-none" placeholder="https://..." {{ !$isFileAllowed ? 'required' : '' }}>
+                        <p id="link-error" class="text-[10px] font-bold text-error mt-2 hidden">Tautan valid wajib diisi!</p>
+                    </div>
+                    @endif
+
+                    @if($isFileAllowed)
                     <div class="flex-1 flex flex-col min-h-[120px]">
-                        <label class="block font-bold text-[10px] text-on-surface mb-1.5">Unggah Berkas <span class="text-error">*</span></label>
-                        <input type="file" id="file-upload" name="file" accept=".pdf,.zip,.rar,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png" class="hidden" onchange="handleFileUpload(event)">
+                        <label class="block font-bold text-[10px] text-on-surface mb-1.5">Unggah Berkas {!! !$isLinkAllowed ? '<span class="text-error">*</span>' : '' !!}</label>
+                        <input type="file" id="file-upload" name="file" accept="{{ $acceptStr }}" class="hidden" onchange="handleFileUpload(event)">
                         <div id="upload-zone" onclick="document.getElementById('file-upload').click()" class="border-2 border-dashed border-outline-variant hover:border-secondary bg-surface-container-low hover:bg-surface-container rounded-xl flex-1 flex flex-col items-center justify-center text-center cursor-pointer transition-colors group p-4">
                             <div class="w-10 h-10 bg-surface-container-highest rounded-full flex items-center justify-center mb-2 group-hover:bg-primary-fixed-dim/20 transition-colors">
                                 <span class="material-symbols-outlined text-xl text-primary group-hover:text-secondary">cloud_upload</span>
                             </div>
                             <p id="upload-text" class="text-xs text-on-surface font-bold">Tarik & lepas file</p>
                             <p id="upload-subtext" class="text-[10px] text-on-surface-variant">atau klik untuk mencari dari perangkat</p>
-                            <p class="text-[9px] text-on-surface-variant mt-2 font-bold">Maks. 50MB (PDF/DOCX/ZIP/RAR/JPG/PNG)</p>
+                            <p class="text-[9px] text-on-surface-variant mt-2 font-bold">Maks. 50MB ({{ $labelStr }})</p>
                         </div>
-                        <p id="file-error" class="text-[10px] font-bold text-error mt-2 hidden">Berkas wajib diunggah sebelum dikumpulkan!</p>
+                        <p id="file-error" class="text-[10px] font-bold text-error mt-2 hidden">Berkas wajib diunggah!</p>
                     </div>
+                    @endif
                 </div>
 
                 <div class="mt-4 pt-3 border-t border-surface-container flex flex-col gap-3 shrink-0">
@@ -111,6 +151,66 @@
                     </div>
                 </div>
             </form>
+            @else
+            <div class="flex-1 overflow-y-auto custom-scrollbar flex flex-col pr-1 gap-4">
+                @if($submission->file_path && $submission->file_path !== '-')
+                <div class="bg-surface-container-low border border-outline-variant rounded-xl p-4">
+                    <p class="font-bold text-[10px] text-on-surface-variant mb-2 uppercase tracking-wider">File Diserahkan</p>
+                    <a href="{{ \Illuminate\Support\Facades\Storage::disk(env('FILESYSTEM_DISK', 'public'))->url($submission->file_path) }}" target="_blank" class="flex items-center gap-3 p-3 bg-surface rounded-lg border border-outline-variant hover:border-secondary hover:shadow-md transition-all group">
+                        <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center shrink-0">
+                            <span class="material-symbols-outlined text-primary group-hover:text-secondary">description</span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="font-bold text-xs text-on-surface truncate group-hover:text-secondary transition-colors">{{ basename($submission->file_path) }}</p>
+                            <p class="text-[10px] text-on-surface-variant mt-0.5">{{ $submission->dikumpulkan_at ? $submission->dikumpulkan_at->format('d M Y, H:i') : '' }} WIB</p>
+                        </div>
+                        <span class="material-symbols-outlined text-on-surface-variant group-hover:text-secondary">open_in_new</span>
+                    </a>
+                </div>
+                @endif
+                
+                @if($submission->link)
+                <div class="bg-surface-container-low border border-outline-variant rounded-xl p-4">
+                    <p class="font-bold text-[10px] text-on-surface-variant mb-2 uppercase tracking-wider">Tautan / Link Diserahkan</p>
+                    <a href="{{ $submission->link }}" target="_blank" class="flex items-center gap-3 p-3 bg-surface rounded-lg border border-outline-variant hover:border-secondary hover:shadow-md transition-all group">
+                        <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center shrink-0">
+                            <span class="material-symbols-outlined text-primary group-hover:text-secondary">link</span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="font-bold text-xs text-on-surface truncate group-hover:text-secondary transition-colors">{{ $submission->link }}</p>
+                            <p class="text-[10px] text-on-surface-variant mt-0.5">{{ $submission->dikumpulkan_at ? $submission->dikumpulkan_at->format('d M Y, H:i') : '' }} WIB</p>
+                        </div>
+                        <span class="material-symbols-outlined text-on-surface-variant group-hover:text-secondary">open_in_new</span>
+                    </a>
+                </div>
+                @endif
+                
+                @if($submission->catatan)
+                <div class="bg-surface-container-low border border-outline-variant rounded-xl p-4">
+                    <p class="font-bold text-[10px] text-on-surface-variant mb-2 uppercase tracking-wider">Catatan Anda</p>
+                    <p class="text-xs text-on-surface leading-relaxed">{{ $submission->catatan }}</p>
+                </div>
+                @endif
+
+                @if($submission->nilai !== null)
+                <div class="bg-primary/5 border border-primary/20 rounded-xl p-4">
+                    <div class="flex items-center justify-between mb-3 border-b border-primary/10 pb-3">
+                        <p class="font-bold text-[10px] text-primary uppercase tracking-wider">Nilai dari Guru</p>
+                        <span class="px-2 py-1 bg-primary text-on-primary font-bold text-xs rounded-md shadow-sm">{{ $submission->nilai }} / 100</span>
+                    </div>
+                    @if($submission->feedback)
+                    <p class="font-bold text-[10px] text-primary mb-1 uppercase tracking-wider">Umpan Balik</p>
+                    <p class="text-xs text-on-surface leading-relaxed">{{ $submission->feedback }}</p>
+                    @endif
+                </div>
+                @else
+                <div class="bg-surface-container-low border border-outline-variant border-dashed rounded-xl p-4 text-center">
+                    <span class="material-symbols-outlined text-outline text-3xl mb-1">hourglass_empty</span>
+                    <p class="font-bold text-xs text-on-surface-variant">Menunggu Penilaian Guru</p>
+                </div>
+                @endif
+            </div>
+            @endif
         </div>
     </section>
 </div>
@@ -190,10 +290,32 @@
         // Simpan Flow
         btnTriggerSimpan.addEventListener('click', () => {
             const fileInput = document.getElementById('file-upload');
-            if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+            const linkInput = document.getElementById('link-upload');
+            let isValid = true;
+            
+            const isFileAllowed = fileInput !== null;
+            const isLinkAllowed = linkInput !== null;
+            
+            const hasFile = isFileAllowed && fileInput.files && fileInput.files.length > 0;
+            const hasLink = isLinkAllowed && linkInput.value.trim() !== '';
+
+            if (isFileAllowed && !isLinkAllowed && !hasFile) {
                 document.getElementById('file-error').classList.remove('hidden');
-                return;
+                isValid = false;
+            } else if (isLinkAllowed && !isFileAllowed && !hasLink) {
+                document.getElementById('link-error').classList.remove('hidden');
+                isValid = false;
+            } else if (isFileAllowed && isLinkAllowed && !hasFile && !hasLink) {
+                document.getElementById('file-error').classList.remove('hidden');
+                document.getElementById('link-error').classList.remove('hidden');
+                isValid = false;
             }
+            
+            if (!isValid) return;
+            
+            if (isFileAllowed) document.getElementById('file-error').classList.add('hidden');
+            if (isLinkAllowed) document.getElementById('link-error').classList.add('hidden');
+            
             modalSimpan.classList.remove('hidden');
         });
         btnCancelSimpan.addEventListener('click', () => modalSimpan.classList.add('hidden'));

@@ -198,9 +198,12 @@
                     </div>
                     <div class="flex flex-col gap-2 items-end">
                         <span class="px-3 py-1 bg-primary/10 text-primary font-bold text-[10px] rounded-full uppercase tracking-wider">UJIAN</span>
-                        @php $nilaiUjian = $u->nilai_siswa->first(); @endphp
-                        @if($nilaiUjian)
-                        <span class="px-2 py-0.5 bg-green-100 text-green-800 font-bold text-[10px] rounded-full uppercase tracking-wider">NILAI: {{ number_format($nilaiUjian->nilai, 0) }}</span>
+                        @if($u->nilai_siswa->count() > 0)
+                            <div class="flex flex-col gap-1 mt-2 items-end">
+                                @foreach($u->nilai_siswa as $n)
+                                    <span class="px-2 py-0.5 bg-green-100 text-green-800 font-bold text-[10px] rounded-full uppercase tracking-wider">PERCOBAAN {{ $n->attempt }}: {{ number_format($n->nilai, 0) }}</span>
+                                @endforeach
+                            </div>
                         @endif
                     </div>
                 </div>
@@ -209,10 +212,18 @@
                         <span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">timer</span> {{ $u->durasi_menit ?? 90 }} Menit</span>
                         <span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">calendar_today</span> Mulai: {{ $u->mulai_at ? \Carbon\Carbon::parse($u->mulai_at)->format('d M Y, H:i') : '-' }}</span>
                     </div>
-                    @if(!$nilaiUjian)
+                    @if($u->nilai_siswa->count() == 0)
                     <a href="{{ route('siswa.pengerjaan-ujian', $u->id) }}" class="w-full sm:w-auto bg-primary text-on-primary px-6 py-2 rounded-lg font-bold text-xs hover:bg-primary-container transition-colors text-center shadow-sm">Mulai Ujian</a>
                     @else
-                    <span class="text-xs font-bold text-on-surface-variant">Telah Dikerjakan</span>
+                    @php
+                        $attemptsCount = \App\Models\JawabanUjian::where('ujian_id', $u->id)->where('siswa_id', Auth::id())->max('attempt') ?? 0;
+                    @endphp
+                    <div class="flex items-center gap-3 w-full sm:w-auto">
+                        <span class="text-xs font-bold text-on-surface-variant">Telah Dikerjakan ({{ $attemptsCount }}/{{ $u->batas_percobaan }})</span>
+                        @if($attemptsCount < $u->batas_percobaan)
+                        <a href="{{ route('siswa.pengerjaan-ujian', $u->id) }}" class="bg-secondary text-on-secondary px-4 py-2 rounded-lg font-bold text-xs hover:bg-secondary-container hover:text-on-secondary-container transition-colors text-center shadow-sm border border-secondary">Memulai Kembali</a>
+                        @endif
+                    </div>
                     @endif
                 </div>
             </div>

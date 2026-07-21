@@ -63,18 +63,23 @@ class MonitoringController extends Controller
                 ->whereHas('ujian', fn ($query) => $query->where('guru_id', Auth::id()))
                 ->orderBy('siswa_id')
                 ->orderBy('ujian_id')
+                ->orderBy('attempt')
                 ->get();
-            $groupsUjian = $jawabanUjian->groupBy(fn ($item) => $item->siswa_id . '_' . $item->ujian_id);
+            $groupsUjian = $jawabanUjian->groupBy(fn ($item) => $item->siswa_id . '_' . $item->ujian_id . '_' . $item->attempt);
             $keysUjian = $groupsUjian->keys();
             foreach ($groupsUjian as $key => $group) {
                 $first = $group->first();
-                $nilaiM = \App\Models\Nilai::where('siswa_id', $first->siswa_id)->where('nilaiable_type', \App\Models\Ujian::class)->where('nilaiable_id', $first->ujian_id)->first();
+                $nilaiM = \App\Models\Nilai::where('siswa_id', $first->siswa_id)
+                                          ->where('nilaiable_type', \App\Models\Ujian::class)
+                                          ->where('nilaiable_id', $first->ujian_id)
+                                          ->where('attempt', $first->attempt)
+                                          ->first();
                 $allSubmissions->push((object)[
                     'type' => 'ujian',
                     'id' => $key,
                     'siswa' => $first->siswa,
                     'kelas' => $first->ujian->kelas,
-                    'judul' => $first->ujian->judul,
+                    'judul' => $first->ujian->judul . ' (Percobaan ' . $first->attempt . ')',
                     'status' => 'terkumpul',
                     'dikumpulkan_at' => $first->created_at,
                     'nilai' => $nilaiM ? $nilaiM->nilai : null,

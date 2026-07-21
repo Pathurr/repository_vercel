@@ -6,7 +6,7 @@ class PengumpulanTugas extends Model
 {
     protected $table = 'pengumpulan_tugas'; // tambahkan ini
     protected $fillable = [
-        'tugas_id', 'siswa_id', 'file_path', 'catatan', 'dikumpulkan_at', 'nilai', 'feedback', 'status'
+        'tugas_id', 'siswa_id', 'file_path', 'link', 'catatan', 'dikumpulkan_at', 'nilai', 'feedback', 'status'
     ];
 
     protected $casts = ['dikumpulkan_at' => 'datetime'];
