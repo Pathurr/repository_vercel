@@ -20,6 +20,11 @@
 <div id="toastContainer" class="fixed top-4 left-1/2 -translate-x-1/2 z-[60] flex flex-col gap-2 transition-all pointer-events-none"></div>
 
 <div class="max-w-[1200px] mx-auto space-y-8">
+    <div class="mb-2">
+        <a href="{{ route('guru.ujian') }}" class="inline-flex items-center gap-2 text-sm text-secondary hover:text-primary transition-colors font-bold">
+            <span class="material-symbols-outlined text-[18px]">arrow_back</span> Kembali ke Daftar Ujian
+        </a>
+    </div>
     <div class="flex flex-wrap items-end justify-between gap-4 border-b border-outline-variant/30 pb-4">
         <div>
             <h2 class="font-bold text-4xl text-primary" style="font-family: var(--font-serif)">{{ request('edit') ? 'Edit Ujian' : 'Buat Ujian Baru' }}</h2>
@@ -211,6 +216,10 @@
                                 <textarea class="w-full p-4 bg-surface-container-low border border-outline rounded-lg focus:ring-2 focus:ring-secondary-container question-text" placeholder="Masukkan pertanyaan ujian di sini..." rows="3">Apa fungsi utama dari protokol DHCP pada jaringan komputer?</textarea>
                                 <p class="text-xs text-error font-bold hidden err-text"></p>
                             </div>
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Lampiran Gambar (Opsional)</label>
+                                <input type="file" name="gambar_soal_1" accept="image/*" class="w-full p-3 bg-surface-container-low border border-outline rounded-lg question-image">
+                            </div>
                             <div class="pg-options space-y-4" id="options-1">
                                 <div class="flex justify-between items-center mb-2">
                                     <p class="text-xs text-on-surface-variant italic">Tentukan opsi jawaban dan pilih jawaban yang benar:</p>
@@ -367,6 +376,10 @@
                     <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Teks Soal</label>
                     <textarea rows="3" placeholder="Masukkan pertanyaan ujian di sini..." class="w-full p-4 bg-surface-container-low border border-outline rounded-lg focus:ring-2 focus:ring-secondary-container question-text"></textarea>
                     <p class="text-xs text-error font-bold hidden err-text"></p>
+                </div>
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Lampiran Gambar (Opsional)</label>
+                    <input type="file" name="gambar_soal_${questionCount}" accept="image/*" class="w-full p-3 bg-surface-container-low border border-outline rounded-lg question-image">
                 </div>
 
                 <div class="pg-options space-y-4" id="options-${questionCount}">

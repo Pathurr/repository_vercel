@@ -57,6 +57,11 @@
 </style>
 
 <div class="max-w-[1200px] mx-auto w-full">
+    <div class="mb-4">
+        <a href="{{ route('guru.kelas') }}" class="inline-flex items-center gap-2 text-sm text-secondary hover:text-primary transition-colors font-bold">
+            <span class="material-symbols-outlined text-[18px]">arrow_back</span> Kembali ke Daftar Kelas
+        </a>
+    </div>
     {{-- Header Section --}}
     <div class="flex flex-col md:flex-row gap-6 items-start justify-between mb-8">
         {{-- Left: Class Info --}}
@@ -391,6 +396,7 @@
 
     </div>
 </div>
+</div> <!-- Closing max-w-[1200px] -->
 
 <!-- Modal Buat Pengumuman -->
 <div id="modalBuat" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm transition-opacity">

@@ -145,6 +145,14 @@ class DashboardController extends Controller
 
         $nilaiTerbaru = array_slice($allNilai, 0, 5);
 
+        $currentMonth = date('n');
+        $currentYear = date('Y');
+        if ($currentMonth >= 7 && $currentMonth <= 12) {
+            $semester = 'Semester Ganjil ' . $currentYear . '/' . ($currentYear + 1);
+        } else {
+            $semester = 'Semester Genap ' . ($currentYear - 1) . '/' . $currentYear;
+        }
+
         return view('siswa.dashboard', compact(
             'aktivitasMendatang', 
             'materiBaru', 
@@ -153,7 +161,8 @@ class DashboardController extends Controller
             'tugasBelumDikerjakanCount', 
             'tugasMendekatiDeadlineCount', 
             'rataRataNilai', 
-            'nilaiTerbaru'
+            'nilaiTerbaru',
+            'semester'
         ));
     }
 }

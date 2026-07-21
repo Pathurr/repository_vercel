@@ -9,7 +9,7 @@
     <div>
         <h2 class="font-bold text-xl text-primary mb-1" style="font-family: var(--font-serif)">Selamat datang kembali, {{ $user->name ?? 'Siswa' }}!</h2>
         <div class="flex items-center gap-2">
-            <span class="bg-primary-fixed text-primary px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider">Semester Ganjil 2024/2025</span>
+            <span class="bg-primary-fixed text-primary px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider">{{ $semester }}</span>
             <span class="text-on-surface-variant text-xs">•</span>
             <span class="text-on-surface-variant text-xs">{{ $user->kelas->first()->nama_kelas ?? 'Belum ada kelas' }}</span>
         </div>
