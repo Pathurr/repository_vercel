@@ -33,7 +33,7 @@ class MateriController extends Controller
 
         $filePath = null;
         if ($request->hasFile('file')) {
-            $filePath = $request->file('file')->store('materi', 'public');
+            $filePath = $request->file('file')->store('materi', env('FILESYSTEM_DISK', 'public'));
         }
 
         foreach ($request->kelas_id as $kelasId) {
