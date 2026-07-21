@@ -48,7 +48,7 @@
             @if($tugas->file_path)
             <div class="mt-5 pt-4 border-t border-surface-container">
                 <p class="font-bold text-[10px] text-on-surface-variant mb-2">Lampiran Guru:</p>
-                <a class="flex items-center gap-2 p-2 rounded-lg border border-outline-variant hover:bg-surface-container-low transition-colors group" href="#">
+                <a class="flex items-center gap-2 p-2 rounded-lg border border-outline-variant hover:bg-surface-container-low transition-colors group" href="{{ \Illuminate\Support\Facades\Storage::disk(env('FILESYSTEM_DISK', 'public'))->url($tugas->file_path) }}" target="_blank">
                     <span class="material-symbols-outlined text-primary text-[18px] group-hover:text-secondary">attachment</span>
                     <div class="flex-1 leading-tight">
                         <p class="font-bold text-[11px] text-on-surface group-hover:text-secondary transition-colors">Lampiran Tugas</p>

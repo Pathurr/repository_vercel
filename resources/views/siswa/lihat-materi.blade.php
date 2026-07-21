@@ -46,8 +46,8 @@
                 <p class="text-xs text-on-surface-variant leading-relaxed">{{ $materi->deskripsi }}</p>
             </div>
             <div class="flex flex-row md:flex-col items-center md:items-end gap-3 flex-shrink-0 w-full md:w-auto justify-between md:justify-start">
-                @if($materi->file_path)
-                <a href="{{ asset('storage/' . $materi->file_path) }}" download class="flex items-center gap-1 font-bold text-[11px] text-secondary hover:underline transition-all">
+                @if($fileUrl)
+                <a href="{{ $fileUrl }}" target="_blank" class="flex items-center gap-1 font-bold text-[11px] text-secondary hover:underline transition-all">
                     <span class="material-symbols-outlined text-[16px]">download</span>
                     Download File
                 </a>
@@ -70,11 +70,11 @@
             </div>
         </div>
 
-        @if($materi->file_path)
+        @if($fileUrl)
         <!-- PDF Viewer -->
         <div class="bg-surface-container-highest rounded-xl shadow-sm border border-outline-variant overflow-hidden flex flex-col mb-6">
             <div class="flex justify-center bg-[#e5e5e5] h-[600px]">
-                <iframe src="{{ asset('storage/' . $materi->file_path) }}" class="w-full h-full border-none"></iframe>
+                <iframe src="{{ $fileUrl }}" class="w-full h-full border-none"></iframe>
             </div>
         </div>
         @else
