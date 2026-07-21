@@ -8,6 +8,11 @@ $selectedKelas = array_filter(explode('|', request('kelas', '')));
 <div class="bg-surface bg-batik">
     <div class="max-w-[1200px] mx-auto min-h-[calc(100vh-100px)] py-4">
         <header class="mb-6">
+            <div class="mb-4">
+                <a href="{{ route('guru.tugas') }}" class="inline-flex items-center gap-2 text-sm text-secondary hover:text-primary transition-colors font-bold">
+                    <span class="material-symbols-outlined text-[18px]">arrow_back</span> Kembali ke Daftar Tugas
+                </a>
+            </div>
             <h1 class="font-bold text-3xl text-primary mb-1" style="font-family: var(--font-serif)">{{ $isEdit ? 'Edit Tugas' : 'Buat Tugas Baru' }}</h1>
             <p class="text-sm text-on-surface-variant max-w-2xl">
                 {{ $isEdit ? 'Perbarui detail tugas yang sudah ada. Pastikan semua informasi sudah benar.' : 'Rancang tugas yang menantang dan mendidik untuk siswa Anda. Isi detail di bawah ini untuk memulai.' }}
@@ -34,6 +39,10 @@ $selectedKelas = array_filter(explode('|', request('kelas', '')));
                             <label class="block text-xs font-bold text-on-surface mb-1">Deskripsi &amp; Instruksi</label>
                             <textarea id="deskripsi-tugas" name="deskripsi" class="w-full bg-surface-container-low border-0 border-b-2 border-primary focus:ring-0 focus:border-secondary-container transition-all py-2 px-3 text-sm" placeholder="Tuliskan instruksi lengkap untuk siswa..." rows="3">{{ old('deskripsi', $tugas->deskripsi ?? '') }}</textarea>
                             <p id="deskripsi-tugas-error" class="hidden text-[11px] text-red-500 font-bold mt-1">Deskripsi tugas wajib diisi.</p>
+                        </div>
+                        <div class="mt-2">
+                            <label class="block text-xs font-bold text-on-surface mb-1">Lampiran Gambar (Opsional)</label>
+                            <input type="file" name="file_path" id="file_path" accept="image/*" class="w-full bg-surface-container-low border-0 border-b-2 border-primary py-2 px-3 text-sm">
                         </div>
                         <div class="relative">
                             <label class="block text-xs font-bold text-on-surface mb-1">Pilih Kelas</label>
@@ -66,15 +75,10 @@ $selectedKelas = array_filter(explode('|', request('kelas', '')));
                         <h2 class="text-xl font-bold text-primary" style="font-family: var(--font-serif)">Pengaturan Waktu &amp; Nilai</h2>
                     </div>
                     <div class="grid grid-cols-2 gap-4">
-                        <div class="col-span-2 md:col-span-1">
+                        <div class="col-span-2">
                             <label class="block text-xs font-bold text-on-surface mb-1">Batas Akhir (Deadline)</label>
                             <input id="deadline" name="deadline" class="w-full bg-surface-container-low border-0 border-b-2 border-primary focus:ring-0 focus:border-secondary-container py-2 px-3 text-sm" type="datetime-local" value="{{ old('deadline', isset($tugas->deadline) ? $tugas->deadline->format('Y-m-d\TH:i') : '') }}"/>
                             <p id="deadline-error" class="hidden text-[11px] text-red-500 font-bold mt-1">Deadline wajib diisi.</p>
-                        </div>
-                        <div class="col-span-2 md:col-span-1">
-                            <label class="block text-sm font-semibold text-primary mb-1" for="bobot-nilai">Bobot Nilai (%)</label>
-                            <input id="bobot-nilai" class="w-full bg-surface-container-low border-0 border-b-2 border-primary focus:ring-0 focus:border-secondary-container py-2 px-3 text-sm" placeholder="20" type="number" min="0" value="{{ request('bobot', '') }}"/>
-                            <p id="bobot-nilai-error" class="hidden text-[11px] text-red-500 font-bold mt-1">Bobot nilai wajib diisi.</p>
                         </div>
                     </div>
                 </div>
@@ -482,11 +486,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const judulInput = document.getElementById('judul-tugas');
     const deskripsiInput = document.getElementById('deskripsi-tugas');
     const deadlineInput = document.getElementById('deadline');
-    const bobotInput = document.getElementById('bobot-nilai');
     const judulError = document.getElementById('judul-tugas-error');
     const deskripsiError = document.getElementById('deskripsi-tugas-error');
     const deadlineError = document.getElementById('deadline-error');
-    const bobotError = document.getElementById('bobot-nilai-error');
     const kelasError = document.getElementById('kelas-error');
     const tipeTugasError = document.getElementById('tipe-tugas-error');
     const formatPengumpulanError = document.getElementById('format-pengumpulan-error');
@@ -531,8 +533,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const requiredInputs = [
             { input: judulInput, error: judulError, message: 'Judul tugas wajib diisi.' },
             { input: deskripsiInput, error: deskripsiError, message: 'Deskripsi tugas wajib diisi.' },
-            { input: deadlineInput, error: deadlineError, message: 'Deadline wajib diisi.' },
-            { input: bobotInput, error: bobotError, message: 'Bobot nilai wajib diisi.' }
+            { input: deadlineInput, error: deadlineError, message: 'Deadline wajib diisi.' }
         ];
 
         requiredInputs.forEach(item => {
@@ -590,14 +591,13 @@ document.addEventListener('DOMContentLoaded', function() {
         return isValid;
     }
 
-    [judulInput, deskripsiInput, deadlineInput, bobotInput].forEach(input => {
+    [judulInput, deskripsiInput, deadlineInput].forEach(input => {
         input.addEventListener('input', () => {
             if (input.value.trim()) {
                 const errorMap = {
                     'judul-tugas': judulError,
                     'deskripsi-tugas': deskripsiError,
-                    'deadline': deadlineError,
-                    'bobot-nilai': bobotError
+                    'deadline': deadlineError
                 };
                 clearInputError(input, errorMap[input.id]);
             }

@@ -22,6 +22,11 @@
 <!-- Hero Section -->
 <section class="relative bg-primary overflow-hidden py-12 px-8 -mx-4 md:-mx-6 -mt-8 mb-10 md:rounded-b-3xl shadow-md">
     <div class="absolute inset-0 batik-overlay"></div>
+    <div class="relative z-10 max-w-container-max mx-auto mb-6">
+        <a href="{{ route('siswa.dashboard') }}" class="inline-flex items-center gap-2 text-sm text-on-primary/80 hover:text-on-primary transition-colors font-bold">
+            <span class="material-symbols-outlined text-[18px]">arrow_back</span> Kembali ke Dashboard
+        </a>
+    </div>
     <div class="relative z-10 max-w-container-max mx-auto flex flex-col md:flex-row items-end justify-between gap-8">
         <div class="flex-1">
             <div class="flex items-center gap-3 mb-4">

@@ -6,6 +6,9 @@
     $judul = request('judul', '');
 @endphp
 <div class="mb-4">
+    <a href="{{ route('guru.materi') }}" class="inline-flex items-center gap-2 text-sm text-secondary hover:text-primary transition-colors font-bold mb-4">
+        <span class="material-symbols-outlined text-[18px]">arrow_back</span> Kembali ke Daftar Materi
+    </a>
     <h2 class="font-bold text-3xl text-primary serif" style="font-family: var(--font-serif)">{{ $isEdit ? 'Edit Materi' : 'Tambah Materi Baru' }}</h2>
     <p class="text-sm text-on-surface-variant mt-1">{{ $isEdit ? 'Perbarui informasi materi yang sudah diunggah.' : 'Buat dan publikasikan materi pembelajaran digital untuk siswa Anda.' }}</p>
 </div>

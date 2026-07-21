@@ -1,7 +1,6 @@
 @extends('layouts.guru')
 @section('title', 'Materi - SMK Mandalahayu 1')
 @section('content')
-//Materi dummy untuk demo, nanti diganti dengan data dari database
 
 <div class="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
     <div>
