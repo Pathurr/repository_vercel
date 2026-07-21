@@ -42,6 +42,7 @@ class TugasController extends Controller
                 'deskripsi'      => $request->deskripsi,
                 'deadline'       => $request->deadline,
                 'nilai_maksimal' => $request->nilai_maksimal ?? 100,
+                'format_pengumpulan' => $request->format_pengumpulan,
             ]);
         }
 
@@ -65,6 +66,7 @@ class TugasController extends Controller
             'deskripsi'      => $request->deskripsi,
             'deadline'       => $request->deadline,
             'nilai_maksimal' => $request->nilai_maksimal ?? 100,
+            'format_pengumpulan' => $request->format_pengumpulan,
         ]);
 
         return redirect()->route('guru.tugas')->with('success', 'Tugas berhasil diperbarui!');

@@ -50,7 +50,7 @@ class KuisController extends Controller
                             'pertanyaan' => $q['pertanyaan'],
                             'tipe' => $q['tipe'] ?? 'pilihan_ganda',
                             'pilihan' => $q['pilihan'],
-                            'jawaban_benar' => (string) $q['jawaban_benar'],
+                            'jawaban_benar' => is_array($q['jawaban_benar']) ? json_encode($q['jawaban_benar']) : (string) $q['jawaban_benar'],
                             'bobot' => $q['bobot'],
                             'urutan' => $q['urutan']
                         ]);
@@ -92,7 +92,7 @@ class KuisController extends Controller
                         'pertanyaan' => $q['pertanyaan'],
                         'tipe' => $q['tipe'] ?? 'pilihan_ganda',
                         'pilihan' => $q['pilihan'],
-                        'jawaban_benar' => (string) $q['jawaban_benar'],
+                        'jawaban_benar' => is_array($q['jawaban_benar']) ? json_encode($q['jawaban_benar']) : (string) $q['jawaban_benar'],
                         'bobot' => $q['bobot'],
                         'urutan' => $q['urutan']
                     ]);

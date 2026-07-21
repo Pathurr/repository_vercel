@@ -124,7 +124,7 @@
         </nav>
         <div class="hidden md:flex items-center gap-4">
             <a href="{{ route('login') }}" class="text-[#F5A623] border-2 border-[#F5A623] px-4 py-2 rounded font-['Noto_Serif'] font-bold text-sm tracking-wide hover:bg-[#F5A623]/10 transition-colors">Masuk E-Learning</a>
-            <a href="#ppdb" class="bg-[#F5A623] text-[#311300] px-4 py-2 rounded font-['Noto_Serif'] font-bold text-sm tracking-wide hover:bg-[#F5A623]/90 transition-colors">Daftar PPDB</a>
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSfmAHsIilHrKhDNi3vsA1ljb5L6AOV2li_SM7bsm01tFMolQA/viewform?usp=publish-editor" target="_blank" class="bg-[#F5A623] text-[#311300] px-4 py-2 rounded font-['Noto_Serif'] font-bold text-sm tracking-wide hover:bg-[#F5A623]/90 transition-colors">Daftar PPDB</a>
         </div>
         <button type="button" onclick="toggleWelcomeMenu()" class="md:hidden w-10 h-10 inline-flex items-center justify-center rounded-lg border border-[#F5A623]/50 text-[#F5A623] hover:bg-[#F5A623]/10 transition-colors" aria-label="Buka menu">
             <span class="material-symbols-outlined" id="welcome-menu-icon">menu</span>
@@ -138,7 +138,7 @@
             <a onclick="closeWelcomeMenu()" class="text-white/90 rounded-lg px-3 py-2 font-['Noto_Serif'] font-bold text-sm hover:bg-white/10 transition-colors" href="#kontak">Kontak</a>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2">
                 <a onclick="closeWelcomeMenu()" href="{{ route('login') }}" class="text-center text-[#F5A623] border border-[#F5A623] px-4 py-2 rounded font-['Noto_Serif'] font-bold text-sm hover:bg-[#F5A623]/10 transition-colors">Masuk E-Learning</a>
-                <a onclick="closeWelcomeMenu()" href="#ppdb" class="text-center bg-[#F5A623] text-[#311300] px-4 py-2 rounded font-['Noto_Serif'] font-bold text-sm hover:bg-[#F5A623]/90 transition-colors">Daftar PPDB</a>
+                <a onclick="closeWelcomeMenu()" href="https://docs.google.com/forms/d/e/1FAIpQLSfmAHsIilHrKhDNi3vsA1ljb5L6AOV2li_SM7bsm01tFMolQA/viewform?usp=publish-editor" target="_blank" class="text-center bg-[#F5A623] text-[#311300] px-4 py-2 rounded font-['Noto_Serif'] font-bold text-sm hover:bg-[#F5A623]/90 transition-colors">Daftar PPDB</a>
             </div>
         </nav>
     </div>
@@ -153,7 +153,7 @@
         <h1 class="font-h1 text-h1 text-on-primary">Selamat Datang di<br/>SMK Mandalahayu 1 Bekasi</h1>
         <p class="font-body-lg text-body-lg text-secondary-fixed max-w-2xl mx-auto">Membentuk generasi unggul, profesional, dan berkarakter dengan fasilitas modern dan kurikulum yang relevan dengan industri.</p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <a href="#ppdb" class="bg-secondary-container text-on-primary-fixed font-label-sm text-label-sm px-8 py-3 rounded-full hover:bg-secondary-fixed transition-colors shadow-sm">Daftar Sekarang</a>
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSfmAHsIilHrKhDNi3vsA1ljb5L6AOV2li_SM7bsm01tFMolQA/viewform?usp=publish-editor" target="_blank" class="bg-secondary-container text-on-primary-fixed font-label-sm text-label-sm px-8 py-3 rounded-full hover:bg-secondary-fixed transition-colors shadow-sm">Daftar Sekarang</a>
             <a href="{{ route('login') }}" class="flex items-center gap-2 border-2 border-secondary-container text-secondary-container font-label-sm text-label-sm px-8 py-3 rounded-full hover:bg-secondary-container/10 transition-colors shadow-sm">
                 <span class="material-symbols-outlined" style="font-size:18px">laptop_mac</span>
                 Masuk E-Learning
@@ -264,8 +264,8 @@
         <h2 class="font-['Noto_Serif'] text-3xl md:text-4xl font-bold mb-4">Daftar PPDB 2025/2026</h2>
         <p class="text-white/80 max-w-xl mx-auto mb-8 font-['Manrope']">Bergabunglah bersama ribuan alumni sukses SMK Mandalahayu 1 Bekasi. Pendaftaran peserta didik baru kini dibuka!</p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="#" class="bg-[#F5A623] text-[#311300] px-8 py-3 rounded-full font-bold font-['Noto_Serif'] hover:bg-[#F5A623]/90 transition-colors shadow">Daftar Sekarang</a>
-            <a href="#kontak" class="border-2 border-white text-white px-8 py-3 rounded-full font-bold font-['Noto_Serif'] hover:bg-white/10 transition-colors">Hubungi Kami</a>
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSfmAHsIilHrKhDNi3vsA1ljb5L6AOV2li_SM7bsm01tFMolQA/viewform?usp=publish-editor" target="_blank" class="bg-[#F5A623] text-[#311300] px-8 py-3 rounded-full font-bold font-['Noto_Serif'] hover:bg-[#F5A623]/90 transition-colors shadow">Daftar Sekarang</a>
+            <a href="https://wa.me/6281234567890" target="_blank" class="border-2 border-white text-white px-8 py-3 rounded-full font-bold font-['Noto_Serif'] hover:bg-white/10 transition-colors">Hubungi Kami</a>
         </div>
     </section>
 
@@ -297,17 +297,13 @@
         </div>
         <div class="flex flex-col md:flex-row gap-12">
             <div class="flex flex-col gap-2">
-                <h4 class="text-[#F5A623] font-semibold font-['Noto_Serif'] text-sm mb-2">Tautan Cepat</h4>
-                <a class="text-white/70 hover:text-white transition-all font-['Manrope'] text-sm" href="#ppdb">Daftar PPDB</a>
-                <a class="text-white/70 hover:text-white transition-all font-['Manrope'] text-sm" href="{{ route('login') }}">E-Learning</a>
-                <a class="text-white/70 hover:text-white transition-all font-['Manrope'] text-sm" href="#kegiatan">Galeri Kegiatan</a>
-            </div>
-            <div class="flex flex-col gap-2">
-                <h4 class="text-[#F5A623] font-semibold font-['Noto_Serif'] text-sm mb-2">Sosial Media</h4>
-                <a class="text-white/70 hover:text-white transition-all font-['Manrope'] text-sm" href="#">Facebook</a>
-                <a class="text-white/70 hover:text-white transition-all font-['Manrope'] text-sm" href="#">Instagram</a>
-                <a class="text-white/70 hover:text-white transition-all font-['Manrope'] text-sm" href="#">YouTube</a>
-                <a class="text-white/70 hover:text-white transition-all font-['Manrope'] text-sm" href="#">LinkedIn</a>
+                <h4 class="text-[#F5A623] font-semibold font-['Noto_Serif'] text-sm mb-2">Kontak Person</h4>
+                <a href="https://wa.me/6281234567890" target="_blank" class="text-white/70 hover:text-white font-['Manrope'] text-sm flex items-center gap-2 transition-colors">
+                    <span class="material-symbols-outlined text-[18px]">chat</span> Bapak Budi (Admin): 0812-3456-7890
+                </a>
+                <a href="https://wa.me/6289876543210" target="_blank" class="text-white/70 hover:text-white font-['Manrope'] text-sm flex items-center gap-2 transition-colors">
+                    <span class="material-symbols-outlined text-[18px]">chat</span> Ibu Siti (Humas): 0898-7654-3210
+                </a>
             </div>
             <div class="mt-0">
                 <a href="{{ route('login') }}" class="text-[#F5A623] border border-[#F5A623] px-4 py-2 rounded text-sm hover:bg-[#F5A623]/10 transition-colors inline-block font-['Noto_Serif']">Masuk E-Learning</a>

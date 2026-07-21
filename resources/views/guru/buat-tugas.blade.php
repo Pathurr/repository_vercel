@@ -72,19 +72,9 @@ $selectedKelas = array_filter(explode('|', request('kelas', '')));
                             <p id="deadline-error" class="hidden text-[11px] text-red-500 font-bold mt-1">Deadline wajib diisi.</p>
                         </div>
                         <div class="col-span-2 md:col-span-1">
-                            <label class="block text-xs font-bold text-on-surface mb-1">Bobot Nilai (%)</label>
-                            <input id="bobot-nilai" class="w-full bg-surface-container-low border-0 border-b-2 border-primary focus:ring-0 focus:border-secondary-container py-2 px-3 text-sm" placeholder="20" type="number" value="{{ request('bobot', '') }}"/>
+                            <label class="block text-sm font-semibold text-primary mb-1" for="bobot-nilai">Bobot Nilai (%)</label>
+                            <input id="bobot-nilai" class="w-full bg-surface-container-low border-0 border-b-2 border-primary focus:ring-0 focus:border-secondary-container py-2 px-3 text-sm" placeholder="20" type="number" min="0" value="{{ request('bobot', '') }}"/>
                             <p id="bobot-nilai-error" class="hidden text-[11px] text-red-500 font-bold mt-1">Bobot nilai wajib diisi.</p>
-                        </div>
-                        <div class="col-span-2 md:col-span-1">
-                            <label class="block text-xs font-bold text-on-surface mb-1">Nilai Minimum (KKM)</label>
-                            <input id="nilai-minimum" class="w-full bg-surface-container-low border-0 border-b-2 border-primary focus:ring-0 focus:border-secondary-container py-2 px-3 text-sm" placeholder="75" type="number" value="{{ request('kkm', '') }}"/>
-                            <p id="nilai-minimum-error" class="hidden text-[11px] text-red-500 font-bold mt-1">Nilai minimum wajib diisi.</p>
-                        </div>
-                        <div class="col-span-2 md:col-span-1">
-                            <label class="block text-xs font-bold text-on-surface mb-1">Nilai Maksimum</label>
-                            <input id="nilai-maksimum" name="nilai_maksimal" class="w-full bg-surface-container-low border-0 border-b-2 border-primary focus:ring-0 focus:border-secondary-container py-2 px-3 text-sm" placeholder="100" type="number" value="{{ old('nilai_maksimal', $tugas->nilai_maksimal ?? 100) }}"/>
-                            <p id="nilai-maksimum-error" class="hidden text-[11px] text-red-500 font-bold mt-1">Nilai maksimum wajib diisi.</p>
                         </div>
                     </div>
                 </div>
@@ -117,21 +107,24 @@ $selectedKelas = array_filter(explode('|', request('kelas', '')));
                         <div>
                             <label class="block text-xs font-bold text-on-surface mb-2">Format Pengumpulan</label>
                             <div class="flex flex-wrap gap-2">
-                                <label class="format-pengumpulan-label flex items-center gap-1.5 px-3 py-1.5 bg-surface border-2 border-secondary bg-secondary/5 rounded-lg cursor-pointer transition-all">
-                                    <input checked class="text-secondary rounded w-3.5 h-3.5" name="format_pengumpulan[]" value="pdf" type="checkbox"/>
-                                    <span class="font-bold text-secondary text-xs">PDF</span>
+                                @php
+                                    $formats = isset($tugas) && is_array($tugas->format_pengumpulan) ? $tugas->format_pengumpulan : ['pdf', 'gambar'];
+                                @endphp
+                                <label class="format-pengumpulan-label flex items-center gap-1.5 px-3 py-1.5 bg-surface {{ in_array('pdf', $formats) ? 'border-secondary bg-secondary/5' : 'border-outline-variant' }} border-2 rounded-lg cursor-pointer transition-all">
+                                    <input {{ in_array('pdf', $formats) ? 'checked' : '' }} class="text-secondary rounded w-3.5 h-3.5" name="format_pengumpulan[]" value="pdf" type="checkbox"/>
+                                    <span class="font-bold {{ in_array('pdf', $formats) ? 'text-secondary' : 'text-on-surface-variant' }} text-xs">PDF</span>
                                 </label>
-                                <label class="format-pengumpulan-label flex items-center gap-1.5 px-3 py-1.5 bg-surface border-2 border-outline-variant rounded-lg cursor-pointer transition-all">
-                                    <input class="text-secondary rounded w-3.5 h-3.5" name="format_pengumpulan[]" value="link" type="checkbox"/>
-                                    <span class="font-bold text-on-surface-variant text-xs">Link/Tautan</span>
+                                <label class="format-pengumpulan-label flex items-center gap-1.5 px-3 py-1.5 bg-surface {{ in_array('link', $formats) ? 'border-secondary bg-secondary/5' : 'border-outline-variant' }} border-2 rounded-lg cursor-pointer transition-all">
+                                    <input {{ in_array('link', $formats) ? 'checked' : '' }} class="text-secondary rounded w-3.5 h-3.5" name="format_pengumpulan[]" value="link" type="checkbox"/>
+                                    <span class="font-bold {{ in_array('link', $formats) ? 'text-secondary' : 'text-on-surface-variant' }} text-xs">Link/Tautan</span>
                                 </label>
-                                <label class="format-pengumpulan-label flex items-center gap-1.5 px-3 py-1.5 bg-surface border-2 border-secondary bg-secondary/5 rounded-lg cursor-pointer transition-all">
-                                    <input checked class="text-secondary rounded w-3.5 h-3.5" name="format_pengumpulan[]" value="gambar" type="checkbox"/>
-                                    <span class="font-bold text-secondary text-xs">Gambar</span>
+                                <label class="format-pengumpulan-label flex items-center gap-1.5 px-3 py-1.5 bg-surface {{ in_array('gambar', $formats) ? 'border-secondary bg-secondary/5' : 'border-outline-variant' }} border-2 rounded-lg cursor-pointer transition-all">
+                                    <input {{ in_array('gambar', $formats) ? 'checked' : '' }} class="text-secondary rounded w-3.5 h-3.5" name="format_pengumpulan[]" value="gambar" type="checkbox"/>
+                                    <span class="font-bold {{ in_array('gambar', $formats) ? 'text-secondary' : 'text-on-surface-variant' }} text-xs">Gambar</span>
                                 </label>
-                                <label class="format-pengumpulan-label flex items-center gap-1.5 px-3 py-1.5 bg-surface border-2 border-outline-variant rounded-lg cursor-pointer transition-all">
-                                    <input class="text-secondary rounded w-3.5 h-3.5" name="format_pengumpulan[]" value="dokumen" type="checkbox"/>
-                                    <span class="font-bold text-on-surface-variant text-xs">Dokumen (.doc)</span>
+                                <label class="format-pengumpulan-label flex items-center gap-1.5 px-3 py-1.5 bg-surface {{ in_array('dokumen', $formats) ? 'border-secondary bg-secondary/5' : 'border-outline-variant' }} border-2 rounded-lg cursor-pointer transition-all">
+                                    <input {{ in_array('dokumen', $formats) ? 'checked' : '' }} class="text-secondary rounded w-3.5 h-3.5" name="format_pengumpulan[]" value="dokumen" type="checkbox"/>
+                                    <span class="font-bold {{ in_array('dokumen', $formats) ? 'text-secondary' : 'text-on-surface-variant' }} text-xs">Dokumen (.doc)</span>
                                 </label>
                             </div>
                             <p id="format-pengumpulan-error" class="hidden text-[11px] text-red-500 font-bold mt-2">Pilih minimal satu format pengumpulan.</p>
@@ -490,14 +483,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const deskripsiInput = document.getElementById('deskripsi-tugas');
     const deadlineInput = document.getElementById('deadline');
     const bobotInput = document.getElementById('bobot-nilai');
-    const nilaiMinInput = document.getElementById('nilai-minimum');
-    const nilaiMaxInput = document.getElementById('nilai-maksimum');
     const judulError = document.getElementById('judul-tugas-error');
     const deskripsiError = document.getElementById('deskripsi-tugas-error');
     const deadlineError = document.getElementById('deadline-error');
     const bobotError = document.getElementById('bobot-nilai-error');
-    const nilaiMinError = document.getElementById('nilai-minimum-error');
-    const nilaiMaxError = document.getElementById('nilai-maksimum-error');
     const kelasError = document.getElementById('kelas-error');
     const tipeTugasError = document.getElementById('tipe-tugas-error');
     const formatPengumpulanError = document.getElementById('format-pengumpulan-error');
@@ -543,9 +532,7 @@ document.addEventListener('DOMContentLoaded', function() {
             { input: judulInput, error: judulError, message: 'Judul tugas wajib diisi.' },
             { input: deskripsiInput, error: deskripsiError, message: 'Deskripsi tugas wajib diisi.' },
             { input: deadlineInput, error: deadlineError, message: 'Deadline wajib diisi.' },
-            { input: bobotInput, error: bobotError, message: 'Bobot nilai wajib diisi.' },
-            { input: nilaiMinInput, error: nilaiMinError, message: 'Nilai minimum wajib diisi.' },
-            { input: nilaiMaxInput, error: nilaiMaxError, message: 'Nilai maksimum wajib diisi.' }
+            { input: bobotInput, error: bobotError, message: 'Bobot nilai wajib diisi.' }
         ];
 
         requiredInputs.forEach(item => {
@@ -568,16 +555,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
 
-        // Validasi nilai minimum dan maksimum
-        if (nilaiMinInput.value && nilaiMaxInput.value) {
-            const minValue = Number(nilaiMinInput.value);
-            const maxValue = Number(nilaiMaxInput.value);
-            if (minValue > maxValue) {
-                setInputError(nilaiMinInput, nilaiMinError, 'Nilai minimum tidak boleh lebih besar dari nilai maksimum.');
-                setInputError(nilaiMaxInput, nilaiMaxError, 'Nilai maksimum tidak boleh lebih kecil dari nilai minimum.');
-                isValid = false;
-            }
-        }
+
 
         // Validasi kelas
         const kelasChecked = Array.from(kelasCheckboxes).some(cb => cb.checked);
@@ -612,32 +590,16 @@ document.addEventListener('DOMContentLoaded', function() {
         return isValid;
     }
 
-    [judulInput, deskripsiInput, deadlineInput, bobotInput, nilaiMinInput, nilaiMaxInput].forEach(input => {
+    [judulInput, deskripsiInput, deadlineInput, bobotInput].forEach(input => {
         input.addEventListener('input', () => {
             if (input.value.trim()) {
                 const errorMap = {
                     'judul-tugas': judulError,
                     'deskripsi-tugas': deskripsiError,
                     'deadline': deadlineError,
-                    'bobot-nilai': bobotError,
-                    'nilai-minimum': nilaiMinError,
-                    'nilai-maksimum': nilaiMaxError
+                    'bobot-nilai': bobotError
                 };
                 clearInputError(input, errorMap[input.id]);
-            }
-        });
-    });
-
-    // Revalidasi nilai minimum dan maksimum saat berubah
-    [nilaiMinInput, nilaiMaxInput].forEach(input => {
-        input.addEventListener('input', () => {
-            if (nilaiMinInput.value && nilaiMaxInput.value) {
-                const minValue = Number(nilaiMinInput.value);
-                const maxValue = Number(nilaiMaxInput.value);
-                if (minValue <= maxValue) {
-                    clearInputError(nilaiMinInput, nilaiMinError);
-                    clearInputError(nilaiMaxInput, nilaiMaxError);
-                }
             }
         });
     });

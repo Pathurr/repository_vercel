@@ -154,12 +154,12 @@
     <table class="responsive-card-table monitor-table w-full text-left border-collapse table-fixed">
         <thead>
             <tr class="bg-surface-container-low border-b border-outline-variant">
-                <th class="px-3 py-2.5 text-[10px] font-bold text-primary uppercase tracking-wider w-[22%]">Nama Siswa</th>
+                <th class="px-3 py-2.5 text-[10px] font-bold text-primary uppercase tracking-wider w-[20%]">Nama Siswa</th>
                 <th class="px-3 py-2.5 text-[10px] font-bold text-primary uppercase tracking-wider w-[18%]">Kelas & Mapel</th>
-                <th class="px-3 py-2.5 text-[10px] font-bold text-primary uppercase tracking-wider w-[22%]">Judul & Tipe</th>
+                <th class="px-3 py-2.5 text-[10px] font-bold text-primary uppercase tracking-wider w-[20%]">Judul & Tipe</th>
                 <th class="px-3 py-2.5 text-[10px] font-bold text-primary uppercase tracking-wider text-center w-[16%]">Status</th>
                 <th class="px-3 py-2.5 text-[10px] font-bold text-primary uppercase tracking-wider text-center w-[14%]">Pengumpulan & Nilai</th>
-                <th class="px-3 py-2.5 text-[10px] font-bold text-primary uppercase tracking-wider text-right w-[8%]">Aksi</th>
+                <th class="px-3 py-2.5 text-[10px] font-bold text-primary uppercase tracking-wider text-right w-[12%]">Aksi</th>
             </tr>
         </thead>
         <tbody class="divide-y divide-outline-variant/30" id="studentTableBody">
@@ -198,7 +198,7 @@
                         <p class="text-xs font-bold text-on-surface-variant">{{ $scoreText }}</p>
                     </td>
                     <td data-label="Aksi" class="action-cell px-3 py-2.5 text-right">
-                        <a href="{{ $submission->link }}" class="btn-nilai">Nilai</a>
+                        <a href="{{ $submission->link }}" class="btn-nilai">{{ $submission->nilai !== null ? 'Edit Nilai' : 'Nilai' }}</a>
                     </td>
                 </tr>
             @empty

@@ -6,10 +6,13 @@ class Tugas extends Model
 {
     protected $table = 'tugas'; // tambahkan ini
     protected $fillable = [
-        'kelas_id', 'guru_id', 'judul', 'deskripsi', 'file_path', 'deadline', 'nilai_maksimal'
+        'kelas_id', 'guru_id', 'judul', 'deskripsi', 'file_path', 'deadline', 'nilai_maksimal', 'format_pengumpulan'
     ];
 
-    protected $casts = ['deadline' => 'datetime'];
+    protected $casts = [
+        'deadline' => 'datetime',
+        'format_pengumpulan' => 'array'
+    ];
 
     public function kelas() { return $this->belongsTo(Kelas::class); }
     public function guru() { return $this->belongsTo(User::class, 'guru_id'); }

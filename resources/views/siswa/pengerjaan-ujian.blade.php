@@ -38,9 +38,9 @@
     </div>
 
     <!-- Main Exam Area -->
-    <div class="flex-1 flex flex-col lg:flex-row gap-4 w-full overflow-visible lg:overflow-hidden">
+    <div class="flex-1 flex flex-col lg:flex-row gap-4 w-full overflow-visible lg:overflow-hidden lg:min-h-0">
         <!-- Left Column: Question & Options -->
-        <section class="flex-1 flex flex-col min-h-[440px] lg:h-full bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/30 overflow-hidden">
+        <section class="flex-1 flex flex-col min-h-[440px] lg:min-h-0 lg:h-full bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/30 overflow-hidden">
             <!-- Question Content -->
             <div class="flex-1 overflow-y-auto p-6 custom-scrollbar flex flex-col">
                 <div class="mb-4 flex items-center justify-between border-b border-outline-variant/50 pb-3">
@@ -54,7 +54,7 @@
                     <p id="question-text" class="text-sm text-on-surface leading-relaxed font-medium">Loading...</p>
                 </div>
                 <!-- Options -->
-                <div id="options-container" class="flex flex-col gap-3 mt-auto">
+                <div id="options-container" class="flex flex-col gap-3">
                     <!-- Rendered by JS -->
                 </div>
             </div>
@@ -190,11 +190,31 @@
                     <textarea id="essay-answer" oninput="saveEssayAnswer()" class="w-full flex-1 min-h-[200px] p-4 bg-surface border border-outline-variant rounded-xl focus:border-primary focus:ring-1 focus:ring-primary text-sm resize-none custom-scrollbar" placeholder="Ketik jawaban Anda di sini...">${q.answer || ''}</textarea>
                 </div>
             `;
+        } else if (q.tipe === 'multiple_select') {
+            container.innerHTML = `<p class="text-[11px] text-secondary font-bold mb-3 italic flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">info</span> Soal ini memiliki lebih dari satu jawaban benar. Anda dapat memilih beberapa opsi.</p>`;
+            if (!Array.isArray(q.answer)) q.answer = [];
+            const labels = ['A', 'B', 'C', 'D', 'E'];
+            const opts = q.options || [];
+            opts.forEach((opt, idx) => {
+                const isSelected = q.answer.includes(idx);
+                const bgClass = isSelected ? 'border-primary bg-primary/5 border-2' : 'border-outline-variant hover:border-primary hover:bg-surface-container-low border';
+                const textClass = isSelected ? 'text-primary font-bold' : 'text-on-surface-variant';
+                
+                container.innerHTML += `
+                    <label class="group relative flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all ${bgClass}">
+                        <input ${isSelected ? 'checked' : ''} onchange="toggleSelectAnswer(${idx})" class="w-4 h-4 text-primary border-outline-variant rounded focus:ring-primary" name="answer" type="checkbox" value="${idx}"/>
+                        <div class="flex-1 flex gap-2 items-center text-xs">
+                            <span class="font-bold text-sm ${isSelected ? 'text-primary' : 'text-on-surface'}">${labels[idx] || ''}.</span>
+                            <span class="${textClass}">${typeof opt === 'string' ? opt.replace(/</g, '&lt;').replace(/>/g, '&gt;') : opt}</span>
+                        </div>
+                    </label>
+                `;
+            });
         } else {
             const labels = ['A', 'B', 'C', 'D', 'E'];
             const opts = q.options || [];
             opts.forEach((opt, idx) => {
-                const isSelected = q.answer == idx;
+                const isSelected = q.answer == idx && q.answer !== null;
                 const bgClass = isSelected ? 'border-primary bg-primary/5 border-2' : 'border-outline-variant hover:border-primary hover:bg-surface-container-low border';
                 const textClass = isSelected ? 'text-primary font-bold' : 'text-on-surface-variant';
                 
@@ -232,6 +252,21 @@
 
     function selectAnswer(optIndex) {
         questions[currentIndex].answer = optIndex;
+        loadQuestion(currentIndex);
+    }
+
+    function toggleSelectAnswer(optIndex) {
+        if (!Array.isArray(questions[currentIndex].answer)) questions[currentIndex].answer = [];
+        const ansArr = questions[currentIndex].answer;
+        const pos = ansArr.indexOf(optIndex);
+        if (pos > -1) {
+            ansArr.splice(pos, 1);
+        } else {
+            ansArr.push(optIndex);
+        }
+        if (ansArr.length === 0) {
+            questions[currentIndex].answer = null;
+        }
         loadQuestion(currentIndex);
     }
 

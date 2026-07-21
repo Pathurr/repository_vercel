@@ -35,12 +35,24 @@ class TugasController extends Controller
 
     public function store(Request $request, $id)
     {
-        $request->validate([
-            'file' => 'required|file|mimes:pdf,zip,rar,doc,docx,xls,xlsx,ppt,pptx,jpg,jpeg,png|max:51200',
-            'catatan' => 'nullable|string'
-        ]);
-
         $tugas = Tugas::findOrFail($id);
+        $formats = $tugas->format_pengumpulan ?? [];
+        
+        $rules = ['catatan' => 'nullable|string'];
+        
+        $isLinkAllowed = in_array('link', $formats);
+        $isFileAllowed = count(array_diff($formats, ['link'])) > 0 || empty($formats);
+
+        if ($isLinkAllowed && !$isFileAllowed) {
+            $rules['link'] = 'required|url';
+        } elseif (!$isLinkAllowed && $isFileAllowed) {
+            $rules['file'] = 'required|file|mimes:pdf,zip,rar,doc,docx,xls,xlsx,ppt,pptx,jpg,jpeg,png|max:51200';
+        } elseif ($isLinkAllowed && $isFileAllowed) {
+            $rules['file'] = 'required_without:link|file|mimes:pdf,zip,rar,doc,docx,xls,xlsx,ppt,pptx,jpg,jpeg,png|max:51200';
+            $rules['link'] = 'required_without:file|url';
+        }
+
+        $request->validate($rules);
 
         $filePath = null;
         if ($request->hasFile('file')) {
@@ -59,12 +71,13 @@ class TugasController extends Controller
         PengumpulanTugas::updateOrCreate(
             ['tugas_id' => $tugas->id, 'siswa_id' => Auth::id()],
             [
-                'file_path' => $filePath, 
+                'file_path' => $filePath,
+                'link' => $request->link,
                 'catatan' => $request->catatan,
                 'dikumpulkan_at' => $now,
-                'status' => $status
+                'status' => $status,
             ]
         );
-        return redirect()->route('siswa.tugas')->with('success', 'Tugas berhasil dikumpulkan!');
+        return redirect()->route('siswa.mapel')->with('success', 'Tugas berhasil dikumpulkan!');
     }
 }

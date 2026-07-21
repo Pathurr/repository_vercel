@@ -45,7 +45,8 @@
                 <div>
                     <label class="block text-sm font-semibold text-primary mb-1" for="name">Nama Lengkap</label>
                     <input class="w-full bg-surface-container-low border-0 border-b-2 border-primary/20 text-on-surface focus:ring-0 focus:border-secondary-container transition-soft py-2 px-3 text-sm"
-                           id="name" name="name" placeholder="Masukkan nama lengkap" type="text" value="{{ old('name') }}" required/>
+                           id="name" name="name" placeholder="Masukkan nama lengkap" type="text" value="{{ old('name') }}" pattern="[A-Za-z\s]+" title="Nama hanya boleh berisi huruf dan spasi." required/>
+                    <p id="name-warning" class="text-[11px] text-on-surface-variant mt-1 transition-colors">Gunakan huruf dan spasi saja.</p>
                 </div>
                 {{-- NIS Field (for Murid) --}}
                 <div id="nis-field">
@@ -145,6 +146,15 @@
         event.target.value = event.target.value.replace(/\D/g, '').slice(0, maxLength);
     }
 
+    function keepLettersOnly(event) {
+        const originalValue = event.target.value;
+        const newValue = originalValue.replace(/[^A-Za-z\s]/g, '');
+        
+        if (originalValue !== newValue) {
+            event.target.value = newValue;
+        }
+    }
+
     function validatePasswordMatch() {
         const passwordInput = document.getElementById('password');
         const confirmationInput = document.getElementById('password_confirmation');
@@ -161,6 +171,7 @@
     // Panggil saat pertama kali load agar validasi menyesuaikan pilihan default
     document.addEventListener('DOMContentLoaded', () => {
         toggleIdentifier();
+        document.getElementById('name')?.addEventListener('input', keepLettersOnly);
         document.getElementById('nis')?.addEventListener('input', keepDigitsOnly);
         document.getElementById('nrg')?.addEventListener('input', keepDigitsOnly);
         document.getElementById('password')?.addEventListener('input', validatePasswordMatch);

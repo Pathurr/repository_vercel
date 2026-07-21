@@ -21,6 +21,10 @@ return Application::configure(basePath: dirname(__DIR__))
         // Jika belum login tapi akses halaman protected,
         // redirect ke halaman login
         $middleware->redirectGuestsTo(fn() => route('login'));
+        
+        $middleware->validateCsrfTokens(except: [
+            'logout',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

@@ -11,24 +11,7 @@
     }
 </style>
 
-<!-- Confirmation Modal -->
-<div id="confirmModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 backdrop-blur-sm">
-    <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full mx-4 border border-outline-variant">
-        <div class="flex items-center gap-3 mb-3">
-            <div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center flex-shrink-0">
-                <span class="material-symbols-outlined text-on-secondary-container">help</span>
-            </div>
-            <div>
-                <h3 class="font-bold text-lg text-primary" style="font-family: var(--font-serif)">Konfirmasi Simpan</h3>
-            </div>
-        </div>
-        <p class="text-sm text-on-surface-variant mb-5">Apakah Anda yakin ingin menyimpan nilai ini?</p>
-        <div class="flex gap-3">
-            <button id="modalCancel" class="flex-1 py-2 border-2 border-outline-variant text-on-surface-variant font-bold rounded-xl hover:bg-surface-container transition-all text-sm">Batal</button>
-            <button id="modalConfirm" class="flex-1 py-2 bg-secondary-container text-on-secondary-container font-bold rounded-xl hover:opacity-90 transition-all text-sm">Ya, Simpan</button>
-        </div>
-    </div>
-</div>
+
 
 <div class="min-h-[calc(100vh-100px)] lg:h-[calc(100vh-100px)] flex flex-col">
     <!-- Header Section -->
@@ -67,21 +50,43 @@
                 </div>
 
                 <!-- File Display -->
-                <div class="relative group flex-1 w-full bg-surface-container rounded-xl overflow-hidden shadow-inner border border-outline-variant/30 min-h-0">
-                    <div class="w-full h-full flex flex-col items-center justify-center gap-4 text-on-surface-variant p-4 text-center">
+                <div class="relative group flex-1 w-full bg-surface-container rounded-xl overflow-y-auto custom-scrollbar shadow-inner border border-outline-variant/30 min-h-0">
+                    <div class="w-full min-h-full flex flex-col md:flex-row items-center justify-center gap-6 text-on-surface-variant p-6 text-center">
+                        @php
+                            $hasContent = false;
+                        @endphp
+                        
                         @if($submission->file_path && $submission->file_path !== '-')
                             @php
+                                $hasContent = true;
                                 $ext = pathinfo($submission->file_path, PATHINFO_EXTENSION);
                                 $icon = in_array(strtolower($ext), ['png','jpg','jpeg','gif']) ? 'image' : (strtolower($ext) == 'pdf' ? 'picture_as_pdf' : 'description');
                             @endphp
-                            <span class="material-symbols-outlined text-5xl text-primary/30">{{ $icon }}</span>
-                            <p class="text-sm font-medium">{{ basename($submission->file_path) }}</p>
-                            <a href="{{ \Illuminate\Support\Facades\Storage::disk(env('FILESYSTEM_DISK', 'public'))->url($submission->file_path) }}" target="_blank" class="bg-white text-primary px-4 py-1.5 rounded-full font-bold shadow text-xs border border-outline-variant flex items-center gap-1.5 hover:bg-surface-container-lowest transition-colors">
-                                <span class="material-symbols-outlined text-[13px]">open_in_new</span> Buka File
-                            </a>
-                        @else
-                            <span class="material-symbols-outlined text-5xl text-primary/30">do_not_disturb</span>
-                            <p class="text-sm font-medium">Tidak ada file yang diunggah.</p>
+                            <div class="flex flex-col items-center gap-3">
+                                <span class="material-symbols-outlined text-5xl text-primary/30">{{ $icon }}</span>
+                                <p class="text-sm font-medium">{{ basename($submission->file_path) }}</p>
+                                <a href="{{ \Illuminate\Support\Facades\Storage::disk(env('FILESYSTEM_DISK', 'public'))->url($submission->file_path) }}" target="_blank" class="bg-white text-primary px-4 py-1.5 rounded-full font-bold shadow text-xs border border-outline-variant flex items-center gap-1.5 hover:bg-surface-container-lowest transition-colors">
+                                    <span class="material-symbols-outlined text-[13px]">open_in_new</span> Buka File
+                                </a>
+                            </div>
+                        @endif
+                        
+                        @if($submission->link)
+                            @php $hasContent = true; @endphp
+                            <div class="flex flex-col items-center gap-3">
+                                <span class="material-symbols-outlined text-5xl text-primary/30">link</span>
+                                <p class="text-sm font-medium">Tautan / Link</p>
+                                <a href="{{ $submission->link }}" target="_blank" class="bg-white text-primary px-4 py-1.5 rounded-full font-bold shadow text-xs border border-outline-variant flex items-center gap-1.5 hover:bg-surface-container-lowest transition-colors">
+                                    <span class="material-symbols-outlined text-[13px]">open_in_new</span> Buka Tautan
+                                </a>
+                            </div>
+                        @endif
+
+                        @if(!$hasContent)
+                            <div class="flex flex-col items-center gap-3">
+                                <span class="material-symbols-outlined text-5xl text-primary/30">do_not_disturb</span>
+                                <p class="text-sm font-medium">Tidak ada file atau tautan yang diserahkan.</p>
+                            </div>
                         @endif
                     </div>
                 </div>
@@ -142,6 +147,25 @@
                             <span class="material-symbols-outlined" style="font-size: 18px">save</span> Simpan Nilai
                         </button>
                     </div>
+                    
+                    <!-- Confirmation Modal -->
+                    <div id="confirmModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 backdrop-blur-sm">
+                        <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full mx-4 border border-outline-variant">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center flex-shrink-0">
+                                    <span class="material-symbols-outlined text-on-secondary-container">help</span>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-lg text-primary" style="font-family: var(--font-serif)">Konfirmasi Simpan</h3>
+                                </div>
+                            </div>
+                            <p class="text-sm text-on-surface-variant mb-5">Apakah Anda yakin ingin menyimpan nilai ini?</p>
+                            <div class="flex gap-3">
+                                <button type="button" id="modalCancel" class="flex-1 py-2 border-2 border-outline-variant text-on-surface-variant font-bold rounded-xl hover:bg-surface-container transition-all text-sm">Batal</button>
+                                <button type="submit" id="modalConfirm" class="flex-1 py-2 bg-secondary-container text-on-secondary-container font-bold rounded-xl hover:opacity-90 transition-all text-sm">Ya, Simpan</button>
+                            </div>
+                        </div>
+                    </div>
                 </form>
             </div>
         </div>
@@ -154,27 +178,16 @@
     <span class="font-bold text-sm">Nilai berhasil disimpan!</span>
 </div>
 
-<!-- Modal Konfirmasi Simpan -->
-<div id="modal-confirm-simpan" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 hidden backdrop-blur-sm transition-opacity">
-    <div class="ui-modal-card">
-        <span class="material-symbols-outlined text-[#feae2c] text-5xl mb-4">help</span>
-        <h3 class="text-xl font-bold text-[#50290b] mb-2" style="font-family: var(--font-serif)">Simpan Nilai?</h3>
-        <p class="text-xs text-[#51443c] mb-6">Apakah Anda yakin nilai yang diberikan sudah benar dan siap disimpan?</p>
-        <div class="flex gap-2 justify-center">
-            <button type="button" id="btn-cancel-simpan" class="ui-btn ui-btn-secondary px-4 py-2 text-xs">Periksa Lagi</button>
-            <button type="button" id="btn-confirm-simpan" class="ui-btn ui-btn-primary px-4 py-2 text-xs">Ya, Simpan</button>
-        </div>
-    </div>
-</div>
+
 
 @push('scripts')
 <script>
     const saveBtn = document.getElementById('saveBtn');
     const gradeInput = document.getElementById('gradeInput');
     const gradeError = document.getElementById('gradeError');
-    const confirmModal = document.getElementById('modal-confirm-simpan');
-    const modalCancel = document.getElementById('btn-cancel-simpan');
-    const modalConfirm = document.getElementById('btn-confirm-simpan');
+    const confirmModal = document.getElementById('confirmModal');
+    const modalCancel = document.getElementById('modalCancel');
+    const modalConfirm = document.getElementById('modalConfirm');
     const toastSuccess = document.getElementById('toast-success');
 
     gradeInput.addEventListener('input', (e) => {
@@ -213,9 +226,6 @@
     modalConfirm.addEventListener('click', () => {
         confirmModal.classList.add('hidden');
         confirmModal.classList.remove('flex');
-        
-        // Actually submit the form
-        document.getElementById('gradingForm').submit();
     });
 </script>
 @endpush

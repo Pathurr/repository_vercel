@@ -49,18 +49,7 @@
     <span class="font-bold text-sm">Nilai berhasil disimpan!</span>
 </div>
 
-<!-- Modal Konfirmasi Simpan -->
-<div id="modal-confirm-simpan" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 hidden backdrop-blur-sm transition-opacity">
-    <div class="ui-modal-card">
-        <span class="material-symbols-outlined text-[#feae2c] text-5xl mb-4">help</span>
-        <h3 class="text-xl font-bold text-[#50290b] mb-2" style="font-family: var(--font-serif)">Simpan Nilai?</h3>
-        <p class="text-xs text-[#51443c] mb-6">Apakah Anda yakin nilai yang diberikan sudah benar dan siap disimpan?</p>
-        <div class="flex gap-2 justify-center">
-            <button type="button" id="btn-cancel-simpan" class="ui-btn ui-btn-secondary px-4 py-2 text-xs">Periksa Lagi</button>
-            <button type="button" id="btn-confirm-simpan" class="ui-btn ui-btn-primary px-4 py-2 text-xs">Ya, Simpan</button>
-        </div>
-    </div>
-</div>
+
 
 <div class="smooth-wave-bg -m-6 p-4" style="min-height: calc(100vh - 64px);">
 <div class="max-w-full mx-auto h-full flex flex-col">
@@ -94,9 +83,13 @@
                 <div class="bg-surface-container-lowest p-4 rounded-xl shadow-ambient border border-outline-variant/30 relative">
                     @if($ans->soal->tipe !== 'essay')
                         <div class="absolute top-4 right-4 flex items-center gap-2">
-                            @if($ans->benar)
+                            @if($ans->skor == 1)
                             <span class="bg-green-100 text-green-700 px-2.5 py-1 rounded-full text-xs font-bold flex items-center gap-1 border border-green-200">
                                 <span class="material-symbols-outlined text-sm">check_circle</span> Benar
+                            </span>
+                            @elseif($ans->skor > 0)
+                            <span class="bg-secondary-container/20 text-on-secondary-container px-2.5 py-1 rounded-full text-xs font-bold flex items-center gap-1 border border-secondary-container/40">
+                                <span class="material-symbols-outlined text-sm">check_circle</span> Sebagian Benar
                             </span>
                             @else
                             <span class="bg-error-container text-on-error-container px-2.5 py-1 rounded-full text-xs font-bold flex items-center gap-1">
@@ -112,15 +105,24 @@
                         </div>
                     @endif
                     
-                    <h4 class="text-xs font-bold text-secondary uppercase tracking-wider mb-2">Pertanyaan {{ $index + 1 }} — {{ $ans->soal->tipe === 'essay' ? 'Essay' : 'Pilihan Ganda' }}</h4>
+                    <h4 class="text-xs font-bold text-secondary uppercase tracking-wider mb-2 flex items-center flex-wrap gap-2">
+                        Pertanyaan {{ $index + 1 }} — {{ $ans->soal->tipe === 'essay' ? 'Essay' : 'Pilihan Ganda' }}
+                        <span class="text-[10px] text-on-surface-variant normal-case font-bold bg-surface-variant/30 px-2 py-0.5 rounded border border-outline-variant/30">Bobot: {{ $ans->soal->bobot ?? 1 }} Poin</span>
+                    </h4>
                     <p class="text-base font-semibold text-on-surface mb-4 pr-28">{!! $ans->soal->pertanyaan !!}</p>
                     
                     @if($ans->soal->tipe !== 'essay')
                         <div class="space-y-2">
                             @foreach($ans->soal->pilihan ?? [] as $optIdx => $optText)
                                 @php
-                                    $isSelected = ((string)$ans->jawaban === (string)$optIdx);
-                                    $isCorrectOpt = ((string)$ans->soal->jawaban_benar === (string)$optIdx);
+                                    $studentAnswers = is_array(json_decode($ans->jawaban, true)) ? json_decode($ans->jawaban, true) : [$ans->jawaban];
+                                    $correctAnswers = is_array(json_decode($ans->soal->jawaban_benar, true)) ? json_decode($ans->soal->jawaban_benar, true) : [$ans->soal->jawaban_benar];
+                                    
+                                    $studentAnswers = array_map('strval', $studentAnswers);
+                                    $correctAnswers = array_map('strval', $correctAnswers);
+                                    
+                                    $isSelected = in_array((string)$optIdx, $studentAnswers, true);
+                                    $isCorrectOpt = in_array((string)$optIdx, $correctAnswers, true);
                                     
                                     $bgClass = 'bg-surface-container border-outline-variant/20';
                                     $icon = '';
@@ -142,8 +144,8 @@
                             @endforeach
                         </div>
                     @else
-                        <div class="bg-surface-bright p-4 rounded-lg border border-outline-variant/30 mb-4 italic text-on-surface text-sm leading-relaxed">
-                            "{{ $ans->jawaban ?? 'Siswa tidak menjawab.' }}"
+                        <div class="bg-surface-bright p-4 rounded-lg border border-outline-variant/30 mb-4 text-on-surface text-sm leading-relaxed">
+                            {{ $ans->jawaban ?? 'Siswa tidak menjawab.' }}
                         </div>
                     @endif
                 </div>
@@ -159,7 +161,7 @@
 
                 @php
                     $mcqTotal = $submission['answers']->where('soal.tipe', '!=', 'essay')->count();
-                    $mcqScore = $submission['answers']->where('soal.tipe', '!=', 'essay')->where('benar', true)->count();
+                    $mcqScore = $submission['answers']->where('soal.tipe', '!=', 'essay')->sum('skor');
                     $baseScore = $mcqTotal > 0 ? ($mcqScore / $mcqTotal) * 100 : 0;
                     
                     // Fetch existing score if any
@@ -173,14 +175,14 @@
                 <div class="space-y-1.5 mb-5 flex-shrink-0">
                     <div class="flex justify-between text-[11px]">
                         <span class="text-on-surface-variant">Skor Auto (PG)</span>
-                        <span class="font-bold text-primary">{{ $mcqScore }}/{{ $mcqTotal }} ({{ round($baseScore) }} Poin)</span>
+                        <span class="font-bold text-primary">{{ is_numeric($mcqScore) && floor($mcqScore) == $mcqScore ? number_format($mcqScore, 0) : number_format($mcqScore, 2) }}/{{ $mcqTotal }} ({{ round($baseScore) }} Poin)</span>
                     </div>
                 </div>
 
                 <div class="mb-4">
                     <label class="text-[11px] font-bold uppercase tracking-wider text-primary mb-1 block">Nilai Keseluruhan (0-100)</label>
                     <div class="relative">
-                        <input name="nilai" value="{{ old('nilai', $existingNilai ? $existingNilai->nilai : round($baseScore)) }}" class="w-full text-3xl font-bold p-3 bg-white border-b-2 border-primary focus:ring-0 focus:border-secondary transition-all rounded-t-xl text-center" max="100" min="0" placeholder="0" type="number" required/>
+                        <input id="gradeInput" name="nilai" value="{{ old('nilai', $existingNilai ? $existingNilai->nilai : round($baseScore)) }}" class="w-full text-3xl font-bold p-3 bg-white border-b-2 border-primary focus:ring-0 focus:border-secondary transition-all rounded-t-xl text-center" max="100" min="0" placeholder="0" type="number" required/>
                     </div>
                     <p class="text-[10px] text-on-surface-variant mt-1 text-center">Sesuaikan nilai di atas jika ada soal essay.</p>
                 </div>
@@ -193,6 +195,19 @@
                         </button>
                     </div>
                 </div>
+                
+                <!-- Modal Konfirmasi Simpan -->
+                <div id="modal-confirm-simpan" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 hidden backdrop-blur-sm transition-opacity">
+                    <div class="ui-modal-card">
+                        <span class="material-symbols-outlined text-[#feae2c] text-5xl mb-4">help</span>
+                        <h3 class="text-xl font-bold text-[#50290b] mb-2" style="font-family: var(--font-serif)">Simpan Nilai?</h3>
+                        <p class="text-xs text-[#51443c] mb-6">Apakah Anda yakin nilai yang diberikan sudah benar dan siap disimpan?</p>
+                        <div class="flex gap-2 justify-center">
+                            <button type="button" id="btn-cancel-simpan" class="ui-btn ui-btn-secondary px-4 py-2 text-xs">Periksa Lagi</button>
+                            <button type="button" id="btn-confirm-simpan" class="ui-btn ui-btn-primary px-4 py-2 text-xs">Ya, Simpan</button>
+                        </div>
+                    </div>
+                </div>
             </form>
         </aside>
     </div>
@@ -203,60 +218,26 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // ── Student Navigator ──────────────────────────────────────
-    const thumbs = document.querySelectorAll('.student-thumb');
-    const prevBtn = document.getElementById('prevStudent');
-    const nextBtn = document.getElementById('nextStudent');
-    const navCounter = document.getElementById('navCounter');
-    let currentIndex = 1; // BP is active
-
-    function activateStudent(idx) {
-        thumbs.forEach((t, i) => {
-            t.classList.toggle('active', i === idx);
-            t.classList.toggle('inactive', i !== idx);
+    const gradeInput = document.getElementById('gradeInput');
+    if (gradeInput) {
+        gradeInput.addEventListener('keydown', (e) => {
+            if (e.key === '-' || e.key === 'e') e.preventDefault();
         });
-        navCounter.textContent = `Siswa ${idx + 1} dari ${thumbs.length}`;
-        prevBtn.style.opacity = idx === 0 ? '.35' : '1';
-        nextBtn.style.opacity = idx === thumbs.length - 1 ? '.35' : '1';
-        currentIndex = idx;
-    }
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const sIndex = urlParams.get('s');
-    if (sIndex !== null && !isNaN(sIndex) && sIndex >= 0 && sIndex < thumbs.length) {
-        currentIndex = parseInt(sIndex);
-    }
-
-    thumbs.forEach((t, i) => t.addEventListener('click', () => activateStudent(i)));
-    prevBtn.addEventListener('click', () => { if (currentIndex > 0) activateStudent(currentIndex - 1); });
-    nextBtn.addEventListener('click', () => { if (currentIndex < thumbs.length - 1) activateStudent(currentIndex + 1); });
-    activateStudent(currentIndex);
-
-    // ── Dynamic Score Calculation ──────────────────────────────
-    const essayInputs = document.querySelectorAll('.essay-score');
-    const AUTO_CORRECT = 50;
-    const AUTO_MAX = 80;
-    const ESSAY_MAX_TOTAL = 20;
-
-    function recalcScore() {
-        let essayGained = 0;
-        essayInputs.forEach(inp => {
-            const v = parseInt(inp.value) || 0;
-            const max = parseInt(inp.dataset.max) || 20;
-            essayGained += Math.min(Math.max(v, 0), max);
+        gradeInput.addEventListener('input', (e) => {
+            if (e.target.value === '') return;
+            let val = parseInt(e.target.value);
+            if (val > 100) e.target.value = 100;
+            if (val < 0) e.target.value = 0;
+            
+            if (val >= 75) {
+                gradeInput.style.color = '#15803d';
+            } else if (val > 0) {
+                gradeInput.style.color = '#b91c1c';
+            } else {
+                gradeInput.style.color = '';
+            }
         });
-        const total = AUTO_CORRECT + essayGained;
-        const totalMax = AUTO_MAX + ESSAY_MAX_TOTAL;
-        const pct = Math.round((total / totalMax) * 100);
-        document.getElementById('totalScore').textContent = pct;
-        document.getElementById('totalPercent').textContent = pct + '%';
-        document.getElementById('manualScore').textContent = essayGained + '/' + ESSAY_MAX_TOTAL;
-        document.getElementById('autoScore').textContent = AUTO_CORRECT + '/' + AUTO_MAX;
-        const circle = document.querySelector('.score-circle');
-        circle.classList.add('scale-105');
-        setTimeout(() => circle.classList.remove('scale-105'), 200);
     }
-    essayInputs.forEach(inp => inp.addEventListener('input', recalcScore));
 
     // ── Modals & Toasts ─────────────────────────────────────
     const monitorUrl = "{{ route('guru.monitor') }}";
@@ -269,6 +250,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Trigger Modals
     btnTriggerSimpan.addEventListener('click', () => {
+        if (gradeInput && gradeInput.value === '') {
+            gradeInput.focus();
+            return;
+        }
         modalSimpan.classList.remove('hidden');
         modalSimpan.classList.add('flex');
     });
@@ -280,12 +265,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Confirm Simpan
-    btnConfirmSimpan.addEventListener('click', () => {
-        modalSimpan.classList.add('hidden');
-        modalSimpan.classList.remove('flex');
-        
-        document.getElementById('gradingForm').submit();
-    });
+    if(btnConfirmSimpan) {
+        btnConfirmSimpan.addEventListener('click', () => {
+            modalSimpan.classList.add('hidden');
+            modalSimpan.classList.remove('flex');
+            
+            document.getElementById('gradingForm').submit();
+        });
+    }
 });
 </script>
 @endpush
