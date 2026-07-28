@@ -13,10 +13,22 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         // Tambahkan baris ini agar Laravel mempercayai ngrok
         $middleware->trustProxies(at: '*');
+        
+        $middleware->alias([
+            'role' => \App\Http\Middleware\RoleMiddleware::class,
+        ]);
 
         // Jika sudah login tapi akses halaman guest (login/register),
-        // redirect ke dashboard guru (sementara, bisa disesuaikan per role nanti)
-        $middleware->redirectUsersTo(fn() => route('guru.dashboard'));
+        // redirect ke dashboard sesuai role
+        $middleware->redirectUsersTo(function () {
+            $role = auth()->user()->role ?? '';
+            if ($role === 'admin') {
+                return route('admin.dashboard');
+            } elseif ($role === 'murid' || $role === 'siswa') {
+                return route('siswa.dashboard');
+            }
+            return route('guru.dashboard');
+        });
 
         // Jika belum login tapi akses halaman protected,
         // redirect ke halaman login
