@@ -34,7 +34,7 @@ require __DIR__.'/auth.php';
 
 
 // ─── Guru Routes (Protected) ──────────────────────────────────
-Route::prefix('guru')->name('guru.')->middleware(['auth'])->group(function () {
+Route::prefix('guru')->name('guru.')->middleware(['auth', 'role:guru'])->group(function () {
 
     // Dashboard
     Route::get('/dashboard', [App\Http\Controllers\Guru\DashboardController::class, 'index'])->name('dashboard');
@@ -89,7 +89,7 @@ Route::prefix('guru')->name('guru.')->middleware(['auth'])->group(function () {
 });
 
 // ─── Siswa Routes (Protected) ─────────────────────────────────
-Route::prefix('siswa')->name('siswa.')->middleware(['auth'])->group(function () {
+Route::prefix('siswa')->name('siswa.')->middleware(['auth', 'role:siswa'])->group(function () {
 
     // Dashboard
     Route::get('/dashboard', [SiswaDashboardController::class, 'index'])->name('dashboard');
@@ -125,7 +125,7 @@ Route::prefix('siswa')->name('siswa.')->middleware(['auth'])->group(function () 
 });
 
 // ─── Admin Routes (Protected) ─────────────────────────────────
-Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->group(function () {
     // Dashboard
     Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
 
