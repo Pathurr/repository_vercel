@@ -32,9 +32,10 @@ class SiswaSeeder extends Seeder
             $siswa = User::create([
                 'name' => $faker->name,
                 'email' => $faker->unique()->safeEmail,
-                'password' => Hash::make('password'), // Password default: password
+                'password' => 'password', // Password default: password
                 'role' => 'murid',
                 'nis' => $faker->unique()->numerify('##########'), // 10 digit NIS acak
+                'status' => 'active',
             ]);
 
             // 2. Assign ke Kelas secara acak

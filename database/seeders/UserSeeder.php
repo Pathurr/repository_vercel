@@ -11,47 +11,59 @@ class UserSeeder extends Seeder
     {
         // Admin
         User::create([
-            'name' => 'Admin',
-            'email' => 'admin@lms.com',
-            'password' => Hash::make('password'),
+            'name' => 'Admin Utama',
+            'email' => 'admin@admin.com',
+            'password' => 'password',
             'role' => 'admin',
+            'status' => 'active',
         ]);
 
         // Guru
         User::create([
+            'name' => 'Still Goodman',
+            'email' => 'stillgoodman466@gmail.com',
+            'password' => 'goodman46',
+            'role' => 'guru',
+            'nrg' => '1122334455',
+            'status' => 'active',
+        ]);
+
+        User::create([
             'name' => 'Budi Santoso',
             'email' => 'guru1@lms.com',
-            'password' => Hash::make('password'),
+            'password' => 'password',
             'role' => 'guru',
-            'nip' => '198501012010011001',
-            'no_hp' => '081234567890',
+            'nrg' => '198501012010011001',
+            'status' => 'active',
         ]);
 
         User::create([
             'name' => 'Siti Rahayu',
             'email' => 'guru2@lms.com',
-            'password' => Hash::make('password'),
+            'password' => 'password',
             'role' => 'guru',
-            'nip' => '198701012010012002',
-            'no_hp' => '081234567891',
+            'nrg' => '198701012010012002',
+            'status' => 'active',
         ]);
 
         // Siswa
         $siswa = [
-            ['name' => 'Andi Pratama',   'email' => 'siswa1@lms.com', 'nis' => '2024001'],
-            ['name' => 'Dewi Lestari',   'email' => 'siswa2@lms.com', 'nis' => '2024002'],
-            ['name' => 'Rizky Ramadan',  'email' => 'siswa3@lms.com', 'nis' => '2024003'],
-            ['name' => 'Aulia Putri',    'email' => 'siswa4@lms.com', 'nis' => '2024004'],
-            ['name' => 'Fajar Nugroho',  'email' => 'siswa5@lms.com', 'nis' => '2024005'],
+            ['name' => 'Alfathurahman',  'email' => 'alfathurahman28@gmail.com', 'nis' => '2024000', 'password' => 'dompak28jb'],
+            ['name' => 'Andi Pratama',   'email' => 'siswa1@lms.com', 'nis' => '2024001', 'password' => 'password'],
+            ['name' => 'Dewi Lestari',   'email' => 'siswa2@lms.com', 'nis' => '2024002', 'password' => 'password'],
+            ['name' => 'Rizky Ramadan',  'email' => 'siswa3@lms.com', 'nis' => '2024003', 'password' => 'password'],
+            ['name' => 'Aulia Putri',    'email' => 'siswa4@lms.com', 'nis' => '2024004', 'password' => 'password'],
+            ['name' => 'Fajar Nugroho',  'email' => 'siswa5@lms.com', 'nis' => '2024005', 'password' => 'password'],
         ];
 
         foreach ($siswa as $s) {
             User::create([
                 'name' => $s['name'],
                 'email' => $s['email'],
-                'password' => Hash::make('password'),
-                'role' => 'siswa',
+                'password' => $s['password'],
+                'role' => 'murid',
                 'nis' => $s['nis'],
+                'status' => 'active',
             ]);
         }
     }
