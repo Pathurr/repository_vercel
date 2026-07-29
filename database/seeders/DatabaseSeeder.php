@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             MateriSeeder::class,
             TugasSeeder::class,
             KuisUjianSeeder::class,
+            InteraksiSeeder::class,
         ]);
     }
 }
