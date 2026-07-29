@@ -15,6 +15,7 @@ class UserSeeder extends Seeder
             'email' => 'admin@admin.com',
             'password' => 'password',
             'role' => 'admin',
+            'status' => 'active',
         ]);
 
         // Guru
@@ -24,6 +25,7 @@ class UserSeeder extends Seeder
             'password' => 'goodman46',
             'role' => 'guru',
             'nrg' => '1122334455',
+            'status' => 'active',
         ]);
 
         User::create([
@@ -32,6 +34,7 @@ class UserSeeder extends Seeder
             'password' => 'password',
             'role' => 'guru',
             'nrg' => '198501012010011001',
+            'status' => 'active',
         ]);
 
         User::create([
@@ -40,6 +43,7 @@ class UserSeeder extends Seeder
             'password' => 'password',
             'role' => 'guru',
             'nrg' => '198701012010012002',
+            'status' => 'active',
         ]);
 
         // Siswa
@@ -59,6 +63,7 @@ class UserSeeder extends Seeder
                 'password' => $s['password'],
                 'role' => 'murid',
                 'nis' => $s['nis'],
+                'status' => 'active',
             ]);
         }
     }

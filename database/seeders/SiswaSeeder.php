@@ -35,6 +35,7 @@ class SiswaSeeder extends Seeder
                 'password' => 'password', // Password default: password
                 'role' => 'murid',
                 'nis' => $faker->unique()->numerify('##########'), // 10 digit NIS acak
+                'status' => 'active',
             ]);
 
             // 2. Assign ke Kelas secara acak
