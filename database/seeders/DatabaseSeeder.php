@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             TugasSeeder::class,
             KuisUjianSeeder::class,
             InteraksiSeeder::class,
+            DemoLengkapSeeder::class,
         ]);
     }
 }

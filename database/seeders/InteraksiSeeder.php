@@ -51,7 +51,6 @@ class InteraksiSeeder extends Seeder
             \Illuminate\Support\Facades\DB::table('materi_siswa')->insert([
                 'materi_id' => $materi->id,
                 'siswa_id' => $siswa->id,
-                'is_read' => true,
                 'read_at' => now(),
                 'created_at' => now(),
                 'updated_at' => now(),
