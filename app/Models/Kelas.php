@@ -9,6 +9,10 @@ class Kelas extends Model
         'nama_kelas', 'mata_pelajaran', 'guru_id', 'kode_kelas', 'deskripsi', 'aktif'
     ];
 
+    protected $casts = [
+        'aktif' => 'boolean',
+    ];
+
     public function guru()
     {
         return $this->belongsTo(User::class, 'guru_id');

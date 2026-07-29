@@ -23,8 +23,7 @@ class UserSeeder extends Seeder
             'email' => 'guru1@lms.com',
             'password' => Hash::make('password'),
             'role' => 'guru',
-            'nip' => '198501012010011001',
-            'no_hp' => '081234567890',
+            'nrg' => '198501012010011001',
         ]);
 
         User::create([
@@ -32,8 +31,7 @@ class UserSeeder extends Seeder
             'email' => 'guru2@lms.com',
             'password' => Hash::make('password'),
             'role' => 'guru',
-            'nip' => '198701012010012002',
-            'no_hp' => '081234567891',
+            'nrg' => '198701012010012002',
         ]);
 
         // Siswa
@@ -50,7 +48,7 @@ class UserSeeder extends Seeder
                 'name' => $s['name'],
                 'email' => $s['email'],
                 'password' => Hash::make('password'),
-                'role' => 'siswa',
+                'role' => 'murid',
                 'nis' => $s['nis'],
             ]);
         }

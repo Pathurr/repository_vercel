@@ -19,7 +19,7 @@ class KelasSeeder extends Seeder
             'guru_id'        => $guru1->id,
             'kode_kelas'     => 'MTK-001',
             'deskripsi'      => 'Kelas Matematika untuk siswa X IPA 1',
-            'aktif'          => true,
+            'aktif'          => 'true',
         ]);
 
         $kelas2 = Kelas::create([
@@ -28,7 +28,7 @@ class KelasSeeder extends Seeder
             'guru_id'        => $guru2->id,
             'kode_kelas'     => 'BIN-001',
             'deskripsi'      => 'Kelas Bahasa Indonesia untuk siswa X IPA 2',
-            'aktif'          => true,
+            'aktif'          => 'true',
         ]);
 
         // Daftarkan semua siswa ke kedua kelas
