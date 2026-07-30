@@ -1,5 +1,5 @@
 @extends('layouts.guru')
-@section('title', 'Buat Ujian Baru - SMK Mandalahayu 1')
+@section('title', isset($ujian) ? 'Edit Ujian - SMK Mandalahayu 1' : 'Buat Ujian Baru - SMK Mandalahayu 1')
 
 @section('content')
 <style>
@@ -27,8 +27,8 @@
     </div>
     <div class="flex flex-wrap items-end justify-between gap-4 border-b border-outline-variant/30 pb-4">
         <div>
-            <h2 class="font-bold text-4xl text-primary" style="font-family: var(--font-serif)">{{ request('edit') ? 'Edit Ujian' : 'Buat Ujian Baru' }}</h2>
-            <p class="text-on-surface-variant text-lg">Rancang instrumen penilaian akademik dengan standar kurikulum vokasi terbaru.</p>
+            <h1 class="text-3xl font-bold text-primary mb-2" style="font-family: var(--font-serif)">{{ isset($ujian) ? 'Edit Ujian' : 'Buat Ujian Baru' }}</h1>
+            <p class="text-on-surface-variant text-sm">{{ isset($ujian) ? 'Perbarui ujian yang sudah ada.' : 'Rancang asesmen ujian yang komprehensif.' }}</p>
         </div>
         <div class="flex items-center gap-2 text-sm font-semibold text-on-surface-variant/60 italic">
             <span class="material-symbols-outlined text-sm">schedule</span>
@@ -217,8 +217,20 @@
                                 <p class="text-xs text-error font-bold hidden err-text"></p>
                             </div>
                             <div class="space-y-2">
-                                <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Lampiran Gambar (Opsional)</label>
-                                <input type="file" name="gambar_soal_1" accept="image/*" class="w-full p-3 bg-surface-container-low border border-outline rounded-lg question-image">
+                                <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Lampiran File (Opsional) - Gambar/PDF/Word/PPT</label>
+                                <div class="relative mt-2">
+                                    <input type="file" name="gambar_soal_1" accept=".pdf,.doc,.docx,.ppt,.pptx,image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onchange="previewFile(this)">
+                                    <div class="w-full p-6 border-2 border-dashed border-outline-variant/60 rounded-xl bg-surface-container-lowest hover:bg-surface-container-low transition-colors flex flex-col items-center justify-center text-center gap-2">
+                                        <span class="material-symbols-outlined text-3xl text-outline">cloud_upload</span>
+                                        <div class="space-y-1">
+                                            <p class="text-sm font-bold text-on-surface">Pilih File Lampiran (Opsional)</p>
+                                            <p class="text-xs text-on-surface-variant">Biarkan kosong jika tidak diperlukan</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-3 hidden image-preview-container">
+                                    <!-- Preview HTML akan dirender di sini -->
+                                </div>
                             </div>
                             <div class="pg-options space-y-4" id="options-1">
                                 <div class="flex justify-between items-center mb-2">
@@ -305,6 +317,59 @@
 
 @push('scripts')
 <script>
+    function previewFile(input) {
+        const previewContainer = input.parentElement.nextElementSibling;
+        
+        if (input.files && input.files[0]) {
+            const file = input.files[0];
+            const fileType = file.type;
+            const fileName = file.name;
+            const fileUrl = URL.createObjectURL(file);
+            
+            let htmlContent = '';
+            if (fileType.startsWith('image/')) {
+                htmlContent = `
+                <div class="relative group mt-3">
+                    <img src="${fileUrl}" alt="Preview" class="w-full max-h-[300px] object-cover rounded-xl border border-outline-variant/50 shadow-sm">
+                    <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex items-center justify-center gap-4">
+                        <a href="${fileUrl}" target="_blank" class="ui-btn bg-white/20 hover:bg-white/30 text-white backdrop-blur-sm border-white/30 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-lg">fullscreen</span>
+                            <span>Lihat Penuh</span>
+                        </a>
+                    </div>
+                </div>`;
+            } else if (fileType === 'application/pdf') {
+                htmlContent = `
+                <div class="mt-3 relative group">
+                    <iframe src="${fileUrl}#toolbar=0" class="w-full h-[400px] rounded-xl border border-outline-variant/50 shadow-sm bg-white"></iframe>
+                </div>`;
+            } else {
+                let icon = 'description';
+                if (fileName.endsWith('.ppt') || fileName.endsWith('.pptx')) icon = 'slideshow';
+                else if (fileName.endsWith('.xls') || fileName.endsWith('.xlsx')) icon = 'table_view';
+                else if (fileName.endsWith('.zip') || fileName.endsWith('.rar')) icon = 'folder_zip';
+                
+                htmlContent = `
+                <div class="mt-3 flex items-center justify-between p-4 bg-surface rounded-xl border border-outline-variant shadow-sm hover:shadow-md transition-shadow">
+                    <div class="flex items-center gap-4 min-w-0">
+                        <div class="w-12 h-12 bg-primary/10 text-primary rounded-xl flex items-center justify-center shrink-0">
+                            <span class="material-symbols-outlined text-3xl">${icon}</span>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <p class="font-bold text-sm text-on-surface truncate">${fileName}</p>
+                            <p class="text-[10px] text-on-surface-variant mt-0.5">Dokumen terlampir</p>
+                        </div>
+                    </div>
+                </div>`;
+            }
+            previewContainer.innerHTML = htmlContent;
+            previewContainer.classList.remove('hidden');
+        } else {
+            previewContainer.innerHTML = '';
+            previewContainer.classList.add('hidden');
+        }
+    }
+
     let questionCount = 1;
 
     function toggleQuestionType(selectElement, id) {
@@ -378,8 +443,20 @@
                     <p class="text-xs text-error font-bold hidden err-text"></p>
                 </div>
                 <div class="space-y-2">
-                    <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Lampiran Gambar (Opsional)</label>
-                    <input type="file" name="gambar_soal_${questionCount}" accept="image/*" class="w-full p-3 bg-surface-container-low border border-outline rounded-lg question-image">
+                    <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Lampiran File (Opsional) - Gambar/PDF/Word/PPT</label>
+                    <div class="relative mt-2">
+                        <input type="file" name="gambar_soal_${questionCount}" accept=".pdf,.doc,.docx,.ppt,.pptx,image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onchange="previewFile(this)">
+                        <div class="w-full p-6 border-2 border-dashed border-outline-variant/60 rounded-xl bg-surface-container-lowest hover:bg-surface-container-low transition-colors flex flex-col items-center justify-center text-center gap-2 dropzone-box">
+                            <span class="material-symbols-outlined text-3xl text-outline dropzone-icon">cloud_upload</span>
+                            <div class="space-y-1 dropzone-text">
+                                <p class="text-sm font-bold text-on-surface dropzone-title">Pilih File Lampiran (Opsional)</p>
+                                <p class="text-xs text-on-surface-variant dropzone-desc">Biarkan kosong jika tidak diperlukan</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-3 hidden image-preview-container">
+                        <!-- Preview HTML akan dirender di sini -->
+                    </div>
                 </div>
 
                 <div class="pg-options space-y-4" id="options-${questionCount}">
@@ -597,21 +674,29 @@
     function updateSelectedClasses() {
         const checked = document.querySelectorAll('.class-checkbox:checked');
         const textSpan = document.getElementById('selectedClassesText');
+        const allCheckboxes = document.querySelectorAll('.class-checkbox');
+        
+        if (allCheckboxes.length === 0) {
+            textSpan.textContent = 'Anda belum memiliki kelas.';
+            textSpan.classList.add('text-red-500');
+            textSpan.classList.remove('font-semibold', 'text-on-surface-variant');
+            return;
+        }
+        
         if (checked.length === 0) {
             textSpan.textContent = 'Pilih Kelas...';
             textSpan.classList.add('text-on-surface-variant');
-            textSpan.classList.remove('font-semibold');
+            textSpan.classList.remove('font-semibold', 'text-red-500');
         } else {
             const values = Array.from(checked).map(cb => cb.getAttribute('data-name'));
             textSpan.textContent = values.join(', ');
-            textSpan.classList.remove('text-on-surface-variant');
+            textSpan.classList.remove('text-on-surface-variant', 'text-red-500');
             textSpan.classList.add('font-semibold');
         }
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-        updateSelectedClasses();
-        toggleScheduleInput();
+    updateSelectedClasses();
+    toggleScheduleInput();
 
         @if(isset($ujian) && $ujian->soal && $ujian->soal->count() > 0)
             // Pre-populate questions for Edit mode
@@ -620,6 +705,8 @@
             // Remove the default empty card
             const defaultCard = document.querySelector('.question-card');
             if (defaultCard) defaultCard.remove();
+            
+            questionCount = 0; // Reset questionCount to match urutan
             
             soalData.forEach((soal, index) => {
                 addQuestion();
@@ -672,9 +759,80 @@
                         if (radio) radio.checked = true;
                     }
                 }
+                // Prepopulate file
+                if (soal.file_path) {
+                    const previewContainer = newCard.querySelector('.image-preview-container');
+                    const existingFileUrl = soal.file_url || `{{ asset('storage') }}/${soal.file_path}`;
+                    const originalFileName = soal.original_file_name || `Lampiran Soal ${index + 1}.${soal.file_path.split('.').pop()}`;
+                    
+                    // Update dropzone UI
+                    const dropzoneTitle = newCard.querySelector('.dropzone-title');
+                    const dropzoneDesc = newCard.querySelector('.dropzone-desc');
+                    const dropzoneIcon = newCard.querySelector('.dropzone-icon');
+                    if(dropzoneTitle) dropzoneTitle.textContent = originalFileName;
+                    if(dropzoneDesc) dropzoneDesc.textContent = "File sebelumnya terlampir. Pilih file baru untuk mengganti.";
+                    if(dropzoneIcon) {
+                        dropzoneIcon.textContent = "check_circle";
+                        dropzoneIcon.classList.replace("text-outline", "text-primary");
+                    }
+
+                    
+                    let htmlContent = '';
+                    const ext = soal.file_path.split('.').pop().toLowerCase();
+                    if (['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp'].includes(ext)) {
+                        htmlContent = `
+                        <div class="relative group mt-3">
+                            <img src="${existingFileUrl}" alt="Preview" class="w-full max-h-[300px] object-cover rounded-xl border border-outline-variant/50 shadow-sm">
+                            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex items-center justify-center gap-4">
+                                <a href="${existingFileUrl}" target="_blank" class="ui-btn bg-white/20 hover:bg-white/30 text-white backdrop-blur-sm border-white/30 flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-lg">fullscreen</span>
+                                    <span>Lihat Penuh</span>
+                                </a>
+                                <a href="${existingFileUrl}" download="${originalFileName}" class="ui-btn bg-primary text-white border-primary hover:bg-primary/90 flex items-center gap-2 shadow-lg">
+                                    <span class="material-symbols-outlined text-lg">download</span>
+                                    <span>Unduh</span>
+                                </a>
+                            </div>
+                        </div>`;
+                    } else if (ext === 'pdf') {
+                        htmlContent = `
+                        <div class="mt-3 relative group">
+                            <iframe src="${existingFileUrl}#toolbar=0" class="w-full h-[400px] rounded-xl border border-outline-variant/50 shadow-sm bg-white"></iframe>
+                            <div class="absolute top-4 right-6 flex gap-2">
+                                <a href="${existingFileUrl}" download="${originalFileName}" class="ui-btn bg-primary text-white shadow-lg hover:bg-primary/90 hover:-translate-y-0.5 transition-all flex items-center gap-2 border border-primary/20 backdrop-blur-md">
+                                    <span class="material-symbols-outlined text-lg">download</span>
+                                    <span>Unduh PDF</span>
+                                </a>
+                            </div>
+                        </div>`;
+                    } else {
+                        let icon = 'description';
+                        if (['ppt', 'pptx'].includes(ext)) icon = 'slideshow';
+                        else if (['xls', 'xlsx'].includes(ext)) icon = 'table_view';
+                        else if (['zip', 'rar'].includes(ext)) icon = 'folder_zip';
+                        
+                        htmlContent = `
+                        <div class="mt-3 flex items-center justify-between p-4 bg-surface rounded-xl border border-outline-variant shadow-sm hover:shadow-md transition-shadow">
+                            <div class="flex items-center gap-4 min-w-0">
+                                <div class="w-12 h-12 bg-primary/10 text-primary rounded-xl flex items-center justify-center shrink-0">
+                                    <span class="material-symbols-outlined text-3xl">${icon}</span>
+                                </div>
+                                <div class="min-w-0 flex-1">
+                                    <p class="font-bold text-sm text-on-surface truncate">${originalFileName}</p>
+                                    <p class="text-[10px] text-on-surface-variant mt-0.5">Dokumen terlampir</p>
+                                </div>
+                            </div>
+                            <a href="${existingFileUrl}" download="${originalFileName}" class="ui-btn bg-primary/10 text-primary hover:bg-primary hover:text-white transition-colors flex items-center gap-2 shrink-0 ml-4 rounded-lg px-4 py-2">
+                                <span class="material-symbols-outlined text-lg">download</span>
+                                <span class="text-xs font-bold">Unduh</span>
+                            </a>
+                        </div>`;
+                    }
+                    previewContainer.innerHTML = htmlContent;
+                    previewContainer.classList.remove('hidden');
+                }
             });
         @endif
-    });
 
     document.addEventListener('click', function(event) {
         const container = document.getElementById('classDropdownContainer');
@@ -782,6 +940,7 @@
         });
 
         if (!isValid && firstErrorElement) {
+            alert('Data Belum Lengkap!\n\nMohon periksa kembali form dan isi semua data wajib yang ditandai dengan teks merah.');
             firstErrorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
@@ -880,5 +1039,7 @@
             autoSaveTime.innerText = time;
         }, 60000);
     }
+    
+    document.addEventListener('DOMContentLoaded', toggleScheduleInput);
 </script>
 @endpush

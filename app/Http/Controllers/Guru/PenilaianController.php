@@ -36,6 +36,20 @@ class PenilaianController extends Controller
             'feedback' => $request->feedback
         ]);
 
+        // Simpan juga ke tabel nilai untuk keperluan rekap
+        \App\Models\Nilai::updateOrCreate(
+            [
+                'siswa_id' => $submission->siswa_id,
+                'kelas_id' => $submission->tugas->kelas_id,
+                'nilaiable_type' => \App\Models\Tugas::class,
+                'nilaiable_id' => $submission->tugas_id,
+            ],
+            [
+                'nilai' => $request->nilai,
+                'catatan' => $request->feedback
+            ]
+        );
+
         return redirect()->route('guru.monitor.tugas')->with('success', 'Nilai tugas berhasil disimpan!');
     }
 

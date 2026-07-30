@@ -204,7 +204,7 @@
                         <p class="text-xs text-[#51443c] mb-6">Apakah Anda yakin nilai yang diberikan sudah benar dan siap disimpan?</p>
                         <div class="flex gap-2 justify-center">
                             <button type="button" id="btn-cancel-simpan" class="ui-btn ui-btn-secondary px-4 py-2 text-xs">Periksa Lagi</button>
-                            <button type="button" id="btn-confirm-simpan" class="ui-btn ui-btn-primary px-4 py-2 text-xs">Ya, Simpan</button>
+                            <button type="submit" id="btn-confirm-simpan" class="ui-btn ui-btn-primary px-4 py-2 text-xs">Ya, Simpan</button>
                         </div>
                     </div>
                 </div>
@@ -269,8 +269,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btnConfirmSimpan.addEventListener('click', () => {
             modalSimpan.classList.add('hidden');
             modalSimpan.classList.remove('flex');
-            
-            document.getElementById('gradingForm').submit();
+            // Form is submitted natively by type="submit"
         });
     }
 });

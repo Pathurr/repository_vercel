@@ -180,7 +180,17 @@
                 </div>
                 <div class="flex flex-col sm:flex-row items-center justify-between pt-4 border-t border-outline-variant/20 gap-4">
                     @if(!$nilaiKuis)
-                    <a href="{{ route('siswa.pengerjaan-kuis', $k->id) }}" class="w-full sm:w-auto bg-primary text-on-primary px-6 py-2 rounded-lg font-bold text-xs hover:bg-primary-container transition-colors text-center shadow-sm">Kerjakan Kuis</a>
+                    <div class="flex items-center gap-4 w-full sm:w-auto justify-end">
+                        @if(\Illuminate\Support\Facades\Cache::has('kuis_start_'.Auth::id().'_'.$k->id))
+                            @php
+                                $startTime = \Illuminate\Support\Facades\Cache::get('kuis_start_'.Auth::id().'_'.$k->id);
+                                $elapsed = now()->timestamp - $startTime;
+                                $remainingMinutes = max(0, floor((($k->durasi_menit * 60) - $elapsed) / 60));
+                            @endphp
+                            <span class="text-error font-bold text-xs flex items-center gap-1"><span class="material-symbols-outlined text-[16px] animate-pulse">hourglass_bottom</span> Sisa: {{ $remainingMinutes }} Menit</span>
+                        @endif
+                        <a href="{{ route('siswa.pengerjaan-kuis', $k->id) }}" class="w-full sm:w-auto bg-primary text-on-primary px-6 py-2 rounded-lg font-bold text-xs hover:bg-primary-container transition-colors text-center shadow-sm">{{ \Illuminate\Support\Facades\Cache::has('kuis_start_'.Auth::id().'_'.$k->id) ? 'Lanjutkan Kuis' : 'Kerjakan Kuis' }}</a>
+                    </div>
                     @else
                     <span class="text-xs font-bold text-on-surface-variant">Telah Dikerjakan</span>
                     @endif
@@ -218,7 +228,17 @@
                         <span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">calendar_today</span> Mulai: {{ $u->mulai_at ? \Carbon\Carbon::parse($u->mulai_at)->format('d M Y, H:i') : '-' }}</span>
                     </div>
                     @if($u->nilai_siswa->count() == 0)
-                    <a href="{{ route('siswa.pengerjaan-ujian', $u->id) }}" class="w-full sm:w-auto bg-primary text-on-primary px-6 py-2 rounded-lg font-bold text-xs hover:bg-primary-container transition-colors text-center shadow-sm">Mulai Ujian</a>
+                    <div class="flex items-center gap-4 w-full sm:w-auto justify-end">
+                        @if(\Illuminate\Support\Facades\Cache::has('ujian_start_'.Auth::id().'_'.$u->id.'_1'))
+                            @php
+                                $startTime = \Illuminate\Support\Facades\Cache::get('ujian_start_'.Auth::id().'_'.$u->id.'_1');
+                                $elapsed = now()->timestamp - $startTime;
+                                $remainingMinutes = max(0, floor((($u->durasi_menit * 60) - $elapsed) / 60));
+                            @endphp
+                            <span class="text-error font-bold text-xs flex items-center gap-1"><span class="material-symbols-outlined text-[16px] animate-pulse">hourglass_bottom</span> Sisa: {{ $remainingMinutes }} Menit</span>
+                        @endif
+                        <a href="{{ route('siswa.pengerjaan-ujian', $u->id) }}" class="w-full sm:w-auto bg-primary text-on-primary px-6 py-2 rounded-lg font-bold text-xs hover:bg-primary-container transition-colors text-center shadow-sm">{{ \Illuminate\Support\Facades\Cache::has('ujian_start_'.Auth::id().'_'.$u->id.'_1') ? 'Lanjutkan Ujian' : 'Mulai Ujian' }}</a>
+                    </div>
                     @else
                     @php
                         $attemptsCount = \App\Models\JawabanUjian::where('ujian_id', $u->id)->where('siswa_id', Auth::id())->max('attempt') ?? 0;
@@ -226,7 +246,17 @@
                     <div class="flex items-center gap-3 w-full sm:w-auto">
                         <span class="text-xs font-bold text-on-surface-variant">Telah Dikerjakan ({{ $attemptsCount }}/{{ $u->batas_percobaan }})</span>
                         @if($attemptsCount < $u->batas_percobaan)
-                        <a href="{{ route('siswa.pengerjaan-ujian', $u->id) }}" class="bg-secondary text-on-secondary px-4 py-2 rounded-lg font-bold text-xs hover:bg-secondary-container hover:text-on-secondary-container transition-colors text-center shadow-sm border border-secondary">Memulai Kembali</a>
+                        <div class="flex items-center gap-4">
+                            @if(\Illuminate\Support\Facades\Cache::has('ujian_start_'.Auth::id().'_'.$u->id.'_'.($attemptsCount+1)))
+                                @php
+                                    $startTime = \Illuminate\Support\Facades\Cache::get('ujian_start_'.Auth::id().'_'.$u->id.'_'.($attemptsCount+1));
+                                    $elapsed = now()->timestamp - $startTime;
+                                    $remainingMinutes = max(0, floor((($u->durasi_menit * 60) - $elapsed) / 60));
+                                @endphp
+                                <span class="text-error font-bold text-xs flex items-center gap-1"><span class="material-symbols-outlined text-[16px] animate-pulse">hourglass_bottom</span> Sisa: {{ $remainingMinutes }} Menit</span>
+                            @endif
+                            <a href="{{ route('siswa.pengerjaan-ujian', $u->id) }}" class="bg-secondary text-on-secondary px-4 py-2 rounded-lg font-bold text-xs hover:bg-secondary-container hover:text-on-secondary-container transition-colors text-center shadow-sm border border-secondary">{{ \Illuminate\Support\Facades\Cache::has('ujian_start_'.Auth::id().'_'.$u->id.'_'.($attemptsCount+1)) ? 'Lanjutkan Ujian' : 'Memulai Kembali' }}</a>
+                        </div>
                         @endif
                     </div>
                     @endif

@@ -52,6 +52,7 @@
                 </div>
                 <div class="prose max-w-none mb-6">
                     <p id="question-text" class="text-sm text-on-surface leading-relaxed font-medium">Loading...</p>
+                    <div id="question-image-container" class="hidden mt-4"></div>
                 </div>
                 <!-- Options -->
                 <div id="options-container" class="flex flex-col gap-3">
@@ -149,6 +150,8 @@
         id: i + 1,
         soal_id: q.id,
         text: q.pertanyaan,
+        file_path: q.file_path,
+        original_file_name: q.original_file_name,
         tipe: q.tipe,
         options: q.pilihan,
         answer: null,
@@ -176,6 +179,58 @@
         
         document.getElementById('question-label').innerText = `Soal No. ${q.id}`;
         document.getElementById('question-text').innerHTML = q.text; // Change to innerHTML to support rich text
+        
+        const imageContainer = document.getElementById('question-image-container');
+        if (q.file_path) {
+            const baseUrl = "{{ rtrim(\Illuminate\Support\Facades\Storage::disk(env('FILESYSTEM_DISK', 'public'))->url(''), '/') }}/";
+            const fileUrl = `${baseUrl}${q.file_path}`;
+            const ext = q.file_path.split('.').pop().toLowerCase();
+            const originalName = q.original_file_name || q.file_path.split('/').pop();
+            
+            if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext)) {
+                imageContainer.innerHTML = `
+                <div class="flex flex-col items-center gap-2 mt-2">
+                    <img src="${fileUrl}" class="max-w-full max-h-64 rounded-lg border border-outline-variant/30 shadow-sm" alt="Lampiran Soal">
+                    <p class="text-[11px] text-on-surface-variant italic font-medium">${originalName}</p>
+                </div>`;
+            } else if (ext === 'pdf') {
+                imageContainer.innerHTML = `
+                <div class="mt-2 rounded-lg border border-outline-variant/30 shadow-sm overflow-hidden flex flex-col">
+                    <div class="bg-surface-container-low px-4 py-2 flex justify-between items-center border-b border-outline-variant/30">
+                        <div class="flex items-center gap-2 min-w-0">
+                            <span class="material-symbols-outlined text-primary text-[18px]">picture_as_pdf</span>
+                            <span class="text-xs font-bold text-on-surface truncate">${originalName}</span>
+                        </div>
+                        <a href="${fileUrl}" download="${originalName}" class="flex items-center gap-1 text-[11px] font-bold bg-primary text-on-primary px-3 py-1.5 rounded-md hover:opacity-90 transition-opacity">
+                            <span class="material-symbols-outlined text-[14px]">download</span> Unduh
+                        </a>
+                    </div>
+                    <iframe src="${fileUrl}#toolbar=0" class="w-full h-[400px] bg-white"></iframe>
+                </div>`;
+            } else {
+                let icon = 'description';
+                if (['ppt', 'pptx'].includes(ext)) icon = 'slideshow';
+                else if (['xls', 'xlsx'].includes(ext)) icon = 'table_view';
+                else if (['zip', 'rar'].includes(ext)) icon = 'folder_zip';
+                
+                imageContainer.innerHTML = `
+                <a href="${fileUrl}" target="_blank" download="${originalName}" class="flex items-center gap-3 p-3 bg-surface rounded-lg border border-outline-variant hover:border-secondary hover:shadow-md transition-all group w-full md:w-2/3">
+                    <div class="p-2 bg-primary/10 text-primary rounded-md flex items-center justify-center">
+                        <span class="material-symbols-outlined text-[24px]">${icon}</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="font-bold text-sm text-on-surface truncate group-hover:text-secondary transition-colors">${originalName}</p>
+                        <p class="text-[10px] text-on-surface-variant">Klik untuk mengunduh/membuka</p>
+                    </div>
+                    <span class="material-symbols-outlined text-on-surface-variant group-hover:text-secondary transition-colors">download</span>
+                </a>`;
+            }
+            imageContainer.classList.remove('hidden');
+        } else {
+            imageContainer.innerHTML = '';
+            imageContainer.classList.add('hidden');
+        }
+
         document.getElementById('progress-current').innerText = q.id;
         document.getElementById('progress-total').innerText = totalQuestions;
 
@@ -324,7 +379,7 @@
 
         // Timer Logic
         const timerEl = document.getElementById('exam-timer');
-        let totalSeconds = {{ ($ujian->durasi_menit ?? 120) * 60 }};
+        let totalSeconds = {{ $remainingSeconds }};
         
         function updateExamTimer() {
             if (totalSeconds <= 0) {

@@ -6,7 +6,7 @@ class SoalUjian extends Model
 {
     protected $table = 'soal_ujian'; // tambahkan ini
     protected $fillable = [
-        'ujian_id', 'pertanyaan', 'tipe', 'pilihan', 'jawaban_benar', 'bobot', 'urutan'
+        'ujian_id', 'pertanyaan', 'file_path', 'original_file_name', 'tipe', 'pilihan', 'jawaban_benar', 'bobot', 'urutan'
     ];
 
     protected $casts = ['pilihan' => 'array'];

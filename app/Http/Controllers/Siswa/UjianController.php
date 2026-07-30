@@ -6,6 +6,7 @@ use App\Models\Ujian;
 use App\Models\JawabanUjian;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class UjianController extends Controller
 {
@@ -37,8 +38,20 @@ class UjianController extends Controller
         if ($attemptsCount >= $ujian->batas_percobaan) {
             return redirect()->route('siswa.mapel.detail', $ujian->kelas_id)->with('error', 'Anda telah mencapai batas maksimal percobaan untuk ujian ini.');
         }
+        
+        $currentAttempt = $attemptsCount + 1;
+        $cacheKey = "ujian_start_{$user->id}_{$ujian->id}_{$currentAttempt}";
+        $startTime = Cache::get($cacheKey);
+        
+        if (!$startTime || !is_numeric($startTime)) {
+            $startTime = now()->timestamp;
+            Cache::put($cacheKey, $startTime, now()->addMinutes($ujian->durasi_menit));
+        }
+        
+        $elapsedSeconds = now()->timestamp - $startTime;
+        $remainingSeconds = max(0, ($ujian->durasi_menit * 60) - $elapsedSeconds);
 
-        return view('siswa.pengerjaan-ujian', compact('ujian'));
+        return view('siswa.pengerjaan-ujian', compact('ujian', 'remainingSeconds'));
     }
 
     public function store(Request $request, $id)
@@ -114,6 +127,8 @@ class UjianController extends Controller
             'attempt' => $currentAttempt,
             'nilai' => $skor,
         ]);
+
+        Cache::forget("ujian_start_{$user->id}_{$ujian->id}_{$currentAttempt}");
 
         return redirect()->route('siswa.mapel.detail', $ujian->kelas_id)->with('success', 'Ujian berhasil dikumpulkan!');
     }

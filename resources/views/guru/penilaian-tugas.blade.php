@@ -222,11 +222,6 @@
         confirmModal.classList.add('hidden');
         confirmModal.classList.remove('flex');
     });
-
-    modalConfirm.addEventListener('click', () => {
-        confirmModal.classList.add('hidden');
-        confirmModal.classList.remove('flex');
-    });
 </script>
 @endpush
 @endsection
