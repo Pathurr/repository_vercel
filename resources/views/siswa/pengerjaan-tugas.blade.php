@@ -48,13 +48,46 @@
             @if($tugas->file_path)
             <div class="mt-5 pt-4 border-t border-surface-container">
                 <p class="font-bold text-[10px] text-on-surface-variant mb-2">Lampiran Guru:</p>
-                <a class="flex items-center gap-2 p-2 rounded-lg border border-outline-variant hover:bg-surface-container-low transition-colors group" href="{{ \Illuminate\Support\Facades\Storage::disk(env('FILESYSTEM_DISK', 'public'))->url($tugas->file_path) }}" target="_blank">
-                    <span class="material-symbols-outlined text-primary text-[18px] group-hover:text-secondary">attachment</span>
-                    <div class="flex-1 leading-tight">
-                        <p class="font-bold text-[11px] text-on-surface group-hover:text-secondary transition-colors">Lampiran Tugas</p>
+                @php
+                    $ext = strtolower(pathinfo($tugas->file_path, PATHINFO_EXTENSION));
+                    $fileUrl = asset('storage/' . $tugas->file_path);
+                    $isImage = in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp']);
+                    $isPdf = $ext === 'pdf';
+                    $icon = 'description';
+                    if (in_array($ext, ['ppt', 'pptx'])) $icon = 'slideshow';
+                    elseif (in_array($ext, ['xls', 'xlsx'])) $icon = 'table_view';
+                    elseif (in_array($ext, ['zip', 'rar'])) $icon = 'folder_zip';
+                @endphp
+                
+                @php
+                    if (!isset($icon) || $icon === 'description') {
+                        if (in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
+                            $icon = 'image';
+                        }
+                    }
+                @endphp
+                <div class="bg-surface rounded-lg border border-outline-variant shadow-sm w-full xl:w-[95%]">
+                    <div class="flex items-center justify-between p-3 bg-surface-container-low rounded-t-lg">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="p-2 bg-primary/10 text-primary rounded-md flex items-center justify-center shrink-0">
+                                <span class="material-symbols-outlined text-[20px]">{{ $icon }}</span>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <p class="font-bold text-sm text-on-surface truncate">{{ $tugas->original_file_name ?? 'Lampiran Tugas.' . $ext }}</p>
+                                <p class="text-[10px] text-on-surface-variant">Dokumen terlampir</p>
+                            </div>
+                        </div>
+                        <a href="{{ $fileUrl }}" download class="shrink-0 flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 text-primary hover:bg-primary hover:text-white rounded-lg transition-colors text-xs font-bold" target="_blank" title="Download File">
+                            <span class="material-symbols-outlined text-[16px]">download</span>
+                            <span class="hidden sm:inline">Unduh</span>
+                        </a>
                     </div>
-                    <span class="material-symbols-outlined text-on-surface-variant text-[16px] group-hover:text-secondary">download</span>
-                </a>
+                    @if($isImage)
+                        <img src="{{ $fileUrl }}" class="w-full h-auto max-h-96 object-contain rounded-b-lg border-t border-outline-variant/30" alt="Lampiran Tugas">
+                    @elseif($isPdf)
+                        <iframe src="{{ $fileUrl }}#toolbar=0" class="w-full h-96 rounded-b-lg border-t border-outline-variant/30"></iframe>
+                    @endif
+                </div>
             </div>
             @endif
         </div>

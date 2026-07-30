@@ -1,6 +1,6 @@
 @extends('layouts.guru')
 
-@section('title', 'Buat Kuis Baru - SMK Mandalahayu 1')
+@section('title', isset($kuis) ? 'Edit Kuis - SMK Mandalahayu 1' : 'Buat Kuis Baru - SMK Mandalahayu 1')
 @section('page-title', 'Kuis')
 
 @section('content')
@@ -29,8 +29,8 @@
     </div>
     <div class="flex flex-wrap items-end justify-between gap-4 border-b border-outline-variant/30 pb-4">
         <div>
-            <h2 class="font-bold text-4xl text-primary" style="font-family: var(--font-serif)">{{ request('edit') ? 'Edit Kuis' : 'Buat Kuis Baru' }}</h2>
-            <p class="text-on-surface-variant text-lg">Rancang asesmen berkualitas untuk perkembangan akademik siswa.</p>
+            <h1 class="text-3xl font-bold text-primary mb-2" style="font-family: var(--font-serif)">{{ isset($kuis) ? 'Edit Kuis' : 'Buat Kuis Baru' }}</h1>
+            <p class="text-on-surface-variant text-sm">{{ isset($kuis) ? 'Perbarui kuis yang sudah ada.' : 'Rancang asesmen berkualitas untuk perkembangan akademik siswa.' }}</p>
         </div>
         <div class="flex items-center gap-2 text-sm font-semibold text-on-surface-variant/60 italic">
             <span class="material-symbols-outlined text-sm">schedule</span>
@@ -89,34 +89,34 @@
                 <div class="space-y-4">
                     <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Status Kuis</label>
                     <div class="flex flex-wrap gap-4">
-                        <label class="flex items-center gap-3 cursor-pointer group">
-                            <input {{ in_array(request('status'), ['aktif', 'published']) ? 'checked' : '' }} class="w-5 h-5 text-secondary border-outline focus:ring-secondary-container" name="status" type="radio" value="published" onchange="toggleScheduleInput()"/>
-                            <span class="text-sm group-hover:text-primary transition-colors">Published</span>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="status" value="published" class="text-primary focus:ring-primary h-4 w-4" {{ old('status', $kuis->status ?? '') === 'published' || !isset($kuis) ? 'checked' : '' }}>
+                            <span class="text-sm font-semibold">Published</span>
                         </label>
-                        <label class="flex items-center gap-3 cursor-pointer group">
-                            <input {{ in_array(request('status'), ['selesai', 'closed']) ? 'checked' : '' }} class="w-5 h-5 text-secondary border-outline focus:ring-secondary-container" name="status" type="radio" value="closed" onchange="toggleScheduleInput()"/>
-                            <span class="text-sm group-hover:text-primary transition-colors">Closed</span>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="status" value="closed" class="text-primary focus:ring-primary h-4 w-4" {{ old('status', $kuis->status ?? '') === 'closed' ? 'checked' : '' }}>
+                            <span class="text-sm font-semibold">Closed</span>
                         </label>
-                        <label class="flex items-center gap-3 cursor-pointer group">
-                            <input {{ request('status') === 'archived' ? 'checked' : '' }} class="w-5 h-5 text-secondary border-outline focus:ring-secondary-container" name="status" type="radio" value="archived" onchange="toggleScheduleInput()"/>
-                            <span class="text-sm group-hover:text-primary transition-colors">Archived</span>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="status" value="archived" class="text-primary focus:ring-primary h-4 w-4" {{ old('status', $kuis->status ?? '') === 'archived' ? 'checked' : '' }}>
+                            <span class="text-sm font-semibold">Archived</span>
                         </label>
-                        <label class="flex items-center gap-3 cursor-pointer group">
-                            <input {{ request('status') === 'terjadwal' ? 'checked' : '' }} class="w-5 h-5 text-secondary border-outline focus:ring-secondary-container" name="status" type="radio" value="terjadwal" onchange="toggleScheduleInput()"/>
-                            <span class="text-sm group-hover:text-primary transition-colors">Terjadwal</span>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="status" value="terjadwal" class="text-primary focus:ring-primary h-4 w-4" {{ old('status', $kuis->status ?? '') === 'terjadwal' ? 'checked' : '' }} onchange="toggleScheduleInput()">
+                            <span class="text-sm font-semibold">Terjadwal</span>
                         </label>
                     </div>
                     <p class="text-xs text-error font-bold hidden mt-1" id="err-quizStatus"></p>
                     <div id="scheduleContainer" class="hidden space-y-4 mt-4 bg-surface-container-low p-4 rounded-lg border border-outline/30">
                         <div class="space-y-2" id="waktuMulaiContainer">
                             <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Waktu Mulai</label>
-                            <input class="w-full p-3 bg-white border border-outline rounded-lg focus:ring-2 focus:ring-secondary-container" type="datetime-local" id="quizScheduleDate"/>
+                            <input class="w-full p-3 bg-white border border-outline rounded-lg focus:ring-2 focus:ring-secondary-container" type="datetime-local" name="waktu_mulai" id="quizScheduleDate" value="{{ old('waktu_mulai', isset($kuis) && $kuis->mulai_at ? date('Y-m-d\TH:i', strtotime($kuis->mulai_at)) : '') }}"/>
                             <p class="text-xs text-on-surface-variant/60 italic">Kuis akan otomatis diterbitkan pada waktu yang ditentukan.</p>
                             <p class="text-xs text-error font-bold hidden" id="err-quizSchedule"></p>
                         </div>
                         <div class="space-y-2">
                             <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Waktu Berakhir</label>
-                            <input class="w-full p-3 bg-white border border-outline rounded-lg focus:ring-2 focus:ring-secondary-container" type="datetime-local" id="quizEndDate"/>
+                            <input class="w-full p-3 bg-white border border-outline rounded-lg focus:ring-2 focus:ring-secondary-container" type="datetime-local" name="waktu_berakhir" id="quizEndDate" value="{{ old('waktu_berakhir', isset($kuis) && $kuis->selesai_at ? date('Y-m-d\TH:i', strtotime($kuis->selesai_at)) : '') }}"/>
                             <p class="text-xs text-on-surface-variant/60 italic">Kuis akan otomatis ditutup pada waktu yang ditentukan.</p>
                             <p class="text-xs text-error font-bold hidden" id="err-quizEndDate"></p>
                         </div>
@@ -174,8 +174,22 @@
                             <p class="text-xs text-error font-bold hidden err-text"></p>
                         </div>
                         <div class="space-y-2">
-                            <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Lampiran Gambar (Opsional)</label>
-                            <input type="file" name="gambar_soal_1" accept="image/*" class="w-full p-3 bg-surface-container-low border border-outline rounded-lg question-image">
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Lampiran File (Opsional) - Gambar/PDF/Word/PPT</label>
+                                <div class="relative mt-2">
+                                    <input type="file" name="gambar_soal_1" accept=".pdf,.doc,.docx,.ppt,.pptx,image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onchange="previewFile(this)">
+                                    <div class="w-full p-6 border-2 border-dashed border-outline-variant/60 rounded-xl bg-surface-container-lowest hover:bg-surface-container-low transition-colors flex flex-col items-center justify-center text-center gap-2">
+                                        <span class="material-symbols-outlined text-3xl text-outline">cloud_upload</span>
+                                        <div class="space-y-1">
+                                            <p class="text-sm font-bold text-on-surface">Pilih File Lampiran (Opsional)</p>
+                                            <p class="text-xs text-on-surface-variant">Biarkan kosong jika tidak diperlukan</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-3 hidden image-preview-container">
+                                    <!-- Preview HTML akan dirender di sini -->
+                                </div>
+                            </div>
                         </div>
                 <div class="pg-options space-y-4" id="options-1">
                             <div class="flex justify-between items-center mb-2">
@@ -259,6 +273,59 @@
 
 @push('scripts')
 <script>
+    function previewFile(input) {
+        const previewContainer = input.parentElement.nextElementSibling;
+        
+        if (input.files && input.files[0]) {
+            const file = input.files[0];
+            const fileType = file.type;
+            const fileName = file.name;
+            const fileUrl = URL.createObjectURL(file);
+            
+            let htmlContent = '';
+            if (fileType.startsWith('image/')) {
+                htmlContent = `
+                <div class="relative group mt-3">
+                    <img src="${fileUrl}" alt="Preview" class="w-full max-h-[300px] object-cover rounded-xl border border-outline-variant/50 shadow-sm">
+                    <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex items-center justify-center gap-4">
+                        <a href="${fileUrl}" target="_blank" class="ui-btn bg-white/20 hover:bg-white/30 text-white backdrop-blur-sm border-white/30 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-lg">fullscreen</span>
+                            <span>Lihat Penuh</span>
+                        </a>
+                    </div>
+                </div>`;
+            } else if (fileType === 'application/pdf') {
+                htmlContent = `
+                <div class="mt-3 relative group">
+                    <iframe src="${fileUrl}#toolbar=0" class="w-full h-[400px] rounded-xl border border-outline-variant/50 shadow-sm bg-white"></iframe>
+                </div>`;
+            } else {
+                let icon = 'description';
+                if (fileName.endsWith('.ppt') || fileName.endsWith('.pptx')) icon = 'slideshow';
+                else if (fileName.endsWith('.xls') || fileName.endsWith('.xlsx')) icon = 'table_view';
+                else if (fileName.endsWith('.zip') || fileName.endsWith('.rar')) icon = 'folder_zip';
+                
+                htmlContent = `
+                <div class="mt-3 flex items-center justify-between p-4 bg-surface rounded-xl border border-outline-variant shadow-sm hover:shadow-md transition-shadow">
+                    <div class="flex items-center gap-4 min-w-0">
+                        <div class="w-12 h-12 bg-primary/10 text-primary rounded-xl flex items-center justify-center shrink-0">
+                            <span class="material-symbols-outlined text-3xl">${icon}</span>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <p class="font-bold text-sm text-on-surface truncate">${fileName}</p>
+                            <p class="text-[10px] text-on-surface-variant mt-0.5">Dokumen terlampir</p>
+                        </div>
+                    </div>
+                </div>`;
+            }
+            previewContainer.innerHTML = htmlContent;
+            previewContainer.classList.remove('hidden');
+        } else {
+            previewContainer.innerHTML = '';
+            previewContainer.classList.add('hidden');
+        }
+    }
+
     let questionCount = 1;
 
     function toggleQuestionType(selectElement, id) {
@@ -333,8 +400,20 @@
                     <p class="text-xs text-error font-bold hidden err-text"></p>
                 </div>
                 <div class="space-y-2">
-                    <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Lampiran Gambar (Opsional)</label>
-                    <input type="file" name="gambar_soal_${questionCount}" accept="image/*" class="w-full p-3 bg-surface-container-low border border-outline rounded-lg question-image">
+                    <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Lampiran File (Opsional) - Gambar/PDF/Word/PPT</label>
+                    <div class="relative mt-2">
+                        <input type="file" name="gambar_soal_${questionCount}" accept=".pdf,.doc,.docx,.ppt,.pptx,image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onchange="previewFile(this)">
+                        <div class="w-full p-6 border-2 border-dashed border-outline-variant/60 rounded-xl bg-surface-container-lowest hover:bg-surface-container-low transition-colors flex flex-col items-center justify-center text-center gap-2 dropzone-box">
+                            <span class="material-symbols-outlined text-3xl text-outline dropzone-icon">cloud_upload</span>
+                            <div class="space-y-1 dropzone-text">
+                                <p class="text-sm font-bold text-on-surface dropzone-title">Pilih File Lampiran (Opsional)</p>
+                                <p class="text-xs text-on-surface-variant dropzone-desc">Biarkan kosong jika tidak diperlukan</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-3 hidden image-preview-container">
+                        <!-- Preview HTML akan dirender di sini -->
+                    </div>
                 </div>
 
                 <div class="pg-options space-y-4" id="options-${questionCount}">
@@ -551,16 +630,25 @@
     }
 
     function updateSelectedClasses() {
-        const checked = document.querySelectorAll('.class-checkbox:checked');
+        const checkedBoxes = Array.from(document.querySelectorAll('.class-checkbox')).filter(cb => cb.checked);
         const textSpan = document.getElementById('selectedClassesText');
-        if (checked.length === 0) {
+        const allBoxes = document.querySelectorAll('.class-checkbox');
+
+        if (allBoxes.length === 0) {
+            textSpan.textContent = "Anda belum memiliki kelas.";
+            textSpan.classList.remove('text-primary', 'font-bold', 'text-on-surface-variant');
+            textSpan.classList.add('text-red-500');
+            return;
+        }
+
+        if (checkedBoxes.length === 0) {
             textSpan.textContent = 'Pilih Kelas...';
             textSpan.classList.add('text-on-surface-variant');
-            textSpan.classList.remove('font-semibold');
+            textSpan.classList.remove('font-semibold', 'text-red-500');
         } else {
-            const values = Array.from(checked).map(cb => cb.getAttribute('data-name'));
+            const values = checkedBoxes.map(cb => cb.getAttribute('data-name'));
             textSpan.textContent = values.join(', ');
-            textSpan.classList.remove('text-on-surface-variant');
+            textSpan.classList.remove('text-on-surface-variant', 'text-red-500');
             textSpan.classList.add('font-semibold');
         }
     }
@@ -593,7 +681,7 @@
 
         const classes = document.querySelectorAll('.class-checkbox:checked');
         if (classes.length === 0) showError('err-quizClasses', 'Pilih minimal satu Kelas.');
-
+        
         const duration = document.getElementById('quizDuration').value;
         if (!duration || duration <= 0) showError('err-quizDuration', 'Durasi Kuis tidak valid.');
 
@@ -670,6 +758,7 @@
         });
 
         if (!isValid && firstErrorElement) {
+            alert('Data Belum Lengkap!\n\nMohon periksa kembali form dan isi semua data wajib yang ditandai dengan teks merah.');
             firstErrorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
@@ -760,9 +849,8 @@
         }
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-        updateSelectedClasses();
-        toggleScheduleInput();
+    updateSelectedClasses();
+    toggleScheduleInput();
 
         @if(isset($kuis) && $kuis->soal && $kuis->soal->count() > 0)
             // Pre-populate questions for Edit mode
@@ -771,6 +859,8 @@
             // Remove the default empty card
             const defaultCard = document.querySelector('.question-card');
             if (defaultCard) defaultCard.remove();
+            
+            questionCount = 0; // Reset questionCount to match urutan
             
             soalData.forEach((soal, index) => {
                 addQuestion();
@@ -823,8 +913,81 @@
                         if (radio) radio.checked = true;
                     }
                 }
+                // Prepopulate file
+                if (soal.file_path) {
+                    const previewContainer = newCard.querySelector('.image-preview-container');
+                    const existingFileUrl = soal.file_url || `{{ asset('storage') }}/${soal.file_path}`;
+                    const originalFileName = soal.original_file_name || `Lampiran Soal ${index + 1}.${soal.file_path.split('.').pop()}`;
+                    
+                    // Update dropzone UI
+                    const dropzoneTitle = newCard.querySelector('.dropzone-title');
+                    const dropzoneDesc = newCard.querySelector('.dropzone-desc');
+                    const dropzoneIcon = newCard.querySelector('.dropzone-icon');
+                    if(dropzoneTitle) dropzoneTitle.textContent = originalFileName;
+                    if(dropzoneDesc) dropzoneDesc.textContent = "File sebelumnya terlampir. Pilih file baru untuk mengganti.";
+                    if(dropzoneIcon) {
+                        dropzoneIcon.textContent = "check_circle";
+                        dropzoneIcon.classList.replace("text-outline", "text-primary");
+                    }
+
+                    
+                    let htmlContent = '';
+                    const ext = soal.file_path.split('.').pop().toLowerCase();
+                    if (['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp'].includes(ext)) {
+                        htmlContent = `
+                        <div class="relative group mt-3">
+                            <img src="${existingFileUrl}" alt="Preview" class="w-full max-h-[300px] object-cover rounded-xl border border-outline-variant/50 shadow-sm">
+                            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex items-center justify-center gap-4">
+                                <a href="${existingFileUrl}" target="_blank" class="ui-btn bg-white/20 hover:bg-white/30 text-white backdrop-blur-sm border-white/30 flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-lg">fullscreen</span>
+                                    <span>Lihat Penuh</span>
+                                </a>
+                                <a href="${existingFileUrl}" download="${originalFileName}" class="ui-btn bg-primary text-white border-primary hover:bg-primary/90 flex items-center gap-2 shadow-lg">
+                                    <span class="material-symbols-outlined text-lg">download</span>
+                                    <span>Unduh</span>
+                                </a>
+                            </div>
+                        </div>`;
+                    } else if (ext === 'pdf') {
+                        htmlContent = `
+                        <div class="mt-3 relative group">
+                            <iframe src="${existingFileUrl}#toolbar=0" class="w-full h-[400px] rounded-xl border border-outline-variant/50 shadow-sm bg-white"></iframe>
+                            <div class="absolute top-4 right-6 flex gap-2">
+                                <a href="${existingFileUrl}" download="${originalFileName}" class="ui-btn bg-primary text-white shadow-lg hover:bg-primary/90 hover:-translate-y-0.5 transition-all flex items-center gap-2 border border-primary/20 backdrop-blur-md">
+                                    <span class="material-symbols-outlined text-lg">download</span>
+                                    <span>Unduh PDF</span>
+                                </a>
+                            </div>
+                        </div>`;
+                    } else {
+                        let icon = 'description';
+                        if (['ppt', 'pptx'].includes(ext)) icon = 'slideshow';
+                        else if (['xls', 'xlsx'].includes(ext)) icon = 'table_view';
+                        else if (['zip', 'rar'].includes(ext)) icon = 'folder_zip';
+                        
+                        htmlContent = `
+                        <div class="mt-3 flex items-center justify-between p-4 bg-surface rounded-xl border border-outline-variant shadow-sm hover:shadow-md transition-shadow">
+                            <div class="flex items-center gap-4 min-w-0">
+                                <div class="w-12 h-12 bg-primary/10 text-primary rounded-xl flex items-center justify-center shrink-0">
+                                    <span class="material-symbols-outlined text-3xl">${icon}</span>
+                                </div>
+                                <div class="min-w-0 flex-1">
+                                    <p class="font-bold text-sm text-on-surface truncate">${originalFileName}</p>
+                                    <p class="text-[10px] text-on-surface-variant mt-0.5">Dokumen terlampir</p>
+                                </div>
+                            </div>
+                            <a href="${existingFileUrl}" download="${originalFileName}" class="ui-btn bg-primary/10 text-primary hover:bg-primary hover:text-white transition-colors flex items-center gap-2 shrink-0 ml-4 rounded-lg px-4 py-2">
+                                <span class="material-symbols-outlined text-lg">download</span>
+                                <span class="text-xs font-bold">Unduh</span>
+                            </a>
+                        </div>`;
+                    }
+                    previewContainer.innerHTML = htmlContent;
+                    previewContainer.classList.remove('hidden');
+                }
             });
         @endif
-    });
+
+    document.addEventListener('DOMContentLoaded', toggleScheduleInput);
 </script>
 @endpush

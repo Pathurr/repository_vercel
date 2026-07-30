@@ -65,7 +65,9 @@ class DashboardController extends Controller
                 'tipe' => 'Tugas',
                 'mata_pelajaran' => $t->kelas->mata_pelajaran ?? 'Umum',
                 'deadline' => $t->deadline,
-                'route' => route('siswa.pengerjaan-tugas', $t->id)
+                'route' => route('siswa.pengerjaan-tugas', $t->id),
+                'durasi_menit' => null
+
             ]);
         }
 
@@ -77,7 +79,9 @@ class DashboardController extends Controller
                 'mata_pelajaran' => $u->kelas->mata_pelajaran ?? 'Umum',
                 // Ujian menggunakan selesai_at sebagai deadline
                 'deadline' => $u->selesai_at,
-                'route' => route('siswa.pengerjaan-ujian', $u->id)
+                'route' => route('siswa.pengerjaan-ujian', $u->id),
+                'durasi_menit' => $u->durasi_menit
+
             ]);
         }
 
@@ -89,7 +93,9 @@ class DashboardController extends Controller
                 'mata_pelajaran' => $k->kelas->mata_pelajaran ?? 'Umum',
                 // Kuis tidak memiliki deadline di skema database saat ini (kita anggap null)
                 'deadline' => null,
-                'route' => route('siswa.pengerjaan-kuis', $k->id)
+                'route' => route('siswa.pengerjaan-kuis', $k->id),
+                'durasi_menit' => $k->durasi_menit
+
             ]);
         }
 

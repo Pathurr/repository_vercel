@@ -41,8 +41,26 @@ $selectedKelas = array_filter(explode('|', request('kelas', '')));
                             <p id="deskripsi-tugas-error" class="hidden text-[11px] text-red-500 font-bold mt-1">Deskripsi tugas wajib diisi.</p>
                         </div>
                         <div class="mt-2">
-                            <label class="block text-xs font-bold text-on-surface mb-1">Lampiran Gambar (Opsional)</label>
-                            <input type="file" name="file_path" id="file_path" accept="image/*" class="w-full bg-surface-container-low border-0 border-b-2 border-primary py-2 px-3 text-sm">
+                            <label class="block text-xs font-bold text-on-surface mb-2">Lampiran File (Opsional) - Gambar/PDF/Word/PPT</label>
+                            <div class="relative">
+                                <input type="file" name="file_path" id="file_path" accept=".pdf,.doc,.docx,.ppt,.pptx,image/*" class="hidden" onchange="previewFile(this)">
+                                <label for="file_path" class="cursor-pointer flex flex-col items-center justify-center gap-1 w-full border-2 border-dashed border-outline-variant hover:border-primary bg-surface hover:bg-surface-container transition-all py-4 rounded-xl text-sm text-on-surface-variant group">
+                                    <span class="material-symbols-outlined text-[28px] group-hover:text-primary transition-colors">cloud_upload</span>
+                                    <span id="file-name-display" class="font-bold text-on-surface group-hover:text-primary transition-colors text-center px-4 truncate w-full">
+                                        @if(isset($tugas) && $tugas->file_path)
+                                            Ganti File Lampiran (Opsional)
+                                        @else
+                                            Klik untuk memilih file dari perangkat
+                                        @endif
+                                    </span>
+                                    @if(isset($tugas) && $tugas->file_path)
+                                        <span class="text-[10px] text-on-surface-variant">Biarkan kosong jika ingin menggunakan file lama</span>
+                                    @endif
+                                </label>
+                            </div>
+                            <div class="mt-3 hidden image-preview-container">
+                                <!-- Preview HTML akan dirender di sini -->
+                            </div>
                         </div>
                         <div class="relative">
                             <label class="block text-xs font-bold text-on-surface mb-1">Pilih Kelas</label>
@@ -52,7 +70,7 @@ $selectedKelas = array_filter(explode('|', request('kelas', '')));
                                 <span class="material-symbols-outlined text-on-surface-variant transition-soft" id="dropdown-kelas-icon">expand_more</span>
                             </button>
 
-                            <div id="dropdown-kelas-menu" class="absolute z-10 w-full mt-1 bg-surface border border-outline-variant/30 rounded-lg shadow-lg opacity-0 invisible pointer-events-none transform -translate-y-2 transition-all duration-200 origin-top">
+                            <div id="dropdown-kelas-menu" class="hidden absolute z-10 w-full mt-1 bg-surface border border-outline-variant/30 rounded-lg shadow-lg">
                                 <div class="p-2 max-h-48 overflow-y-auto space-y-1">
                                     @forelse($kelases as $kelas)
                                     <label class="flex items-center gap-2 p-2 hover:bg-surface-container rounded-md cursor-pointer transition-colors">
@@ -181,7 +199,7 @@ $selectedKelas = array_filter(explode('|', request('kelas', '')));
                         <button type="button" id="btn-trigger-simpan" class="ui-btn ui-btn-primary px-6 py-2 text-sm w-full">
                             <span class="material-symbols-outlined" style="font-size: 18px">save</span> {{ $isEdit ? 'Simpan Perubahan' : 'Simpan Tugas' }}
                         </button>
-                        <button type="button" id="btn-trigger-batal" class="ui-btn ui-btn-secondary px-6 py-2 text-sm w-full">
+                        <button type="button" id="btn-trigger-batal" class="ui-btn ui-btn-secondary px-6 py-2 text-sm w-full mt-3">
                             Batal
                         </button>
                     </div>
@@ -251,7 +269,54 @@ $selectedKelas = array_filter(explode('|', request('kelas', '')));
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+    function previewFile(input) {
+        const previewContainer = document.querySelector('.image-preview-container');
+        const fileNameDisplay = document.getElementById('file-name-display');
+        
+        if (input.files && input.files[0]) {
+            const file = input.files[0];
+            const fileType = file.type;
+            const fileName = file.name;
+            const fileUrl = URL.createObjectURL(file);
+            
+            if (fileNameDisplay) {
+                fileNameDisplay.textContent = fileName;
+                fileNameDisplay.classList.add('text-primary');
+            }
+            
+            let htmlContent = '';
+            if (fileType.startsWith('image/')) {
+                htmlContent = `<img src="${fileUrl}" alt="Preview" class="max-h-64 rounded-lg border border-outline-variant/30 shadow-sm mx-auto">`;
+            } else if (fileType === 'application/pdf') {
+                htmlContent = `<iframe src="${fileUrl}#toolbar=0" class="w-full h-96 rounded-lg border border-outline-variant/30 shadow-sm"></iframe>`;
+            } else {
+                // Document (Word, PPT, Excel, dll)
+                let icon = 'description';
+                if (fileName.endsWith('.ppt') || fileName.endsWith('.pptx')) icon = 'slideshow';
+                else if (fileName.endsWith('.xls') || fileName.endsWith('.xlsx')) icon = 'table_view';
+                else if (fileName.endsWith('.zip') || fileName.endsWith('.rar')) icon = 'folder_zip';
+                
+                htmlContent = `
+                <div class="flex items-center gap-3 p-3 bg-surface rounded-lg border border-outline-variant shadow-sm w-full md:w-1/2">
+                    <div class="p-2 bg-primary/10 text-primary rounded-md flex items-center justify-center">
+                        <span class="material-symbols-outlined text-[24px]">${icon}</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="font-bold text-sm text-on-surface truncate">${fileName}</p>
+                        <p class="text-[10px] text-on-surface-variant">Dokumen terlampir</p>
+                    </div>
+                </div>`;
+            }
+            previewContainer.innerHTML = htmlContent;
+            previewContainer.classList.remove('hidden');
+        } else {
+            previewContainer.innerHTML = '';
+            previewContainer.classList.add('hidden');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        try {
     // --- STATUS PUBLIKASI ---
     const radioPublish = document.getElementById('status-publish');
     const radioTerjadwal = document.getElementById('status-terjadwal');
@@ -419,17 +484,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Toggle dropdown UI
     function toggleDropdown(e) {
         e.preventDefault();
-        const isExpanded = dropdownKelasMenu.classList.contains('opacity-100');
-        if (isExpanded) {
-            dropdownKelasMenu.classList.replace('opacity-100', 'opacity-0');
-            dropdownKelasMenu.classList.add('invisible', 'pointer-events-none');
+        const isHidden = dropdownKelasMenu.classList.contains('hidden');
+        if (!isHidden) {
+            dropdownKelasMenu.classList.add('hidden');
             dropdownKelasIcon.classList.remove('rotate-180');
         } else {
-            dropdownKelasMenu.classList.remove('invisible', 'pointer-events-none');
-            // Timeout sedikit untuk memicu transisi opacity
-            setTimeout(() => {
-                dropdownKelasMenu.classList.replace('opacity-0', 'opacity-100');
-            }, 10);
+            dropdownKelasMenu.classList.remove('hidden');
             dropdownKelasIcon.classList.add('rotate-180');
         }
     }
@@ -439,14 +499,18 @@ document.addEventListener('DOMContentLoaded', function() {
     // Menutup dropdown jika user mengklik area luar
     document.addEventListener('click', (e) => {
         if (!btnDropdownKelas.contains(e.target) && !dropdownKelasMenu.contains(e.target)) {
-            dropdownKelasMenu.classList.replace('opacity-100', 'opacity-0');
-            dropdownKelasMenu.classList.add('invisible', 'pointer-events-none');
+            dropdownKelasMenu.classList.add('hidden');
             dropdownKelasIcon.classList.remove('rotate-180');
         }
     });
 
-    // Mengupdate teks info yang ditampilkan ketika mencentang kelas
     function updateKelasText() {
+        if (kelasCheckboxes.length === 0) {
+            dropdownKelasText.textContent = "Anda belum memiliki kelas.";
+            dropdownKelasText.classList.remove('text-primary', 'font-bold');
+            dropdownKelasText.classList.add('text-red-500');
+            return;
+        }
         const checkedBoxes = Array.from(kelasCheckboxes).filter(cb => cb.checked);
         if (checkedBoxes.length === 0) {
             dropdownKelasText.textContent = "Pilih kelas...";
@@ -588,6 +652,9 @@ document.addEventListener('DOMContentLoaded', function() {
             hideError(formatPengumpulanError);
         }
 
+        if (!isValid) {
+            alert('Data Belum Lengkap!\n\nMohon periksa kembali form dan isi semua data wajib yang ditandai dengan teks merah.');
+        }
         return isValid;
     }
 
@@ -621,12 +688,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     btnConfirmBatal.addEventListener('click', () => {
-        modalConfirmBatal.classList.add('hidden');
-        toastBatal.classList.remove('invisible', 'opacity-0', '-translate-y-4');
-        toastBatal.classList.add('opacity-100', 'translate-y-0');
-        setTimeout(() => {
-            window.location.href = "{{ route('guru.tugas') }}";
-        }, 1500);
+        window.location.href = "{{ route('guru.tugas') }}";
     });
 
     btnConfirmSimpan.addEventListener('click', () => {
@@ -665,6 +727,54 @@ document.addEventListener('DOMContentLoaded', function() {
     //     }, 1500);
     // });
 
+        } catch (error) {
+            console.error('JS Error on Load:', error);
+            alert('Terjadi kesalahan pada sistem saat memuat halaman: ' + error.message);
+        }
+
+        // Cek kalau ada file_path (Edit Mode)
+        @if(isset($tugas) && $tugas->file_path)
+            const previewContainer = document.querySelector('.image-preview-container');
+            const existingFileUrl = "{{ asset('storage/' . $tugas->file_path) }}";
+            const existingFileName = "{{ basename($tugas->file_path) }}";
+            let ext = existingFileName.split('.').pop().toLowerCase();
+            
+            let previewVisual = '';
+            if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext)) {
+                previewVisual = `<img src="${existingFileUrl}" alt="Preview" class="w-full h-auto max-h-96 object-contain rounded-b-lg border-t border-outline-variant/30">`;
+            } else if (ext === 'pdf') {
+                previewVisual = `<iframe src="${existingFileUrl}#toolbar=0" class="w-full h-96 rounded-b-lg border-t border-outline-variant/30"></iframe>`;
+            }
+
+            let icon = 'description';
+            if (['ppt', 'pptx'].includes(ext)) icon = 'slideshow';
+            else if (['xls', 'xlsx'].includes(ext)) icon = 'table_view';
+            else if (['zip', 'rar'].includes(ext)) icon = 'folder_zip';
+            else if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext)) icon = 'image';
+            
+            let htmlContent = `
+            <div class="bg-surface rounded-lg border border-outline-variant shadow-sm w-full">
+                <div class="flex items-center justify-between p-3 bg-surface-container-low rounded-t-lg">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div class="p-2 bg-primary/10 text-primary rounded-md flex items-center justify-center shrink-0">
+                            <span class="material-symbols-outlined text-[20px]">${icon}</span>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <p class="font-bold text-sm text-on-surface truncate">{{ $tugas->original_file_name ?? 'Lampiran Tugas.' . pathinfo($tugas->file_path, PATHINFO_EXTENSION) }}</p>
+                            <p class="text-[10px] text-on-surface-variant">Dokumen tersimpan saat ini</p>
+                        </div>
+                    </div>
+                    <a href="${existingFileUrl}" download class="shrink-0 flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 text-primary hover:bg-primary hover:text-white rounded-lg transition-colors text-xs font-bold" target="_blank" title="Download File">
+                        <span class="material-symbols-outlined text-[16px]">download</span>
+                        <span>Unduh</span>
+                    </a>
+                </div>
+                ${previewVisual}
+            </div>`;
+            
+            previewContainer.innerHTML = htmlContent;
+            previewContainer.classList.remove('hidden');
+        @endif
 });
 </script>
 @endsection

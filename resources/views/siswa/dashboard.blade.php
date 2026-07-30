@@ -78,11 +78,39 @@
                         </div>
                     </div>
                     <div class="flex sm:flex-col items-center sm:items-end gap-3 sm:gap-1">
+                        @php
+                            $btnText = 'Kerjakan';
+                            $isActive = false;
+                            $remainingMinutes = 0;
+                            if ($a->tipe === 'Kuis' && \Illuminate\Support\Facades\Cache::has('kuis_start_'.Auth::id().'_'.$a->id)) {
+                                $btnText = 'Lanjutkan';
+                                $isActive = true;
+                                $startTime = \Illuminate\Support\Facades\Cache::get('kuis_start_'.Auth::id().'_'.$a->id);
+                                $elapsed = now()->timestamp - $startTime;
+                                $remainingMinutes = max(0, floor((($a->durasi_menit * 60) - $elapsed) / 60));
+                            } elseif ($a->tipe === 'Ujian') {
+                                $attemptsCount = \App\Models\JawabanUjian::where('ujian_id', $a->id)->where('siswa_id', Auth::id())->max('attempt') ?? 0;
+                                if (\Illuminate\Support\Facades\Cache::has('ujian_start_'.Auth::id().'_'.$a->id.'_'.($attemptsCount+1))) {
+                                    $btnText = 'Lanjutkan';
+                                    $isActive = true;
+                                    $startTime = \Illuminate\Support\Facades\Cache::get('ujian_start_'.Auth::id().'_'.$a->id.'_'.($attemptsCount+1));
+                                    $elapsed = now()->timestamp - $startTime;
+                                    $remainingMinutes = max(0, floor((($a->durasi_menit * 60) - $elapsed) / 60));
+                                }
+                            }
+                        @endphp
+                        @if($isActive)
+                        <div class="text-error font-bold text-[10px] flex items-center gap-1 px-2 py-0.5 rounded bg-error-container/30 border border-error/20">
+                            <span class="material-symbols-outlined text-xs animate-pulse">hourglass_bottom</span>
+                            <span>Sisa: {{ $remainingMinutes }} Menit</span>
+                        </div>
+                        @else
                         <div class="{{ $a->deadline && \Carbon\Carbon::parse($a->deadline)->isPast() ? 'text-error bg-error-container/30' : 'text-secondary bg-secondary-container/30' }} font-semibold text-[10px] flex items-center gap-1 px-1.5 py-0.5 rounded">
                             <span class="material-symbols-outlined text-xs">timer</span>
                             <span>{{ $a->deadline ? \Carbon\Carbon::parse($a->deadline)->diffForHumans() : 'Tanpa Tenggat' }}</span>
                         </div>
-                        <a href="{{ $a->route }}" class="bg-secondary-container hover:bg-secondary text-on-secondary-container hover:text-white font-semibold px-4 py-1.5 rounded transition-soft text-xs">Kerjakan</a>
+                        @endif
+                        <a href="{{ $a->route }}" class="bg-secondary-container hover:bg-secondary text-on-secondary-container hover:text-white font-semibold px-4 py-1.5 rounded transition-soft text-xs">{{ $btnText }}</a>
                     </div>
                 </div>
                 @empty

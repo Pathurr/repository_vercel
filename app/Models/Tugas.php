@@ -6,7 +6,17 @@ class Tugas extends Model
 {
     protected $table = 'tugas'; // tambahkan ini
     protected $fillable = [
-        'kelas_id', 'guru_id', 'judul', 'deskripsi', 'file_path', 'deadline', 'nilai_maksimal', 'format_pengumpulan'
+        'guru_id',
+        'kelas_id',
+        'judul',
+        'deskripsi',
+        'file_path',
+        'original_file_name',
+        'deadline',
+        'nilai_maksimal',
+        'status',
+        'scheduled_at',
+        'format_pengumpulan',
     ];
 
     protected $casts = [

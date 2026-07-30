@@ -6,6 +6,7 @@ use App\Models\Kuis;
 use App\Models\JawabanKuis;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class KuisController extends Controller
 {
@@ -24,7 +25,19 @@ class KuisController extends Controller
         $kelasIds = $user->kelas()->pluck('kelas.id');
 
         $kuis = Kuis::with('soal')->whereIn('kelas_id', $kelasIds)->findOrFail($id);
-        return view('siswa.pengerjaan-kuis', compact('kuis'));
+        
+        $cacheKey = "kuis_start_{$user->id}_{$kuis->id}";
+        $startTime = Cache::get($cacheKey);
+        
+        if (!$startTime || !is_numeric($startTime)) {
+            $startTime = now()->timestamp;
+            Cache::put($cacheKey, $startTime, now()->addMinutes($kuis->durasi_menit));
+        }
+        
+        $elapsedSeconds = now()->timestamp - $startTime;
+        $remainingSeconds = max(0, ($kuis->durasi_menit * 60) - $elapsedSeconds);
+
+        return view('siswa.pengerjaan-kuis', compact('kuis', 'remainingSeconds'));
     }
 
     public function store(Request $request, $id)
@@ -94,6 +107,8 @@ class KuisController extends Controller
             'nilaiable_id' => $kuis->id,
             'nilai' => $skor,
         ]);
+
+        Cache::forget("kuis_start_{$user->id}_{$kuis->id}");
 
         return redirect()->route('siswa.mapel.detail', $kuis->kelas_id)->with('success', 'Kuis berhasil dikumpulkan!');
     }
