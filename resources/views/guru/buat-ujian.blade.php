@@ -762,7 +762,8 @@
                 // Prepopulate file
                 if (soal.file_path) {
                     const previewContainer = newCard.querySelector('.image-preview-container');
-                    const existingFileUrl = soal.file_url || `{{ asset('storage') }}/${soal.file_path}`;
+                    const baseUrl = "{{ rtrim(\Illuminate\Support\Facades\Storage::disk(env('FILESYSTEM_DISK', 'public'))->url(''), '/') }}";
+                    const existingFileUrl = soal.file_url || `${baseUrl}/${soal.file_path}`;
                     const originalFileName = soal.original_file_name || `Lampiran Soal ${index + 1}.${soal.file_path.split('.').pop()}`;
                     
                     // Update dropzone UI

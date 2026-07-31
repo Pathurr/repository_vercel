@@ -50,7 +50,7 @@
                 <p class="font-bold text-[10px] text-on-surface-variant mb-2">Lampiran Guru:</p>
                 @php
                     $ext = strtolower(pathinfo($tugas->file_path, PATHINFO_EXTENSION));
-                    $fileUrl = asset('storage/' . $tugas->file_path);
+                    $fileUrl = \Illuminate\Support\Facades\Storage::disk(env('FILESYSTEM_DISK', 'public'))->url($tugas->file_path);
                     $isImage = in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp']);
                     $isPdf = $ext === 'pdf';
                     $icon = 'description';

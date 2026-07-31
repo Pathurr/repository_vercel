@@ -735,7 +735,7 @@ $selectedKelas = array_filter(explode('|', request('kelas', '')));
         // Cek kalau ada file_path (Edit Mode)
         @if(isset($tugas) && $tugas->file_path)
             const previewContainer = document.querySelector('.image-preview-container');
-            const existingFileUrl = "{{ asset('storage/' . $tugas->file_path) }}";
+            const existingFileUrl = "{{ \Illuminate\Support\Facades\Storage::disk(env('FILESYSTEM_DISK', 'public'))->url($tugas->file_path) }}";
             const existingFileName = "{{ basename($tugas->file_path) }}";
             let ext = existingFileName.split('.').pop().toLowerCase();
             

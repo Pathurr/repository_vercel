@@ -40,7 +40,7 @@ class TugasController extends Controller
             $file = $request->file('file_path');
             $originalFileName = $file->getClientOriginalName();
             $filename = \Illuminate\Support\Str::random(40) . '.' . $file->getClientOriginalExtension();
-            $filePath = $file->storeAs('tugas_attachments', $filename, 'public');
+            $filePath = $file->storeAs('tugas_attachments', $filename, env('FILESYSTEM_DISK', 'public'));
         }
 
         foreach ($request->kelas_id as $kelasId) {
@@ -85,13 +85,16 @@ class TugasController extends Controller
         ];
 
         if ($request->hasFile('file_path')) {
-            if ($tugas->file_path && \Illuminate\Support\Facades\Storage::disk('public')->exists($tugas->file_path)) {
+            $disk = env('FILESYSTEM_DISK', 'public');
+            if ($tugas->file_path && \Illuminate\Support\Facades\Storage::disk($disk)->exists($tugas->file_path)) {
+                \Illuminate\Support\Facades\Storage::disk($disk)->delete($tugas->file_path);
+            } elseif ($tugas->file_path && $disk !== 'public' && \Illuminate\Support\Facades\Storage::disk('public')->exists($tugas->file_path)) {
                 \Illuminate\Support\Facades\Storage::disk('public')->delete($tugas->file_path);
             }
             $file = $request->file('file_path');
             $dataToUpdate['original_file_name'] = $file->getClientOriginalName();
             $filename = \Illuminate\Support\Str::random(40) . '.' . $file->getClientOriginalExtension();
-            $dataToUpdate['file_path'] = $file->storeAs('tugas_attachments', $filename, 'public');
+            $dataToUpdate['file_path'] = $file->storeAs('tugas_attachments', $filename, $disk);
         }
 
         $tugas->update($dataToUpdate);

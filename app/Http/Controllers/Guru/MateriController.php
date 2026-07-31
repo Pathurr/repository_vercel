@@ -54,7 +54,10 @@ class MateriController extends Controller
         $materi = Materi::findOrFail($id);
         
         // Hapus file jika ada
-        if ($materi->file_path && \Illuminate\Support\Facades\Storage::disk('public')->exists($materi->file_path)) {
+        $disk = env('FILESYSTEM_DISK', 'public');
+        if ($materi->file_path && \Illuminate\Support\Facades\Storage::disk($disk)->exists($materi->file_path)) {
+            \Illuminate\Support\Facades\Storage::disk($disk)->delete($materi->file_path);
+        } elseif ($materi->file_path && $disk !== 'public' && \Illuminate\Support\Facades\Storage::disk('public')->exists($materi->file_path)) {
             \Illuminate\Support\Facades\Storage::disk('public')->delete($materi->file_path);
         }
         
