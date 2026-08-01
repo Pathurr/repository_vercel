@@ -69,9 +69,9 @@
                             @endphp
                             
                             @if(in_array($ext, ['png','jpg','jpeg','gif','webp']))
-                                <img src="{{ $fileUrl }}" alt="Preview" class="max-w-full max-h-96 object-contain rounded-lg border border-outline-variant/30">
+                                <img src="{{ $fileUrl }}" alt="Preview" class="max-w-full max-h-[600px] object-contain rounded-lg border border-outline-variant/30">
                             @elseif($ext == 'pdf')
-                                <iframe src="{{ $fileUrl }}" class="w-full h-96 border-0 rounded-lg shadow-sm"></iframe>
+                                <iframe src="{{ $fileUrl }}" class="w-full h-[600px] border-0 rounded-lg shadow-sm"></iframe>
                             @else
                                 <div class="flex flex-col items-center gap-3">
                                     <span class="material-symbols-outlined text-5xl text-primary/30">{{ $icon }}</span>
