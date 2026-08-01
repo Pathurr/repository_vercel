@@ -13,4 +13,15 @@ class PengumpulanTugas extends Model
 
     public function tugas() { return $this->belongsTo(Tugas::class); }
     public function siswa() { return $this->belongsTo(User::class, 'siswa_id'); }
+
+    protected static function booted()
+    {
+        static::deleting(function ($pengumpulan) {
+            if ($pengumpulan->file_path && \Illuminate\Support\Facades\Storage::disk(env('FILESYSTEM_DISK', 'public'))->exists($pengumpulan->file_path)) {
+                \Illuminate\Support\Facades\Storage::disk(env('FILESYSTEM_DISK', 'public'))->delete($pengumpulan->file_path);
+            } elseif ($pengumpulan->file_path && \Illuminate\Support\Facades\Storage::disk('public')->exists($pengumpulan->file_path)) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($pengumpulan->file_path);
+            }
+        });
+    }
 }

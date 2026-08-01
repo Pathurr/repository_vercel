@@ -42,4 +42,22 @@ class Kelas extends Model
     {
         return $this->hasMany(Kuis::class);
     }
+
+    protected static function booted()
+    {
+        static::deleting(function ($kelas) {
+            $kelas->materi()->each(function ($materi) {
+                $materi->delete();
+            });
+            $kelas->tugas()->each(function ($tugas) {
+                $tugas->delete();
+            });
+            $kelas->kuis()->each(function ($kuis) {
+                $kuis->delete();
+            });
+            $kelas->ujian()->each(function ($ujian) {
+                $ujian->delete();
+            });
+        });
+    }
 }

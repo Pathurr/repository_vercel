@@ -12,4 +12,14 @@ class Kuis extends Model
     public function soal() { return $this->hasMany(SoalKuis::class); }
     public function jawaban() { return $this->hasMany(JawabanKuis::class); }
     public function nilai_siswa() { return $this->morphMany(Nilai::class, 'nilaiable'); }
+
+    protected static function booted()
+    {
+        static::deleting(function ($kuis) {
+            $kuis->soal()->each(function ($soal) {
+                $soal->delete();
+            });
+            $kuis->nilai_siswa()->delete();
+        });
+    }
 }

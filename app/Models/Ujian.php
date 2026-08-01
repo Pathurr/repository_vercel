@@ -16,4 +16,14 @@ class Ujian extends Model
     public function soal() { return $this->hasMany(SoalUjian::class); }
     public function jawaban() { return $this->hasMany(JawabanUjian::class); }
     public function nilai_siswa() { return $this->morphMany(Nilai::class, 'nilaiable'); }
+
+    protected static function booted()
+    {
+        static::deleting(function ($ujian) {
+            $ujian->soal()->each(function ($soal) {
+                $soal->delete();
+            });
+            $ujian->nilai_siswa()->delete();
+        });
+    }
 }
