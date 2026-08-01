@@ -2,8 +2,8 @@
 @section('title', request('edit') ? 'Edit Materi - SMK Mandalahayu 1' : 'Tambah Materi Baru - SMK Mandalahayu 1')
 @section('content')
 @php
-    $isEdit = request('edit') == 'true';
-    $judul = request('judul', '');
+    $isEdit = isset($materi);
+    $judul = old('judul', $materi->judul ?? '');
 @endphp
 <div class="mb-4">
     <a href="{{ route('guru.materi') }}" class="inline-flex items-center gap-2 text-sm text-secondary hover:text-primary transition-colors font-bold mb-4">
@@ -15,8 +15,11 @@
 <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
     <div class="lg:col-span-8 space-y-4">
         <div class="bg-surface-container-lowest rounded-2xl p-5 shadow-ambient border border-outline-variant/30">
-            <form id="form-materi" method="POST" action="{{ route('guru.materi.store') }}" enctype="multipart/form-data">
+            <form id="form-materi" method="POST" action="{{ $isEdit ? route('guru.materi.update', $materi->id) : route('guru.materi.store') }}" enctype="multipart/form-data">
                 @csrf
+                @if($isEdit)
+                    @method('PUT')
+                @endif
                 <div class="space-y-4">
                     <div>
                         <label class="block text-xs font-bold uppercase tracking-wider text-primary mb-1" for="judul">Judul Materi</label>
@@ -27,7 +30,7 @@
                     <div>
                         <label class="block text-xs font-bold uppercase tracking-wider text-primary mb-1" for="deskripsi">Deskripsi Materi</label>
                         <textarea class="w-full bg-surface-container-low border-0 border-b-2 border-primary focus:border-secondary focus:ring-0 transition-soft px-3 py-2 resize-none"
-                                  id="deskripsi" name="deskripsi" rows="2" placeholder="Jelaskan secara singkat kompetensi dasar...">{{ $isEdit ? 'Deskripsi dummy untuk materi ' . $judul . ' (Dalam mode edit, deskripsi akan diisi secara otomatis).' : '' }}</textarea>
+                                  id="deskripsi" name="deskripsi" rows="2" placeholder="Jelaskan secara singkat kompetensi dasar...">{{ old('deskripsi', $materi->deskripsi ?? '') }}</textarea>
                     </div>
                     <div>
                         <label class="block text-xs font-bold uppercase tracking-wider text-primary mb-2">Dokumen Materi</label>
@@ -55,7 +58,7 @@
                             <div class="space-y-2 bg-surface-container-low p-3 rounded-xl max-h-32 overflow-y-auto custom-scrollbar" id="kelas-container">
                                 @forelse($kelases as $kelas)
                                 <label class="flex items-center gap-2 cursor-pointer group">
-                                    <input class="kelas-checkbox w-4 h-4 rounded border-outline-variant text-secondary focus:ring-secondary" name="kelas_id[]" type="checkbox" value="{{ $kelas->id }}"/>
+                                    <input class="kelas-checkbox w-4 h-4 rounded border-outline-variant text-secondary focus:ring-secondary" name="kelas_id[]" type="checkbox" value="{{ $kelas->id }}" {{ (isset($materi) && $materi->kelas_id == $kelas->id) ? 'checked' : '' }}/>
                                     <span class="text-sm text-on-surface-variant group-hover:text-primary">{{ $kelas->nama_kelas }}</span>
                                 </label>
                                 @empty
@@ -450,6 +453,47 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('form-materi').submit();
         }, 1500);
     });
+
+    // Cek kalau ada file_path (Edit Mode)
+    @if(isset($materi) && $materi->file_path)
+        const previewContainer = document.getElementById('preview-container');
+        const existingFileUrl = "{{ \Illuminate\Support\Facades\Storage::disk(env('FILESYSTEM_DISK', 'public'))->url($materi->file_path) }}";
+        const existingFileName = "{{ basename($materi->file_path) }}";
+        let ext = existingFileName.split('.').pop().toLowerCase();
+        
+        let previewVisual = '';
+        if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext)) {
+            previewVisual = `<img src="${existingFileUrl}" alt="Preview" class="w-full max-h-64 object-contain rounded-lg border border-outline-variant/30 shadow-sm mx-auto">`;
+        } else if (ext === 'pdf') {
+            previewVisual = `<iframe src="${existingFileUrl}#toolbar=0" class="w-full h-80 rounded-lg border border-outline-variant/30 shadow-sm"></iframe>`;
+        } else {
+            let icon = 'description';
+            if (['ppt', 'pptx'].includes(ext)) icon = 'slideshow';
+            else if (['xls', 'xlsx'].includes(ext)) icon = 'table_view';
+            else if (['zip', 'rar'].includes(ext)) icon = 'folder_zip';
+            else if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext)) icon = 'image';
+            
+            previewVisual = `
+            <div class="flex flex-col items-center justify-center p-6 bg-surface rounded-lg border border-outline-variant shadow-sm w-full mx-auto">
+                <div class="p-3 bg-primary/10 text-primary rounded-full mb-3 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-[36px]">${icon}</span>
+                </div>
+                <p class="font-bold text-sm text-on-surface truncate max-w-[80%]">${existingFileName}</p>
+                <p class="text-[11px] text-on-surface-variant">Dokumen tersimpan saat ini</p>
+                <a href="${existingFileUrl}" download class="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 text-primary hover:bg-primary hover:text-white rounded-lg transition-colors text-xs font-bold" target="_blank" title="Download File">
+                    <span class="material-symbols-outlined text-[16px]">download</span>
+                    <span>Unduh</span>
+                </a>
+            </div>`;
+        }
+        
+        document.getElementById('drop-prompt').classList.add('hidden');
+        document.getElementById('file-preview').classList.remove('hidden');
+        document.getElementById('preview-name').innerText = existingFileName;
+        document.getElementById('preview-size').innerText = 'Tersimpan';
+        
+        previewContainer.innerHTML = previewVisual;
+    @endif
 });
 </script>
 @endpush

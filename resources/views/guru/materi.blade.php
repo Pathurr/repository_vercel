@@ -58,7 +58,7 @@
             data-judul="{{ strtolower($m->judul) }}" 
             data-kelas="{{ $m->kelas_id }}" 
             data-status="{{ $m->status ?? 'published' }}"
-            onclick="window.location.href='{{ route('guru.materi.tambah') }}?edit=true&judul={{ urlencode($m->judul) }}'">
+            onclick="window.location.href='{{ route('guru.materi.edit', $m->id) }}'">
             
             <div class="h-36 bg-primary-container flex items-center justify-center relative">
                 <span class="material-symbols-outlined text-5xl text-on-primary-container opacity-50 group-hover:scale-110 transition-soft">book</span>
@@ -92,10 +92,10 @@
                 
                 {{-- Actions --}}
                 <div class="flex gap-2 mt-5 pt-4 border-t border-outline-variant/30" onclick="event.stopPropagation()">
-                    <a href="{{ route('guru.materi.tambah') }}?edit=true&judul={{ urlencode($m->judul) }}" class="flex-1 text-center py-2 border border-secondary text-secondary text-xs font-bold rounded-lg hover:bg-secondary hover:text-on-secondary transition-soft flex items-center justify-center gap-1">
+                    <a href="{{ route('guru.materi.edit', $m->id) }}" class="flex-1 text-center py-2 border border-secondary text-secondary text-xs font-bold rounded-lg hover:bg-secondary hover:text-on-secondary transition-soft flex items-center justify-center gap-1">
                         <span class="material-symbols-outlined" style="font-size: 16px">edit</span> Edit
                     </a>
-                    <button onclick="confirmDelete('{{ $m->judul }}')" class="flex-1 py-2 border border-error text-error text-xs font-bold rounded-lg hover:bg-error hover:text-white transition-soft flex items-center justify-center gap-1 group/btn">
+                    <button onclick="confirmDelete('{{ route('guru.materi.destroy', $m->id) }}', '{{ $m->judul }}')" class="flex-1 py-2 border border-error text-error text-xs font-bold rounded-lg hover:bg-error hover:text-white transition-soft flex items-center justify-center gap-1 group/btn">
                         <span class="material-symbols-outlined group-hover/btn:animate-bounce" style="font-size: 16px">delete</span> Hapus
                     </button>
                 </div>
@@ -212,12 +212,10 @@
     });
 
     // Modal Delete Logic
-    let currentDeleteTarget = null;
-    let currentDeleteItemEvent = null;
+    let currentDeleteTargetUrl = null;
 
-    function confirmDelete(judul) {
-        currentDeleteTarget = judul;
-        currentDeleteItemEvent = event;
+    function confirmDelete(url, judul) {
+        currentDeleteTargetUrl = url;
         document.getElementById('deleteTargetName').innerText = judul;
         
         const modal = document.getElementById('deleteModal');
@@ -237,24 +235,21 @@
         modalContent.classList.add('scale-95');
         
         setTimeout(() => {
-            currentDeleteTarget = null;
-            currentDeleteItemEvent = null;
+            currentDeleteTargetUrl = null;
         }, 300);
     }
 
     function executeDelete() {
-        // Simulasi hapus element dari DOM
-        if (currentDeleteItemEvent) {
-            const item = currentDeleteItemEvent.target.closest('.materi-item');
-            if(item) {
-                // animasi hilang
-                item.style.transform = 'scale(0.9)';
-                item.style.opacity = '0';
-                setTimeout(() => {
-                    item.remove();
-                    filterMateri(); // Re-evaluate empty state
-                }, 300);
-            }
+        if (currentDeleteTargetUrl) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = currentDeleteTargetUrl;
+            form.innerHTML = `
+                @csrf
+                @method('DELETE')
+            `;
+            document.body.appendChild(form);
+            form.submit();
         }
         closeDeleteModal();
     }

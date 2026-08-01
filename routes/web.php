@@ -49,6 +49,8 @@ Route::prefix('guru')->name('guru.')->middleware(['auth', 'role:guru'])->group(f
     Route::get('/materi', [MateriController::class, 'index'])->name('materi');
     Route::get('/materi/tambah', [MateriController::class, 'create'])->name('materi.tambah');
     Route::post('/materi/store', [MateriController::class, 'store'])->name('materi.store');
+    Route::get('/materi/{id}/edit', [MateriController::class, 'edit'])->name('materi.edit');
+    Route::put('/materi/{id}', [MateriController::class, 'update'])->name('materi.update');
     Route::delete('/materi/{id}', [MateriController::class, 'destroy'])->name('materi.destroy');
 
     // Tugas
