@@ -179,12 +179,14 @@
                                 <div class="relative mt-2">
                                     <input type="file" name="gambar_soal_1" accept=".pdf,.doc,.docx,.ppt,.pptx,image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onchange="previewFile(this)">
                                     <div class="w-full p-6 border-2 border-dashed border-outline-variant/60 rounded-xl bg-surface-container-lowest hover:bg-surface-container-low transition-colors flex flex-col items-center justify-center text-center gap-2">
-                                        <span class="material-symbols-outlined text-3xl text-outline">cloud_upload</span>
-                                        <div class="space-y-1">
-                                            <p class="text-sm font-bold text-on-surface">Pilih File Lampiran (Opsional)</p>
-                                            <p class="text-xs text-on-surface-variant">Biarkan kosong jika tidak diperlukan</p>
+                                        <span class="material-symbols-outlined text-3xl text-outline dropzone-icon">cloud_upload</span>
+                                        <div class="space-y-1 dropzone-text">
+                                            <p class="text-sm font-bold text-on-surface dropzone-title">Pilih File Lampiran (Opsional)</p>
+                                            <p class="text-xs text-on-surface-variant dropzone-desc">Biarkan kosong jika tidak diperlukan</p>
+                                            <p class="text-[10px] text-error font-bold mt-1">Maksimal ukuran file 4MB</p>
                                         </div>
                                     </div>
+                                    <p class="hidden text-error mt-2 err-file-size text-xs font-bold">Ukuran file maksimal 4MB.</p>
                                 </div>
                                 <div class="mt-3 hidden image-preview-container">
                                     <!-- Preview HTML akan dirender di sini -->
@@ -408,8 +410,10 @@
                             <div class="space-y-1 dropzone-text">
                                 <p class="text-sm font-bold text-on-surface dropzone-title">Pilih File Lampiran (Opsional)</p>
                                 <p class="text-xs text-on-surface-variant dropzone-desc">Biarkan kosong jika tidak diperlukan</p>
+                                <p class="text-[10px] text-error font-bold mt-1">Maksimal ukuran file 4MB</p>
                             </div>
                         </div>
+                        <p class="hidden text-error mt-2 err-file-size text-xs font-bold">Ukuran file maksimal 4MB.</p>
                     </div>
                     <div class="mt-3 hidden image-preview-container">
                         <!-- Preview HTML akan dirender di sini -->
@@ -755,10 +759,17 @@
                     showError(q.querySelector('.err-options'), optErr.join(' '));
                 }
             }
+
+            const fileInput = q.querySelector('input[type="file"]');
+            if (fileInput && fileInput.files.length > 0) {
+                if (fileInput.files[0].size > 4 * 1024 * 1024) {
+                    showError(q.querySelector('.err-file-size'), 'Ukuran file tidak boleh lebih dari 4MB.');
+                }
+            }
         });
 
         if (!isValid && firstErrorElement) {
-            alert('Data Belum Lengkap!\n\nMohon periksa kembali form dan isi semua data wajib yang ditandai dengan teks merah.');
+            showToast('Mohon lengkapi semua data wajib atau periksa ukuran file!', 'error');
             firstErrorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 

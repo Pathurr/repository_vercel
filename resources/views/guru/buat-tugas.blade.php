@@ -56,7 +56,9 @@ $selectedKelas = array_filter(explode('|', request('kelas', '')));
                                     @if(isset($tugas) && $tugas->file_path)
                                         <span class="text-[10px] text-on-surface-variant">Biarkan kosong jika ingin menggunakan file lama</span>
                                     @endif
+                                    <p class="text-[10px] text-red-500 font-bold mt-1">Maksimal ukuran file 4MB</p>
                                 </label>
+                                <p id="file-error" class="hidden text-red-500 text-[11px] font-bold mt-2">Ukuran file maksimal 4MB.</p>
                             </div>
                             <div class="mt-3 hidden image-preview-container">
                                 <!-- Preview HTML akan dirender di sini -->
@@ -245,6 +247,12 @@ $selectedKelas = array_filter(explode('|', request('kelas', '')));
 <div id="toast-batal" class="fixed top-5 left-1/2 -translate-x-1/2 z-[70] flex items-center gap-3 bg-red-100 border border-red-300 text-red-800 px-6 py-3 rounded-lg shadow-lg opacity-0 invisible transition-all duration-300 transform -translate-y-4">
     <span class="material-symbols-outlined">cancel</span>
     <span class="font-bold text-sm">Pembuatan dibatalkan!</span>
+</div>
+
+<!-- Toast Error (Popup Merah) -->
+<div id="toast-error" class="fixed top-5 left-1/2 -translate-x-1/2 z-[80] flex items-center gap-3 bg-red-100 border border-red-300 text-red-800 px-6 py-3 rounded-lg shadow-lg opacity-0 invisible transition-all duration-300 transform -translate-y-4">
+    <span class="material-symbols-outlined">error</span>
+    <span class="font-bold text-sm" id="toast-error-msg">Mohon lengkapi semua data wajib terlebih dahulu!</span>
 </div>
 
 <!-- Modal Popup Terjadwal -->
@@ -652,8 +660,30 @@ $selectedKelas = array_filter(explode('|', request('kelas', '')));
             hideError(formatPengumpulanError);
         }
 
+        // Validasi ukuran file
+        const fileInput = document.getElementById('file_path');
+        const fileError = document.getElementById('file-error');
+        let errorMsg = 'Mohon lengkapi semua data wajib terlebih dahulu!';
+        
+        if (fileInput.files.length > 0) {
+            if (fileInput.files[0].size > 4 * 1024 * 1024) {
+                fileError.classList.remove('hidden');
+                isValid = false;
+                errorMsg = 'Ukuran file tidak boleh lebih dari 4MB!';
+            } else {
+                fileError.classList.add('hidden');
+            }
+        }
+
         if (!isValid) {
-            alert('Data Belum Lengkap!\n\nMohon periksa kembali form dan isi semua data wajib yang ditandai dengan teks merah.');
+            const toastError = document.getElementById('toast-error');
+            document.getElementById('toast-error-msg').innerText = errorMsg;
+            toastError.classList.remove('invisible', 'opacity-0', '-translate-y-4');
+            toastError.classList.add('opacity-100', 'translate-y-0');
+            setTimeout(() => {
+                toastError.classList.remove('opacity-100', 'translate-y-0');
+                toastError.classList.add('invisible', 'opacity-0', '-translate-y-4');
+            }, 3000);
         }
         return isValid;
     }
@@ -672,6 +702,7 @@ $selectedKelas = array_filter(explode('|', request('kelas', '')));
     });
 
     btnTriggerSimpan.addEventListener('click', () => {
+        if (!validateForm()) return;
         modalConfirmSimpan.classList.remove('hidden');
     });
     
@@ -707,19 +738,13 @@ $selectedKelas = array_filter(explode('|', request('kelas', '')));
             document.getElementById('form-buat-tugas').submit();
         }, 1500);
     });
-    // btnConfirmSimpan.addEventListener('click', () => {
-    //     if (!validateForm()) {
-    //         modalConfirmSimpan.classList.add('hidden');
-    //         return;
-    //     }
-
-    //     // Sembunyikan modal konfirmasi
+     btnConfirmSimpan.addEventListener('click', () => {
+        modalConfirmSimpan.classList.add('hidden'); modal konfirmasi
     //     modalConfirmSimpan.classList.add('hidden');
         
     //     // Tampilkan Popup Toast Hijau 
     //     toastSuccess.classList.remove('invisible', 'opacity-0', '-translate-y-4');
     //     toastSuccess.classList.add('opacity-100', 'translate-y-0');
-        
     //     // Buat jeda waktu 1.5 detik agar pengguna bisa baca popup, lalu pindah halaman
     //     setTimeout(() => {
     //         // Bisa pakai form submit betulan jika backend dirutekan ke POST:

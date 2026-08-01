@@ -166,9 +166,10 @@
                             </div>
                             <p id="upload-text" class="text-xs text-on-surface font-bold">Tarik & lepas file</p>
                             <p id="upload-subtext" class="text-[10px] text-on-surface-variant">atau klik untuk mencari dari perangkat</p>
-                            <p class="text-[9px] text-on-surface-variant mt-2 font-bold">Maks. 50MB ({{ $labelStr }})</p>
+                            <p class="text-[9px] text-on-surface-variant mt-2 font-bold">Maks. 4MB ({{ $labelStr }})</p>
                         </div>
                         <p id="file-error" class="text-[10px] font-bold text-error mt-2 hidden">Berkas wajib diunggah!</p>
+                        <p id="file-size-error" class="text-[10px] font-bold text-error mt-2 hidden">Ukuran file maksimal 4MB.</p>
                     </div>
                     @endif
                 </div>
@@ -302,6 +303,12 @@
     <span class="font-bold text-sm">Pengumpulan dibatalkan!</span>
 </div>
 
+<!-- Toast Error (Popup Merah) -->
+<div id="toast-error" class="fixed top-5 left-1/2 -translate-x-1/2 z-[80] flex items-center gap-3 bg-red-100 border border-red-300 text-red-800 px-6 py-3 rounded-lg shadow-lg opacity-0 invisible transition-all duration-300 transform -translate-y-4">
+    <span class="material-symbols-outlined">error</span>
+    <span class="font-bold text-sm" id="toast-error-msg">Mohon lengkapi semua data wajib terlebih dahulu!</span>
+</div>
+
 @push('scripts')
 <script>
     function handleFileUpload(event) {
@@ -311,6 +318,7 @@
             document.getElementById('upload-subtext').innerText = "Berkas siap diunggah.";
             document.getElementById('upload-zone').classList.add('border-primary', 'bg-primary/5');
             document.getElementById('file-error').classList.add('hidden');
+            document.getElementById('file-size-error').classList.add('hidden');
         }
     }
 
@@ -359,8 +367,24 @@
                 document.getElementById('link-error').classList.remove('hidden');
                 isValid = false;
             }
+
+            if (hasFile) {
+                if (fileInput.files[0].size > 4 * 1024 * 1024) {
+                    document.getElementById('file-size-error').classList.remove('hidden');
+                    isValid = false;
+                }
+            }
             
-            if (!isValid) return;
+            if (!isValid) {
+                const toastError = document.getElementById('toast-error');
+                if(hasFile && fileInput.files[0].size > 4 * 1024 * 1024) {
+                    document.getElementById('toast-error-msg').innerText = 'Ukuran file tidak boleh lebih dari 4MB!';
+                } else {
+                    document.getElementById('toast-error-msg').innerText = 'Mohon lengkapi semua data wajib terlebih dahulu!';
+                }
+                showToast(toastError);
+                return;
+            }
             
             if (isFileAllowed) document.getElementById('file-error').classList.add('hidden');
             if (isLinkAllowed) document.getElementById('link-error').classList.add('hidden');

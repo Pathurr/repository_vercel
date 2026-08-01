@@ -142,6 +142,12 @@
     <span class="font-bold text-sm">Pembuatan dibatalkan!</span>
 </div>
 
+<!-- Toast Error (Popup Merah) -->
+<div id="toast-error" class="fixed top-5 left-1/2 -translate-x-1/2 z-[80] flex items-center gap-3 bg-red-100 border border-red-300 text-red-800 px-6 py-3 rounded-lg shadow-lg opacity-0 invisible transition-all duration-300 transform -translate-y-4">
+    <span class="material-symbols-outlined">error</span>
+    <span class="font-bold text-sm" id="toast-error-msg">Mohon lengkapi semua data wajib terlebih dahulu!</span>
+</div>
+
 <!-- Modal Popup Terjadwal -->
 <div id="modal-terjadwal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 hidden backdrop-blur-sm transition-opacity">
     <div class="ui-modal-card text-left">
@@ -240,6 +246,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function validateForm() {
         let isValid = true;
+        let errorMsg = "Mohon lengkapi semua data wajib terlebih dahulu!";
         
         if (!judulInput.value.trim()) {
             judulError.classList.remove('hidden');
@@ -248,10 +255,14 @@ document.addEventListener('DOMContentLoaded', function() {
             isValid = false;
         }
         
-        // if (fileInput.files.length === 0) {
-        //     fileError.classList.remove('hidden');
-        //     isValid = false;
-        // }
+        if (fileInput.files.length > 0) {
+            if (fileInput.files[0].size > 4 * 1024 * 1024) {
+                fileError.innerText = "Ukuran file tidak boleh lebih dari 4MB.";
+                fileError.classList.remove('hidden');
+                isValid = false;
+                errorMsg = "Ukuran file tidak boleh lebih dari 4MB!";
+            }
+        }
 
         const anyChecked = Array.from(kelasCheckboxes).some(c => c.checked);
         if (!anyChecked) {
@@ -264,6 +275,17 @@ document.addEventListener('DOMContentLoaded', function() {
             urutanInput.classList.add('border-red-500');
             urutanInput.classList.remove('border-primary');
             isValid = false;
+        }
+
+        if (!isValid) {
+            const toastError = document.getElementById('toast-error');
+            document.getElementById('toast-error-msg').innerText = errorMsg;
+            toastError.classList.remove('invisible', 'opacity-0', '-translate-y-4');
+            toastError.classList.add('opacity-100', 'translate-y-0');
+            setTimeout(() => {
+                toastError.classList.remove('opacity-100', 'translate-y-0');
+                toastError.classList.add('invisible', 'opacity-0', '-translate-y-4');
+            }, 3000);
         }
 
         return isValid;
@@ -355,6 +377,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const toastBatal = document.getElementById('toast-batal');
 
     btnTriggerSimpan.addEventListener('click', () => {
+        if (!validateForm()) return;
         modalConfirmSimpan.classList.remove('hidden');
     });
     
@@ -381,11 +404,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     btnConfirmSimpan.addEventListener('click', () => {
         console.log('confirm simpan clicked');
-        if (!validateForm()) {
-            console.log('validasi gagal');
-            modalConfirmSimpan.classList.add('hidden');
-            return;
-        }
         modalConfirmSimpan.classList.add('hidden');
         console.log('akan submit form');
         setTimeout(() => {
