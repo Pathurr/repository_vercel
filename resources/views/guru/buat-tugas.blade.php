@@ -460,6 +460,7 @@ $selectedKelas = array_filter(explode('|', request('kelas', '')));
     const btnIndividual = document.getElementById('btn-tipe-individual');
     const btnKelompok = document.getElementById('btn-tipe-kelompok');
     const tipeTugasInput = document.getElementById('tipe-tugas-input');
+    const tipeTugasError = document.getElementById('tipe-tugas-error');
 
     function setActiveTipeTugas(tipe) {
         tipeTugasInput.value = tipe;
@@ -585,9 +586,6 @@ $selectedKelas = array_filter(explode('|', request('kelas', '')));
     const deadlineError = document.getElementById('deadline-error');
     const kelasError = document.getElementById('kelas-error');
     const formatPengumpulanError = document.getElementById('format-pengumpulan-error');
-    const tipeTugasError = document.getElementById('tipe-tugas-error');
-    const tipeTugasInput = document.getElementById('tipe-tugas-input');
-    const formatCheckboxes = document.querySelectorAll('input[name="format_pengumpulan[]"]');
 
     updateKelasText();
 
