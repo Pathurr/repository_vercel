@@ -46,9 +46,9 @@ class TugasController extends Controller
         if ($isLinkAllowed && !$isFileAllowed) {
             $rules['link'] = 'required|url';
         } elseif (!$isLinkAllowed && $isFileAllowed) {
-            $rules['file'] = 'required|file|mimes:pdf,zip,rar,doc,docx,xls,xlsx,ppt,pptx,jpg,jpeg,png|max:51200';
+            $rules['file'] = 'required|file|mimes:pdf,zip,rar,doc,docx,xls,xlsx,ppt,pptx,jpg,jpeg,png|max:4096';
         } elseif ($isLinkAllowed && $isFileAllowed) {
-            $rules['file'] = 'required_without:link|file|mimes:pdf,zip,rar,doc,docx,xls,xlsx,ppt,pptx,jpg,jpeg,png|max:51200';
+            $rules['file'] = 'required_without:link|file|mimes:pdf,zip,rar,doc,docx,xls,xlsx,ppt,pptx,jpg,jpeg,png|max:4096';
             $rules['link'] = 'required_without:file|url';
         }
 

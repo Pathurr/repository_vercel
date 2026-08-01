@@ -59,16 +59,24 @@
                         @if($submission->file_path && $submission->file_path !== '-')
                             @php
                                 $hasContent = true;
-                                $ext = pathinfo($submission->file_path, PATHINFO_EXTENSION);
-                                $icon = in_array(strtolower($ext), ['png','jpg','jpeg','gif']) ? 'image' : (strtolower($ext) == 'pdf' ? 'picture_as_pdf' : 'description');
+                                $ext = strtolower(pathinfo($submission->file_path, PATHINFO_EXTENSION));
+                                $icon = in_array($ext, ['png','jpg','jpeg','gif','webp']) ? 'image' : ($ext == 'pdf' ? 'picture_as_pdf' : 'description');
+                                $fileUrl = \Illuminate\Support\Facades\Storage::disk(env('FILESYSTEM_DISK', 'public'))->url($submission->file_path);
                             @endphp
-                            <div class="flex flex-col items-center gap-3">
-                                <span class="material-symbols-outlined text-5xl text-primary/30">{{ $icon }}</span>
-                                <p class="text-sm font-medium">{{ basename($submission->file_path) }}</p>
-                                <a href="{{ \Illuminate\Support\Facades\Storage::disk(env('FILESYSTEM_DISK', 'public'))->url($submission->file_path) }}" target="_blank" class="bg-white text-primary px-4 py-1.5 rounded-full font-bold shadow text-xs border border-outline-variant flex items-center gap-1.5 hover:bg-surface-container-lowest transition-colors">
-                                    <span class="material-symbols-outlined text-[13px]">open_in_new</span> Buka File
-                                </a>
-                            </div>
+                            
+                            @if(in_array($ext, ['png','jpg','jpeg','gif','webp']))
+                                <img src="{{ $fileUrl }}" alt="Preview" class="max-w-full max-h-96 object-contain rounded-lg border border-outline-variant/30">
+                            @elseif($ext == 'pdf')
+                                <iframe src="{{ $fileUrl }}" class="w-full h-96 border-0 rounded-lg shadow-sm"></iframe>
+                            @else
+                                <div class="flex flex-col items-center gap-3">
+                                    <span class="material-symbols-outlined text-5xl text-primary/30">{{ $icon }}</span>
+                                    <p class="text-sm font-medium">{{ basename($submission->file_path) }}</p>
+                                    <a href="{{ $fileUrl }}" target="_blank" class="bg-white text-primary px-4 py-1.5 rounded-full font-bold shadow text-xs border border-outline-variant flex items-center gap-1.5 hover:bg-surface-container-lowest transition-colors">
+                                        <span class="material-symbols-outlined text-[13px]">open_in_new</span> Buka File
+                                    </a>
+                                </div>
+                            @endif
                         @endif
                         
                         @if($submission->link)

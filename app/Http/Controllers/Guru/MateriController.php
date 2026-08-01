@@ -28,7 +28,7 @@ class MateriController extends Controller
             'kelas_id'  => 'required|array',
             'kelas_id.*'=> 'exists:kelas,id',
             'deskripsi' => 'nullable|string',
-            'file'      => 'nullable|file|mimes:pdf,ppt,pptx,jpg,jpeg,png|max:20480', // 20MB
+            'file'      => 'nullable|file|mimes:pdf,ppt,pptx,jpg,jpeg,png|max:4096', // 4MB
         ]);
 
         $filePath = null;

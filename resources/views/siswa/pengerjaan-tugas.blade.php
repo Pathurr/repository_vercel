@@ -189,9 +189,25 @@
                 @if($submission->file_path && $submission->file_path !== '-')
                 <div class="bg-surface-container-low border border-outline-variant rounded-xl p-4">
                     <p class="font-bold text-[10px] text-on-surface-variant mb-2 uppercase tracking-wider">File Diserahkan</p>
-                    <a href="{{ \Illuminate\Support\Facades\Storage::disk(env('FILESYSTEM_DISK', 'public'))->url($submission->file_path) }}" target="_blank" class="flex items-center gap-3 p-3 bg-surface rounded-lg border border-outline-variant hover:border-secondary hover:shadow-md transition-all group">
+                    
+                    @php
+                        $ext = strtolower(pathinfo($submission->file_path, PATHINFO_EXTENSION));
+                        $fileUrl = \Illuminate\Support\Facades\Storage::disk(env('FILESYSTEM_DISK', 'public'))->url($submission->file_path);
+                    @endphp
+                    
+                    @if(in_array($ext, ['png','jpg','jpeg','gif','webp']))
+                        <div class="mb-3">
+                            <img src="{{ $fileUrl }}" alt="Preview" class="max-w-full max-h-64 object-contain rounded-lg border border-outline-variant/30">
+                        </div>
+                    @elseif($ext == 'pdf')
+                        <div class="mb-3">
+                            <iframe src="{{ $fileUrl }}" class="w-full h-64 border-0 rounded-lg shadow-sm"></iframe>
+                        </div>
+                    @endif
+                    
+                    <a href="{{ $fileUrl }}" target="_blank" class="flex items-center gap-3 p-3 bg-surface rounded-lg border border-outline-variant hover:border-secondary hover:shadow-md transition-all group">
                         <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center shrink-0">
-                            <span class="material-symbols-outlined text-primary group-hover:text-secondary">description</span>
+                            <span class="material-symbols-outlined text-primary group-hover:text-secondary">{{ in_array($ext, ['png','jpg','jpeg','gif','webp']) ? 'image' : ($ext == 'pdf' ? 'picture_as_pdf' : 'description') }}</span>
                         </div>
                         <div class="flex-1 min-w-0">
                             <p class="font-bold text-xs text-on-surface truncate group-hover:text-secondary transition-colors">{{ basename($submission->file_path) }}</p>

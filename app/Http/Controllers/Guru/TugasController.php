@@ -32,6 +32,7 @@ class TugasController extends Controller
             'kelas_id' => 'required|array',
             'kelas_id.*'=> 'exists:kelas,id',
             'deadline' => 'required|date',
+            'file_path' => 'nullable|file|max:4096',
         ]);
 
         $filePath = null;
@@ -71,6 +72,7 @@ class TugasController extends Controller
             'kelas_id' => 'required|array',
             'kelas_id.*'=> 'exists:kelas,id',
             'deadline' => 'required|date',
+            'file_path' => 'nullable|file|max:4096',
         ]);
 
         $dataToUpdate = [
