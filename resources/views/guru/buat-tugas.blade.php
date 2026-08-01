@@ -762,19 +762,6 @@ $selectedKelas = array_filter(explode('|', request('kelas', '')));
             document.getElementById('form-buat-tugas').submit();
         }, 1500);
     });
-     btnConfirmSimpan.addEventListener('click', () => {
-        modalConfirmSimpan.classList.add('hidden'); modal konfirmasi
-    //     modalConfirmSimpan.classList.add('hidden');
-        
-    //     // Tampilkan Popup Toast Hijau 
-    //     toastSuccess.classList.remove('invisible', 'opacity-0', '-translate-y-4');
-    //     toastSuccess.classList.add('opacity-100', 'translate-y-0');
-    //     // Buat jeda waktu 1.5 detik agar pengguna bisa baca popup, lalu pindah halaman
-    //     setTimeout(() => {
-    //         // Bisa pakai form submit betulan jika backend dirutekan ke POST:
-    //         document.getElementById('form-buat-tugas').submit();
-    //     }, 1500);
-    // });
 
         } catch (error) {
             console.error('JS Error on Load:', error);
