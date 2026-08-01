@@ -38,11 +38,13 @@
                                 <p class="text-sm text-on-surface-variant"><span class="text-primary font-bold">Klik untuk unggah</span> atau seret file ke sini</p>
                                 <p class="text-xs text-on-surface-variant/60 mt-1 uppercase tracking-widest">PDF, PPTX, JPG (Max. 20MB)</p>
                             </div>
-                            <div id="file-preview" class="hidden">
-                                <span id="preview-icon" class="material-symbols-outlined text-4xl text-secondary mb-2" style="display:block;">description</span>
-                                <p id="preview-name" class="text-sm font-bold text-primary truncate px-4">filename.pdf</p>
-                                <p id="preview-size" class="text-xs text-on-surface-variant/80 mt-1">2.5 MB</p>
-                                <p class="text-[10px] text-primary/60 mt-2 hover:underline">Klik untuk mengganti file</p>
+                            <div id="file-preview" class="hidden w-full">
+                                <div id="preview-container" class="mt-2 w-full"></div>
+                                <div class="mt-2 text-center">
+                                    <p id="preview-name" class="text-sm font-bold text-primary truncate px-4">filename.pdf</p>
+                                    <p id="preview-size" class="text-xs text-on-surface-variant/80 mt-1">2.5 MB</p>
+                                    <p class="text-[10px] text-primary/60 mt-2 hover:underline">Klik area ini untuk mengganti file</p>
+                                </div>
                             </div>
                         </div>
                         <p id="file-error" class="hidden text-[11px] text-red-500 font-bold mt-1">Dokumen materi wajib diunggah.</p>
@@ -237,10 +239,32 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('preview-name').innerText = file.name;
         document.getElementById('preview-size').innerText = (file.size / (1024 * 1024)).toFixed(2) + ' MB';
         
-        let icon = 'description';
-        if (file.name.toLowerCase().endsWith('.pdf')) icon = 'picture_as_pdf';
-        else if (file.name.match(/\.(jpeg|jpg|png|gif)$/i)) icon = 'image';
-        document.getElementById('preview-icon').innerText = icon;
+        const previewContainer = document.getElementById('preview-container');
+        const fileType = file.type;
+        const fileUrl = URL.createObjectURL(file);
+        
+        let htmlContent = '';
+        if (fileType.startsWith('image/')) {
+            htmlContent = `<img src="${fileUrl}" alt="Preview" class="w-full max-h-64 object-contain rounded-lg border border-outline-variant/30 shadow-sm mx-auto">`;
+        } else if (fileType === 'application/pdf') {
+            htmlContent = `<iframe src="${fileUrl}#toolbar=0" class="w-full h-80 rounded-lg border border-outline-variant/30 shadow-sm"></iframe>`;
+        } else {
+            let icon = 'description';
+            if (file.name.toLowerCase().endsWith('.ppt') || file.name.toLowerCase().endsWith('.pptx')) icon = 'slideshow';
+            else if (file.name.toLowerCase().endsWith('.xls') || file.name.toLowerCase().endsWith('.xlsx')) icon = 'table_view';
+            else if (file.name.toLowerCase().endsWith('.zip') || file.name.toLowerCase().endsWith('.rar')) icon = 'folder_zip';
+            
+            htmlContent = `
+            <div class="flex flex-col items-center justify-center p-6 bg-surface rounded-lg border border-outline-variant shadow-sm w-full mx-auto">
+                <div class="p-3 bg-primary/10 text-primary rounded-full mb-3 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-[36px]">${icon}</span>
+                </div>
+                <p class="font-bold text-sm text-on-surface truncate max-w-[80%]">${file.name}</p>
+                <p class="text-[11px] text-on-surface-variant">Dokumen terlampir</p>
+            </div>`;
+        }
+        
+        previewContainer.innerHTML = htmlContent;
     }
 
     // Validasi input
