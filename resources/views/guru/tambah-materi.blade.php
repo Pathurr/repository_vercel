@@ -185,6 +185,22 @@ document.addEventListener('DOMContentLoaded', function() {
     dropArea.addEventListener('drop', e => { 
         const files = e.dataTransfer.files; 
         if(files.length) {
+            if (files[0].size > 4 * 1024 * 1024) {
+                fileInput.value = '';
+                document.getElementById('file-preview').classList.add('hidden');
+                document.getElementById('drop-prompt').classList.remove('hidden');
+                const toastError = document.getElementById('toast-error');
+                if (toastError) {
+                    document.getElementById('toast-error-msg').innerText = 'Ukuran file tidak boleh lebih dari 4MB!';
+                    toastError.classList.remove('invisible', 'opacity-0', '-translate-y-4');
+                    toastError.classList.add('opacity-100', 'translate-y-0');
+                    setTimeout(() => {
+                        toastError.classList.remove('opacity-100', 'translate-y-0');
+                        toastError.classList.add('invisible', 'opacity-0', '-translate-y-4');
+                    }, 3000);
+                }
+                return;
+            }
             fileInput.files = files;
             fileError.classList.add('hidden');
             showPreview(files[0]);
@@ -193,6 +209,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
     fileInput.addEventListener('change', () => {
         if(fileInput.files.length > 0) {
+            if (fileInput.files[0].size > 4 * 1024 * 1024) {
+                fileInput.value = '';
+                document.getElementById('file-preview').classList.add('hidden');
+                document.getElementById('drop-prompt').classList.remove('hidden');
+                const toastError = document.getElementById('toast-error');
+                if (toastError) {
+                    document.getElementById('toast-error-msg').innerText = 'Ukuran file tidak boleh lebih dari 4MB!';
+                    toastError.classList.remove('invisible', 'opacity-0', '-translate-y-4');
+                    toastError.classList.add('opacity-100', 'translate-y-0');
+                    setTimeout(() => {
+                        toastError.classList.remove('opacity-100', 'translate-y-0');
+                        toastError.classList.add('invisible', 'opacity-0', '-translate-y-4');
+                    }, 3000);
+                }
+                return;
+            }
             fileError.classList.add('hidden');
             showPreview(fileInput.files[0]);
         }
@@ -214,8 +246,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Validasi input
     const judulInput = document.getElementById('judul');
     const judulError = document.getElementById('judul-error');
-    const urutanInput = document.getElementById('urutan');
-    const urutanError = document.getElementById('urutan-error');
     const kelasCheckboxes = document.querySelectorAll('.kelas-checkbox');
     const kelasError = document.getElementById('kelas-error');
     
@@ -224,14 +254,6 @@ document.addEventListener('DOMContentLoaded', function() {
             judulError.classList.add('hidden');
             judulInput.classList.remove('border-red-500');
             judulInput.classList.add('border-primary');
-        }
-    });
-    
-    urutanInput.addEventListener('input', () => {
-        if (urutanInput.value.trim()) {
-            urutanError.classList.add('hidden');
-            urutanInput.classList.remove('border-red-500');
-            urutanInput.classList.add('border-primary');
         }
     });
     
@@ -267,13 +289,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const anyChecked = Array.from(kelasCheckboxes).some(c => c.checked);
         if (!anyChecked) {
             kelasError.classList.remove('hidden');
-            isValid = false;
-        }
-
-        if (!urutanInput.value.trim()) {
-            urutanError.classList.remove('hidden');
-            urutanInput.classList.add('border-red-500');
-            urutanInput.classList.remove('border-primary');
             isValid = false;
         }
 

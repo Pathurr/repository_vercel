@@ -283,6 +283,28 @@ $selectedKelas = array_filter(explode('|', request('kelas', '')));
         
         if (input.files && input.files[0]) {
             const file = input.files[0];
+
+            if (file.size > 4 * 1024 * 1024) {
+                input.value = '';
+                previewContainer.innerHTML = '';
+                previewContainer.classList.add('hidden');
+                if (fileNameDisplay) {
+                    fileNameDisplay.textContent = 'Pilih File Lampiran';
+                    fileNameDisplay.classList.remove('text-primary');
+                }
+                const toastError = document.getElementById('toast-error');
+                if (toastError) {
+                    document.getElementById('toast-error-msg').innerText = 'Ukuran file tidak boleh lebih dari 4MB!';
+                    toastError.classList.remove('invisible', 'opacity-0', '-translate-y-4');
+                    toastError.classList.add('opacity-100', 'translate-y-0');
+                    setTimeout(() => {
+                        toastError.classList.remove('opacity-100', 'translate-y-0');
+                        toastError.classList.add('invisible', 'opacity-0', '-translate-y-4');
+                    }, 3000);
+                }
+                return;
+            }
+
             const fileType = file.type;
             const fileName = file.name;
             const fileUrl = URL.createObjectURL(file);
@@ -562,8 +584,10 @@ $selectedKelas = array_filter(explode('|', request('kelas', '')));
     const deskripsiError = document.getElementById('deskripsi-tugas-error');
     const deadlineError = document.getElementById('deadline-error');
     const kelasError = document.getElementById('kelas-error');
-    const tipeTugasError = document.getElementById('tipe-tugas-error');
     const formatPengumpulanError = document.getElementById('format-pengumpulan-error');
+    const tipeTugasError = document.getElementById('tipe-tugas-error');
+    const tipeTugasInput = document.getElementById('tipe-tugas-input');
+    const formatCheckboxes = document.querySelectorAll('input[name="format_pengumpulan[]"]');
 
     updateKelasText();
 

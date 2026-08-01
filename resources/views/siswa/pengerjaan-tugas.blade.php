@@ -312,8 +312,26 @@
 @push('scripts')
 <script>
     function handleFileUpload(event) {
-        const file = event.target.files[0];
+        const fileInput = event.target;
+        const file = fileInput.files[0];
         if (file) {
+            if (file.size > 4 * 1024 * 1024) {
+                fileInput.value = '';
+                document.getElementById('upload-text').innerText = 'Tarik & lepas file';
+                document.getElementById('upload-subtext').innerText = 'atau klik untuk mencari dari perangkat';
+                document.getElementById('upload-zone').classList.remove('border-primary', 'bg-primary/5');
+                const toastError = document.getElementById('toast-error');
+                if (toastError) {
+                    document.getElementById('toast-error-msg').innerText = 'Ukuran file tidak boleh lebih dari 4MB!';
+                    toastError.classList.remove('invisible', 'opacity-0', '-translate-y-4');
+                    toastError.classList.add('opacity-100', 'translate-y-0');
+                    setTimeout(() => {
+                        toastError.classList.remove('opacity-100', 'translate-y-0');
+                        toastError.classList.add('invisible', 'opacity-0', '-translate-y-4');
+                    }, 3000);
+                }
+                return;
+            }
             document.getElementById('upload-text').innerText = file.name;
             document.getElementById('upload-subtext').innerText = "Berkas siap diunggah.";
             document.getElementById('upload-zone').classList.add('border-primary', 'bg-primary/5');

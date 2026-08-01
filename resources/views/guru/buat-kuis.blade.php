@@ -280,6 +280,32 @@
         
         if (input.files && input.files[0]) {
             const file = input.files[0];
+
+            if (file.size > 4 * 1024 * 1024) {
+                input.value = '';
+                previewContainer.innerHTML = '';
+                previewContainer.classList.add('hidden');
+                
+                // Show toast error!
+                const toastContainer = document.getElementById('toastContainer');
+                if (toastContainer) {
+                    const toast = document.createElement('div');
+                    toast.className = 'px-6 py-3 rounded-full shadow-lg font-bold text-white transform transition-all duration-300 -translate-y-4 opacity-0 flex items-center gap-2 bg-error text-on-error';
+                    toast.innerHTML = `
+                        <span class="material-symbols-outlined">error</span>
+                        Ukuran file tidak boleh lebih dari 4MB!
+                    `;
+                    toastContainer.appendChild(toast);
+                    
+                    setTimeout(() => toast.classList.remove('-translate-y-4', 'opacity-0'), 10);
+                    setTimeout(() => {
+                        toast.classList.add('-translate-y-4', 'opacity-0');
+                        setTimeout(() => toast.remove(), 300);
+                    }, 3000);
+                }
+                return;
+            }
+
             const fileType = file.type;
             const fileName = file.name;
             const fileUrl = URL.createObjectURL(file);
