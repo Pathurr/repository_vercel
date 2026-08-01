@@ -194,7 +194,9 @@
                     
                     @php
                         $ext = strtolower(pathinfo($submission->file_path, PATHINFO_EXTENSION));
-                        $fileUrl = \Illuminate\Support\Facades\Storage::disk(env('FILESYSTEM_DISK', 'public'))->url($submission->file_path);
+                        $isLocal = \Illuminate\Support\Facades\Storage::disk('public')->exists($submission->file_path);
+                        $diskName = $isLocal ? 'public' : env('FILESYSTEM_DISK', 'public');
+                        $fileUrl = \Illuminate\Support\Facades\Storage::disk($diskName)->url($submission->file_path);
                     @endphp
                     
                     @if(in_array($ext, ['png','jpg','jpeg','gif','webp']))

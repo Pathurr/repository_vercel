@@ -61,7 +61,11 @@
                                 $hasContent = true;
                                 $ext = strtolower(pathinfo($submission->file_path, PATHINFO_EXTENSION));
                                 $icon = in_array($ext, ['png','jpg','jpeg','gif','webp']) ? 'image' : ($ext == 'pdf' ? 'picture_as_pdf' : 'description');
-                                $fileUrl = \Illuminate\Support\Facades\Storage::disk(env('FILESYSTEM_DISK', 'public'))->url($submission->file_path);
+                                
+                                // Cek apakah file ada di disk lokal (file lama sebelum pindah ke Supabase)
+                                $isLocal = \Illuminate\Support\Facades\Storage::disk('public')->exists($submission->file_path);
+                                $diskName = $isLocal ? 'public' : env('FILESYSTEM_DISK', 'public');
+                                $fileUrl = \Illuminate\Support\Facades\Storage::disk($diskName)->url($submission->file_path);
                             @endphp
                             
                             @if(in_array($ext, ['png','jpg','jpeg','gif','webp']))
@@ -110,7 +114,7 @@
                             <p class="text-[10px] text-on-surface-variant uppercase">{{ $ext ?? 'file' }} Document</p>
                         </div>
                     </div>
-                    <a href="{{ \Illuminate\Support\Facades\Storage::disk(env('FILESYSTEM_DISK', 'public'))->url($submission->file_path) }}" download class="text-primary hover:underline font-bold text-xs flex items-center gap-1 flex-shrink-0">
+                    <a href="{{ $fileUrl }}" download class="text-primary hover:underline font-bold text-xs flex items-center gap-1 flex-shrink-0">
                         <span class="material-symbols-outlined text-sm">download</span> Unduh
                     </a>
                 </div>
