@@ -145,10 +145,10 @@
                 <td data-label="Aksi" class="action-cell p-4 text-center">
                     <div class="flex gap-2 justify-center">
                         <a href="{{ route('guru.tugas.buat', ['mode' => 'edit', 'id' => $t->id]) }}" class="p-2 rounded-lg text-secondary hover:bg-secondary-container/30 transition-soft"><span class="material-symbols-outlined text-base">edit</span></a>
-                        <form action="{{ route('guru.tugas.destroy', $t->id) }}" method="POST" class="inline" onsubmit="return confirm('Yakin ingin menghapus tugas ini?');">
+                        <form action="{{ route('guru.tugas.destroy', $t->id) }}" method="POST" class="inline" onsubmit="event.preventDefault(); confirmDelete(this, 'tugas ini');">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="p-2 rounded-lg text-error hover:bg-error-container/30 transition-soft"><span class="material-symbols-outlined text-base">delete</span></button>
+                            <button type="submit" class="p-2 rounded-lg text-error hover:bg-error-container/30 transition-soft" title="Hapus"><span class="material-symbols-outlined text-base">delete</span></button>
                         </form>
                         <a href="{{ route('guru.monitor.tugas', ['tugas_id' => $t->id]) }}" class="px-3 py-2 rounded-lg text-primary border border-primary/20 hover:bg-primary-container/30 transition-soft text-xs font-bold">Nilai</a>
                     </div>
@@ -158,6 +158,26 @@
         </tbody>
     </table>
 </div>
+
+<!-- Modal Konfirmasi Hapus -->
+<div id="modal-confirm-hapus" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 hidden backdrop-blur-sm transition-opacity">
+    <div class="bg-red-50 rounded-xl shadow-2xl p-6 w-full max-w-sm border border-red-200 text-center">
+        <span class="material-symbols-outlined text-red-500 text-5xl mb-4">delete_forever</span>
+        <h3 class="text-xl font-bold text-red-700 mb-2" style="font-family: var(--font-serif)">Hapus Tugas?</h3>
+        <p class="text-xs text-red-600/80 mb-6" id="hapus-modal-text">Apakah Anda yakin ingin menghapus tugas ini? Tindakan ini tidak dapat dibatalkan.</p>
+        <div class="flex gap-2 justify-center">
+            <button type="button" onclick="closeHapusModal()" class="px-4 py-2 rounded-lg font-bold text-xs text-red-700 border border-red-200 hover:bg-red-100 transition-colors">Batal</button>
+            <button type="button" id="btn-confirm-hapus" class="px-4 py-2 rounded-lg font-bold text-xs bg-red-500 text-white hover:bg-red-600 transition-all shadow-md hover:shadow-lg">Ya, Hapus</button>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Success (Popup Hijau) -->
+<div id="toast-action" class="fixed top-5 left-1/2 -translate-x-1/2 z-[70] flex items-center gap-3 bg-green-100 border border-green-300 text-green-800 px-6 py-3 rounded-lg shadow-lg transition-all duration-300 transform {{ session('success') ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-4' }}">
+    <span class="material-symbols-outlined">check_circle</span>
+    <span class="font-bold text-sm">{{ session('success') ?? '' }}</span>
+</div>
+
 @endsection
 @push('scripts')
 <script>
@@ -214,5 +234,36 @@
     });
 
     filterTugas();
+
+    // --- Modal Hapus ---
+    let formToSubmit = null;
+
+    function confirmDelete(form, itemName) {
+        formToSubmit = form;
+        document.getElementById('hapus-modal-text').innerText = `Apakah Anda yakin ingin menghapus ${itemName}? Tindakan ini tidak dapat dibatalkan.`;
+        document.getElementById('modal-confirm-hapus').classList.remove('hidden');
+    }
+
+    function closeHapusModal() {
+        document.getElementById('modal-confirm-hapus').classList.add('hidden');
+        formToSubmit = null;
+    }
+
+    document.getElementById('btn-confirm-hapus').addEventListener('click', function() {
+        if (formToSubmit) {
+            formToSubmit.submit();
+        }
+    });
+
+    // --- Hide Toast Automatically ---
+    @if(session('success'))
+    setTimeout(() => {
+        const toast = document.getElementById('toast-action');
+        if(toast) {
+            toast.classList.remove('opacity-100', 'visible', 'translate-y-0');
+            toast.classList.add('opacity-0', 'invisible', '-translate-y-4');
+        }
+    }, 3000);
+    @endif
 </script>
 @endpush

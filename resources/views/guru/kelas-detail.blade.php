@@ -224,7 +224,7 @@
                                 <p class="text-xs text-on-surface-variant">Diunggah {{ $materi->created_at ? $materi->created_at->format('d M Y') : '-' }}</p>
                             </div>
                         </div>
-                        <form action="{{ route('guru.materi.destroy', $materi->id) }}" method="POST" class="inline" onclick="event.stopPropagation();" onsubmit="return confirm('Apakah Anda yakin ingin menghapus materi ini?');">
+                        <form action="{{ route('guru.materi.destroy', $materi->id) }}" method="POST" class="inline" onclick="event.stopPropagation();" onsubmit="event.preventDefault(); confirmDelete(this, 'materi ini');">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:bg-error-container hover:text-error rounded-lg transition-soft" title="Hapus">
@@ -264,7 +264,7 @@
                             </div>
                             <div class="flex gap-2 items-center">
                                 <span class="bg-secondary-container/20 text-secondary text-xs font-bold px-2 py-1 rounded">Aktif</span>
-                                <form action="{{ route('guru.tugas.destroy', $tugas->id) }}" method="POST" class="inline" onclick="event.stopPropagation();" onsubmit="return confirm('Apakah Anda yakin ingin menghapus tugas ini?');">
+                                <form action="{{ route('guru.tugas.destroy', $tugas->id) }}" method="POST" class="inline" onclick="event.stopPropagation();" onsubmit="event.preventDefault(); confirmDelete(this, 'tugas ini');">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:bg-error-container hover:text-error rounded-lg transition-soft" title="Hapus">
@@ -306,7 +306,7 @@
                                 <p class="text-xs text-on-surface-variant">Durasi: {{ $kuis->durasi_menit }} Menit</p>
                             </div>
                         </div>
-                        <form action="{{ route('guru.kuis.destroy', $kuis->id) }}" method="POST" class="inline" onclick="event.stopPropagation();" onsubmit="return confirm('Apakah Anda yakin ingin menghapus kuis ini?');">
+                        <form action="{{ route('guru.kuis.destroy', $kuis->id) }}" method="POST" class="inline" onclick="event.stopPropagation();" onsubmit="event.preventDefault(); confirmDelete(this, 'kuis ini');">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:bg-error-container hover:text-error rounded-lg transition-soft" title="Hapus">
@@ -342,7 +342,7 @@
                                 <p class="text-xs text-on-surface-variant">Jadwal: {{ $ujian->mulai_at ? $ujian->mulai_at->format('d M Y, H:i') : '-' }}</p>
                             </div>
                         </div>
-                        <form action="{{ route('guru.ujian.destroy', $ujian->id) }}" method="POST" class="inline" onclick="event.stopPropagation();" onsubmit="return confirm('Apakah Anda yakin ingin menghapus ujian ini?');">
+                        <form action="{{ route('guru.ujian.destroy', $ujian->id) }}" method="POST" class="inline" onclick="event.stopPropagation();" onsubmit="event.preventDefault(); confirmDelete(this, 'ujian ini');">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:bg-error-container hover:text-error rounded-lg transition-soft" title="Hapus">
@@ -463,6 +463,26 @@
                 </button>
                 <button onclick="confirmDeletePengumuman()" class="bg-error text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-error/90 transition-soft">
                     Hapus
+                </button>
+            </div>
+    </div>
+</div>
+
+<!-- Modal Konfirmasi Hapus Data (Materi, Tugas, Kuis, Ujian) -->
+<div id="modal-confirm-hapus" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm transition-opacity">
+    <div class="bg-red-50 border border-red-200 rounded-2xl w-full max-w-md shadow-xl overflow-hidden transform scale-95 transition-transform" id="modalConfirmHapusContent">
+        <div class="p-6 text-center">
+            <div class="w-16 h-16 rounded-full bg-red-100 text-red-500 flex items-center justify-center mx-auto mb-4">
+                <span class="material-symbols-outlined" style="font-size: 32px">delete_forever</span>
+            </div>
+            <h3 class="font-bold text-xl text-red-700 mb-2" style="font-family: var(--font-serif)">Hapus Data?</h3>
+            <p class="text-red-600/80 text-sm mb-6" id="hapus-modal-text">Apakah Anda yakin ingin menghapus data ini? Tindakan ini tidak dapat dibatalkan.</p>
+            <div class="flex justify-center gap-3">
+                <button type="button" onclick="closeHapusModal()" class="px-4 py-2 rounded-lg font-bold text-sm text-red-700 border border-red-200 hover:bg-red-100 transition-soft">
+                    Batal
+                </button>
+                <button type="button" id="btn-confirm-hapus" class="bg-red-500 text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-red-600 transition-soft shadow-md hover:shadow-lg">
+                    Ya, Hapus
                 </button>
             </div>
         </div>
@@ -698,6 +718,43 @@
             document.getElementById('modalDelete').classList.add('hidden');
         }, 150);
     }
+
+    // Modal Generic Delete Logic
+    let formToSubmit = null;
+
+    function confirmDelete(form, itemName) {
+        formToSubmit = form;
+        document.getElementById('hapus-modal-text').innerText = `Apakah Anda yakin ingin menghapus ${itemName}? Tindakan ini tidak dapat dibatalkan.`;
+        const modal = document.getElementById('modal-confirm-hapus');
+        const content = document.getElementById('modalConfirmHapusContent');
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            content.classList.remove('scale-95');
+            content.classList.add('scale-100');
+        }, 10);
+    }
+
+    function closeHapusModal() {
+        const content = document.getElementById('modalConfirmHapusContent');
+        content.classList.remove('scale-100');
+        content.classList.add('scale-95');
+        setTimeout(() => {
+            document.getElementById('modal-confirm-hapus').classList.add('hidden');
+            formToSubmit = null;
+        }, 150);
+    }
+
+    document.getElementById('btn-confirm-hapus').addEventListener('click', function() {
+        if (formToSubmit) {
+            formToSubmit.submit();
+        }
+    });
+
+    // Handle Session Flash
+    @if(session('success'))
+        showSuccessToast("{{ session('success') }}");
+    @endif
+
 
     function confirmDeletePengumuman() {
         if(currentDeleteElement) {
