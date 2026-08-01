@@ -168,6 +168,7 @@
                             <p id="upload-subtext" class="text-[10px] text-on-surface-variant">atau klik untuk mencari dari perangkat</p>
                             <p class="text-[9px] text-on-surface-variant mt-2 font-bold">Maks. 4MB ({{ $labelStr }})</p>
                         </div>
+                        <div id="image-preview-container" class="mt-4 hidden w-full"></div>
                         <p id="file-error" class="text-[10px] font-bold text-error mt-2 hidden">Berkas wajib diunggah!</p>
                         <p id="file-size-error" class="text-[10px] font-bold text-error mt-2 hidden">Ukuran file maksimal 4MB.</p>
                     </div>
@@ -314,12 +315,17 @@
     function handleFileUpload(event) {
         const fileInput = event.target;
         const file = fileInput.files[0];
+        const previewContainer = document.getElementById('image-preview-container');
+        
         if (file) {
             if (file.size > 4 * 1024 * 1024) {
                 fileInput.value = '';
                 document.getElementById('upload-text').innerText = 'Tarik & lepas file';
                 document.getElementById('upload-subtext').innerText = 'atau klik untuk mencari dari perangkat';
                 document.getElementById('upload-zone').classList.remove('border-primary', 'bg-primary/5');
+                previewContainer.innerHTML = '';
+                previewContainer.classList.add('hidden');
+                
                 const toastError = document.getElementById('toast-error');
                 if (toastError) {
                     document.getElementById('toast-error-msg').innerText = 'Ukuran file tidak boleh lebih dari 4MB!';
@@ -332,11 +338,47 @@
                 }
                 return;
             }
+            
             document.getElementById('upload-text').innerText = file.name;
             document.getElementById('upload-subtext').innerText = "Berkas siap diunggah.";
             document.getElementById('upload-zone').classList.add('border-primary', 'bg-primary/5');
             document.getElementById('file-error').classList.add('hidden');
             document.getElementById('file-size-error').classList.add('hidden');
+
+            const fileType = file.type;
+            const fileName = file.name;
+            const fileUrl = URL.createObjectURL(file);
+            
+            let htmlContent = '';
+            if (fileType.startsWith('image/')) {
+                htmlContent = `<img src="${fileUrl}" alt="Preview" class="max-h-64 rounded-lg border border-outline-variant/30 shadow-sm mx-auto">`;
+            } else if (fileType === 'application/pdf') {
+                htmlContent = `<iframe src="${fileUrl}#toolbar=0" class="w-full h-96 rounded-lg border border-outline-variant/30 shadow-sm"></iframe>`;
+            } else {
+                let icon = 'description';
+                if (fileName.endsWith('.ppt') || fileName.endsWith('.pptx')) icon = 'slideshow';
+                else if (fileName.endsWith('.xls') || fileName.endsWith('.xlsx')) icon = 'table_view';
+                else if (fileName.endsWith('.zip') || fileName.endsWith('.rar')) icon = 'folder_zip';
+                
+                htmlContent = `
+                <div class="flex items-center gap-3 p-3 bg-surface rounded-lg border border-outline-variant shadow-sm w-full mx-auto md:w-3/4">
+                    <div class="p-2 bg-primary/10 text-primary rounded-md flex items-center justify-center">
+                        <span class="material-symbols-outlined text-[24px]">${icon}</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="font-bold text-sm text-on-surface truncate">${fileName}</p>
+                        <p class="text-[10px] text-on-surface-variant">Dokumen terlampir</p>
+                    </div>
+                </div>`;
+            }
+            previewContainer.innerHTML = htmlContent;
+            previewContainer.classList.remove('hidden');
+        } else {
+            previewContainer.innerHTML = '';
+            previewContainer.classList.add('hidden');
+            document.getElementById('upload-text').innerText = 'Tarik & lepas file';
+            document.getElementById('upload-subtext').innerText = 'atau klik untuk mencari dari perangkat';
+            document.getElementById('upload-zone').classList.remove('border-primary', 'bg-primary/5');
         }
     }
 
