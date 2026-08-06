@@ -62,8 +62,8 @@
             display: none;
         }
     </style>
-    <link rel="shortcut icon" href="/logo.png?v=3" type="image/x-icon">
-    <link rel="icon" href="/logo.png?v=3" type="image/png">
+    <link rel="shortcut icon" href="/favicon.png?v=4" type="image/x-icon">
+    <link rel="icon" href="/favicon.png?v=4" type="image/png">
 </head>
 <body class="bg-surface text-on-surface font-sans antialiased min-h-screen flex items-center justify-center">
     @yield('content')

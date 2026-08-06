@@ -109,8 +109,8 @@
             #sidebar-toggle-btn { display: none; }
         }
     </style>
-    <link rel="shortcut icon" href="/logo.png?v=3" type="image/x-icon">
-    <link rel="icon" href="/logo.png?v=3" type="image/png">
+    <link rel="shortcut icon" href="/favicon.png?v=4" type="image/x-icon">
+    <link rel="icon" href="/favicon.png?v=4" type="image/png">
 </head>
 <body class="text-on-surface bg-surface">
 
