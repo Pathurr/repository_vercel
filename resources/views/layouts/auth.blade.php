@@ -62,6 +62,8 @@
             display: none;
         }
     </style>
+    <link rel="shortcut icon" href="{{ asset('logo.png') }}?v=3" type="image/x-icon">
+    <link rel="icon" href="{{ asset('logo.png') }}?v=3" type="image/png">
 </head>
 <body class="bg-surface text-on-surface font-sans antialiased min-h-screen flex items-center justify-center">
     @yield('content')
