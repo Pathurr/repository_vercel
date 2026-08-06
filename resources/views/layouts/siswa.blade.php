@@ -105,8 +105,8 @@
             #sidebar-toggle-btn { display: none; }
         }
     </style>
-    <link rel="shortcut icon" href="{{ asset('logo.png') }}?v=3" type="image/x-icon">
-    <link rel="icon" href="{{ asset('logo.png') }}?v=3" type="image/png">
+    <link rel="shortcut icon" href="/logo.png?v=3" type="image/x-icon">
+    <link rel="icon" href="/logo.png?v=3" type="image/png">
 </head>
 <body class="bg-surface text-on-surface font-sans antialiased min-h-screen">
 
@@ -114,7 +114,7 @@
     <aside id="siswa-sidebar" class="flex bg-primary text-on-primary fixed left-0 top-0 h-full w-64 flex-col z-50 custom-scrollbar overflow-y-auto">
         <div class="sidebar-logo p-6 flex items-center gap-3">
             <div class="flex-shrink-0 w-10 h-10 flex items-center justify-center">
-                <img src="{{ asset('logo.png') }}" alt="Logo" class="max-w-full max-h-full object-contain">
+                <img src="/logo.png" alt="Logo" class="max-w-full max-h-full object-contain">
             </div>
             <div class="sidebar-logo-text overflow-hidden">
                 <h1 class="font-bold text-xl text-secondary-fixed whitespace-nowrap" style="font-family: var(--font-serif)">SMK Mandalahayu 1</h1>

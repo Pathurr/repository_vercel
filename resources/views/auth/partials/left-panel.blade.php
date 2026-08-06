@@ -15,7 +15,7 @@
     {{-- Logo (absolute top-left) --}}
     <div class="absolute top-0 left-0 z-10 p-8">
         <div class="flex items-center gap-3">
-            <img src="{{ asset('logo.png') }}" alt="Logo SMK Mandalahayu" class="h-10 w-auto object-contain">
+            <img src="/logo.png" alt="Logo SMK Mandalahayu" class="h-10 w-auto object-contain">
             <span class="font-bold text-white text-lg" style="font-family: 'Noto Serif', serif;">
                 SMK Mandalahayu 1
             </span>
