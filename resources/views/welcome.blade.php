@@ -109,13 +109,18 @@
     }
     html { scroll-behavior: smooth; }
 </style>
+    <link rel="shortcut icon" href="{{ asset('logo.png') }}?v=3" type="image/x-icon">
+    <link rel="icon" href="{{ asset('logo.png') }}?v=3" type="image/png">
 </head>
 <body class="bg-background text-on-background font-body-md text-body-md antialiased">
 
 <!-- TopNavBar -->
 <header class="bg-[#6B3F1F] fixed top-0 w-full z-50 shadow-lg">
     <div class="max-w-[1200px] mx-auto flex justify-between items-center px-4 sm:px-6 lg:px-8 py-4">
-        <div class="text-lg sm:text-xl font-black text-white font-['Noto_Serif']">SMK Mandalahayu 1</div>
+        <div class="flex items-center gap-3">
+            <img src="{{ asset('logo.png') }}" alt="Logo SMK Mandalahayu" class="h-12 sm:h-14 w-auto object-contain">
+            <div class="text-lg sm:text-xl font-black text-white font-['Noto_Serif'] leading-tight">SMK Mandalahayu 1</div>
+        </div>
         <nav class="hidden md:flex gap-6 items-center" id="main-nav">
             <a class="nav-link text-[#F5A623] border-b-2 border-[#F5A623] pb-1 font-['Noto_Serif'] font-bold text-sm tracking-wide transition-colors duration-300" href="#tentang">Tentang Kami</a>
             <a class="nav-link text-white/90 border-b-2 border-transparent pb-1 hover:text-[#F5A623] transition-colors duration-300 font-['Noto_Serif'] font-bold text-sm tracking-wide" href="#program">Program Keahlian</a>
