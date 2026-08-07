@@ -61,7 +61,7 @@
 
         .monitor-table td {
             display: flex;
-            align-items: flex-start;
+            align-items: center;
             justify-content: space-between;
             gap: 1rem;
             padding: 0.75rem 1rem;
@@ -76,15 +76,6 @@
             text-align: left;
             text-transform: uppercase;
             letter-spacing: 0.04em;
-        }
-
-        .monitor-table .main-cell {
-            flex-direction: column;
-            text-align: left;
-        }
-
-        .monitor-table .action-cell {
-            justify-content: flex-start;
         }
     }
 </style>
@@ -174,30 +165,36 @@
                     $scoreText = $submission->nilai !== null ? $submission->nilai : '-';
                 @endphp
                 <tr class="hover:bg-surface-container-lowest transition-colors" data-name="{{ strtolower($submission->siswa->name) }}" data-type="{{ $submission->type }}" data-status="{{ $status }}" data-grade="{{ $gradeStatus }}">
-                    <td data-label="Nama Siswa" class="main-cell px-3 py-2.5">
-                        <div class="flex items-center gap-2">
+                    <td data-label="Nama Siswa" class="px-3 py-2.5">
+                        <div class="flex items-center justify-end md:justify-start gap-2">
                             <div class="w-7 h-7 flex-shrink-0 bg-primary-fixed flex items-center justify-center rounded-full text-primary font-bold text-[10px]">{{ strtoupper(substr($submission->siswa->name, 0, 1)) }}</div>
                             <span class="font-semibold text-xs leading-tight">{{ $submission->siswa->name }}</span>
                         </div>
                     </td>
-                    <td data-label="Kelas & Mapel" class="main-cell px-3 py-2.5">
-                        <p class="text-xs font-semibold text-on-surface leading-tight">{{ $submission->kelas?->nama_kelas ?? 'Kelas tidak tersedia' }} <span class="text-[10px] text-on-surface-variant font-normal">· {{ $submission->kelas?->mata_pelajaran ?? 'Mata Pelajaran belum ditentukan' }}</span></p>
-                        <p class="text-[10px] text-on-surface-variant mt-0.5">{{ $submission->judul }}</p>
+                    <td data-label="Kelas & Mapel" class="px-3 py-2.5">
+                        <div class="text-right md:text-left">
+                            <p class="text-xs font-semibold text-on-surface leading-tight">{{ $submission->kelas?->nama_kelas ?? 'Kelas tidak tersedia' }} <span class="text-[10px] text-on-surface-variant font-normal">· {{ $submission->kelas?->mata_pelajaran ?? 'Mata Pelajaran belum ditentukan' }}</span></p>
+                            <p class="text-[10px] text-on-surface-variant mt-0.5">{{ $submission->judul }}</p>
+                        </div>
                     </td>
-                    <td data-label="Judul & Tipe" class="main-cell px-3 py-2.5">
-                        <p class="text-xs font-semibold text-on-surface leading-tight truncate">{{ $submission->judul }}</p>
-                        <span class="text-[10px] px-1.5 py-0.5 bg-surface-variant rounded text-on-surface-variant">{{ ucfirst($submission->type) }}</span>
+                    <td data-label="Judul & Tipe" class="px-3 py-2.5">
+                        <div class="text-right md:text-left">
+                            <p class="text-xs font-semibold text-on-surface leading-tight truncate">{{ $submission->judul }}</p>
+                            <span class="text-[10px] px-1.5 py-0.5 bg-surface-variant rounded text-on-surface-variant inline-block mt-1">{{ ucfirst($submission->type) }}</span>
+                        </div>
                     </td>
                     <td data-label="Status" class="px-3 py-2.5 text-center">
                         <span class="px-2 py-0.5 rounded-full text-[10px] font-bold inline-flex items-center gap-1 {{ $badgeClass }}">
                             <span class="w-1.5 h-1.5 {{ $dotClass }} rounded-full flex-shrink-0"></span>{{ $statusText }}
                         </span>
                     </td>
-                    <td data-label="Pengumpulan & Nilai" class="main-cell px-3 py-2.5 text-center">
-                        <p class="text-[10px] text-on-surface-variant">{{ $submission->dikumpulkan_at?->format('d M Y') ?? '-' }}</p>
-                        <p class="text-xs font-bold text-on-surface-variant">{{ $scoreText }}</p>
+                    <td data-label="Pengumpulan & Nilai" class="px-3 py-2.5 text-center">
+                        <div class="text-right md:text-center">
+                            <p class="text-[10px] text-on-surface-variant">{{ $submission->dikumpulkan_at?->format('d M Y') ?? '-' }}</p>
+                            <p class="text-xs font-bold text-on-surface-variant">{{ $scoreText }}</p>
+                        </div>
                     </td>
-                    <td data-label="Aksi" class="action-cell px-3 py-2.5 text-right">
+                    <td data-label="Aksi" class="px-3 py-2.5 text-right">
                         <a href="{{ $submission->link }}" class="btn-nilai">{{ $submission->nilai !== null ? 'Edit Nilai' : 'Nilai' }}</a>
                     </td>
                 </tr>
@@ -230,11 +227,11 @@
         filterTabs.forEach(btn => {
             btn.addEventListener('click', () => {
                 filterTabs.forEach(b => {
-                    b.classList.remove('bg-primary', 'text-on-primary', 'shadow-md');
-                    b.classList.add('bg-surface-container-high', 'text-on-surface-variant');
+                    b.classList.remove('bg-primary', 'text-on-primary', 'shadow-md', 'font-bold');
+                    b.classList.add('bg-surface-container-high', 'text-on-surface-variant', 'font-semibold', 'hover:bg-surface-variant');
                 });
-                btn.classList.add('bg-primary', 'text-on-primary', 'shadow-md');
-                btn.classList.remove('bg-surface-container-high', 'text-on-surface-variant');
+                btn.classList.add('bg-primary', 'text-on-primary', 'shadow-md', 'font-bold');
+                btn.classList.remove('bg-surface-container-high', 'text-on-surface-variant', 'font-semibold', 'hover:bg-surface-variant');
                 currentStatus = btn.dataset.status;
                 currentPage = 1;
                 applyFilters();
@@ -302,7 +299,15 @@
                 const matchSearch = rowName.includes(searchVal);
                 const matchType = (typeVal === 'all' || rowType === typeVal);
                 const matchGrade = (gradeVal === 'all' || rowGrade === gradeVal);
-                const matchStatus = (currentStatus === 'all' || rowStatus === currentStatus);
+                
+                let matchStatus = false;
+                if (currentStatus === 'all') {
+                    matchStatus = true;
+                } else if (currentStatus === 'terkumpul') {
+                    matchStatus = (rowStatus === 'terkumpul' || rowStatus === 'tepat_waktu');
+                } else {
+                    matchStatus = (rowStatus === currentStatus);
+                }
 
                 if (matchSearch && matchType && matchGrade && matchStatus) {
                     visibleRows.push(row);

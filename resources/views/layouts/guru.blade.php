@@ -224,7 +224,7 @@
 </button>
 
 {{-- Main Content Area --}}
-<main id="main-content" class="ml-0 md:ml-64 flex-1 min-h-screen flex flex-col overflow-hidden">
+<main id="main-content" class="ml-0 md:ml-64 flex-1 min-h-screen flex flex-col">
 
     {{-- Top Navbar --}}
     <header class="bg-primary text-on-primary sticky top-0 w-full z-40 border-b border-primary-container flex justify-between items-center px-4 md:px-6 py-2">

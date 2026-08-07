@@ -47,10 +47,6 @@
             text-transform: uppercase;
             letter-spacing: 0.04em;
         }
-
-        .task-table .action-cell {
-            justify-content: flex-start;
-        }
     }
 </style>
 
@@ -143,14 +139,30 @@
                     </span>
                 </td>
                 <td data-label="Aksi" class="action-cell p-4 text-center">
-                    <div class="flex gap-2 justify-center">
+                    <!-- Mobile & Desktop Actions (Inline) -->
+                    <div class="flex md:hidden lg:flex gap-2 justify-end lg:justify-center w-full">
                         <a href="{{ route('guru.tugas.buat', ['mode' => 'edit', 'id' => $t->id]) }}" class="p-2 rounded-lg text-secondary hover:bg-secondary-container/30 transition-soft"><span class="material-symbols-outlined text-base">edit</span></a>
                         <form action="{{ route('guru.tugas.destroy', $t->id) }}" method="POST" class="inline" onsubmit="event.preventDefault(); confirmDelete(this, 'tugas ini');">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="p-2 rounded-lg text-error hover:bg-error-container/30 transition-soft" title="Hapus"><span class="material-symbols-outlined text-base">delete</span></button>
                         </form>
-                        <a href="{{ route('guru.monitor.tugas', ['tugas_id' => $t->id]) }}" class="px-3 py-2 rounded-lg text-primary border border-primary/20 hover:bg-primary-container/30 transition-soft text-xs font-bold">Nilai</a>
+                        <a href="{{ route('guru.monitor.tugas', ['tugas_id' => $t->id]) }}" class="px-3 py-2 rounded-lg text-primary border border-primary/20 hover:bg-primary-container/30 transition-soft text-xs font-bold flex-shrink-0">Nilai</a>
+                    </div>
+                    <!-- Tablet Actions (Dropdown) -->
+                    <div class="hidden md:flex lg:hidden relative justify-center w-full">
+                        <button type="button" onclick="toggleActionDropdown(this, event)" class="p-2 rounded-lg text-on-surface-variant hover:bg-surface-variant/50 transition-soft">
+                            <span class="material-symbols-outlined">more_vert</span>
+                        </button>
+                        <div class="action-dropdown hidden absolute right-0 top-full mt-2 w-36 bg-surface border border-outline-variant/30 rounded-xl shadow-lg overflow-hidden z-50 text-left">
+                            <a href="{{ route('guru.tugas.buat', ['mode' => 'edit', 'id' => $t->id]) }}" class="w-full text-left px-4 py-3 text-sm text-secondary hover:bg-surface-variant/60 transition-soft flex items-center gap-3"><span class="material-symbols-outlined text-[18px]">edit</span> Edit</a>
+                            <form action="{{ route('guru.tugas.destroy', $t->id) }}" method="POST" class="w-full m-0" onsubmit="event.preventDefault(); confirmDelete(this, 'tugas ini');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="w-full text-left px-4 py-3 text-sm text-error hover:bg-surface-variant/60 transition-soft flex items-center gap-3"><span class="material-symbols-outlined text-[18px]">delete</span> Hapus</button>
+                            </form>
+                            <a href="{{ route('guru.monitor.tugas', ['tugas_id' => $t->id]) }}" class="w-full text-left px-4 py-3 text-sm text-primary hover:bg-surface-variant/60 transition-soft flex items-center gap-3 border-t border-outline-variant/30"><span class="material-symbols-outlined text-[18px]">fact_check</span> Nilai</a>
+                        </div>
                     </div>
                 </td>
             </tr>
@@ -287,7 +299,29 @@
         if (!event.target.closest('[onclick="toggleDropdown(\'status\')"]') && statusWrapper && !statusWrapper.classList.contains('hidden')) {
             statusWrapper.classList.add('hidden');
         }
+
+        // Close action dropdowns
+        if (!event.target.closest('.action-dropdown') && !event.target.closest('[onclick^="toggleActionDropdown"]')) {
+            document.querySelectorAll('.action-dropdown').forEach(d => {
+                d.classList.add('hidden');
+            });
+        }
     });
+
+    function toggleActionDropdown(btn, event) {
+        event.stopPropagation();
+        const dropdown = btn.nextElementSibling;
+        const isHidden = dropdown.classList.contains('hidden');
+        
+        // Hide all other dropdowns
+        document.querySelectorAll('.action-dropdown').forEach(d => {
+            d.classList.add('hidden');
+        });
+
+        if (isHidden) {
+            dropdown.classList.remove('hidden');
+        }
+    }
 
     filterTugas();
 
