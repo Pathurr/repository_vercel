@@ -112,7 +112,7 @@
     <link rel="shortcut icon" href="/favicon.png?v=4" type="image/x-icon">
     <link rel="icon" href="/favicon.png?v=4" type="image/png">
 </head>
-<body class="text-on-surface bg-surface">
+<body class="text-on-surface bg-surface overflow-x-hidden">
 
 {{-- Sidebar Admin --}}
 <aside id="admin-sidebar" class="fixed left-0 top-0 h-full w-64 flex flex-col overflow-y-auto bg-primary text-on-primary z-40 custom-scrollbar">
@@ -169,10 +169,10 @@
 </button>
 
 {{-- Main Content Area --}}
-<main id="main-content" class="ml-0 md:ml-64 flex-1 min-h-screen flex flex-col">
+<main id="main-content" class="ml-0 md:ml-64 flex-1 min-h-screen flex flex-col min-w-0">
 
     {{-- Top Navbar --}}
-    <header class="bg-primary text-on-primary sticky top-0 w-full z-40 border-b border-primary-container flex justify-between items-center px-4 md:px-6 py-2">
+    <header class="bg-primary text-on-primary sticky top-0 w-full z-50 border-b border-primary-container flex justify-between items-center px-4 md:px-6 py-2">
         {{-- Left: Mobile menu button + Page Title --}}
         <div class="flex items-center gap-2">
             {{-- Mobile menu button --}}
@@ -228,7 +228,7 @@
     </header>
 
     {{-- Page Content --}}
-    <div class="p-4 md:p-8 w-full flex-1">
+    <div class="p-4 md:p-8 w-full flex-1 min-w-0">
         @yield('content')
     </div>
 
