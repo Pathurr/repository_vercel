@@ -121,12 +121,12 @@
 {{-- Sidebar Guru --}}
 <aside id="guru-sidebar" class="fixed left-0 top-0 h-full w-64 flex flex-col overflow-y-auto bg-primary text-on-primary z-40 custom-scrollbar">
     {{-- Logo --}}
-    <div class="sidebar-logo p-6 flex items-center gap-3">
-        <div class="w-10 h-10 flex items-center justify-center flex-shrink-0">
+    <div class="sidebar-logo px-4 py-5 flex items-center gap-3">
+        <div class="w-9 h-9 flex items-center justify-center flex-shrink-0">
             <img src="/logo.png" alt="Logo" class="max-w-full max-h-full object-contain">
         </div>
         <div class="sidebar-logo-text overflow-hidden">
-            <h2 class="font-bold text-xl text-secondary-fixed leading-tight whitespace-nowrap" style="font-family: var(--font-serif)">Teacher Portal</h2>
+            <h2 class="font-bold text-base text-secondary-fixed leading-tight whitespace-nowrap" style="font-family: var(--font-serif)">Teacher Portal</h2>
             <p class="text-xs text-on-primary/70 uppercase tracking-wider whitespace-nowrap">SMK Mandalahayu 1</p>
         </div>
     </div>

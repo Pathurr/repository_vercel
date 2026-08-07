@@ -58,16 +58,25 @@
             text-align: left;
             text-transform: uppercase;
             letter-spacing: 0.04em;
+            flex-shrink: 0;
         }
 
         .student-grade-table .primary-cell {
+            flex-direction: row !important;
             align-items: flex-start;
-            flex-direction: column;
-            text-align: left;
+            justify-content: space-between !important;
+        }
+
+        .student-grade-table .primary-cell::before {
+            margin-top: 0;
         }
 
         .student-grade-table .action-cell {
-            justify-content: flex-start;
+            justify-content: space-between !important;
+        }
+
+        .student-grade-table tr.hidden {
+            display: none !important;
         }
 
         .student-grade-table .feedback-row {
@@ -106,7 +115,7 @@
         <div class="bg-primary-container text-on-primary p-5 rounded-xl shadow-sm relative overflow-hidden group hover:-translate-y-0.5 transition-soft">
             <div class="relative z-10 h-full flex flex-col justify-between">
                 <div>
-                    <p class="text-[11px] uppercase tracking-widest text-on-primary/60 mb-1 font-bold">Tugas Terkumpul</p>
+                    <p class="text-[11px] uppercase tracking-widest text-on-primary/60 mb-1 font-bold">Evaluasi Diselesaikan</p>
                     <h3 class="text-4xl font-bold leading-none mb-2" style="font-family: var(--font-serif)">{{ $tugasSelesai }}/{{ $totalTugas }}</h3>
                     <p class="text-[11px] text-secondary font-bold flex items-center gap-1">
                         <span class="material-symbols-outlined text-[14px]">check_circle</span>
@@ -163,23 +172,17 @@
 
         <!-- Table Container -->
         <div class="bg-surface-container-lowest rounded-xl border border-outline-variant/30 shadow-sm overflow-hidden flex flex-col">
-            <div class="hidden md:block">
+            <div class="overflow-x-auto">
                 <table class="responsive-card-table student-grade-table w-full table-fixed text-left border-collapse">
-                    <thead class="bg-surface-container text-on-surface-variant uppercase text-[10px] font-bold tracking-widest sticky top-0 z-10">
+                    <thead class="bg-surface-container text-on-surface-variant uppercase text-[10px] font-bold tracking-widest">
                         <tr>
-                            <th class="px-5 py-3 w-[40%]">Nama Tugas / Ujian</th>
+                            <th class="px-4 py-3 w-[40%]">Nama Tugas / Ujian</th>
                             <th class="px-4 py-3 w-[15%]">Kategori</th>
                             <th class="px-4 py-3 w-[15%]">Tanggal Dinilai</th>
                             <th class="px-4 py-3 text-center w-[15%]">Skor</th>
-                            <th class="px-5 py-3 text-right w-[15%]">Aksi</th>
+                            <th class="px-4 py-3 text-right w-[15%]">Aksi</th>
                         </tr>
                     </thead>
-                </table>
-            </div>
-            
-            <!-- Limit to max 350px so about 7 rows are visible -->
-            <div class="overflow-y-auto custom-scrollbar max-h-[350px]">
-                <table class="responsive-card-table student-grade-table w-full table-fixed text-left border-collapse">
                     <tbody id="table-body" class="divide-y divide-outline-variant/20">
                         <!-- Rendered by JS -->
                     </tbody>
@@ -227,22 +230,28 @@
             const tr = document.createElement('tr');
             tr.className = 'hover:bg-surface-container-low transition-colors group';
             tr.innerHTML = `
-                <td data-label="Nama" class="primary-cell px-5 py-3 w-[40%]">
-                    <div class="font-bold text-primary group-hover:text-secondary transition-colors text-[12px] truncate max-w-[280px]">${item.name}</div>
-                    <div class="text-[10px] text-on-surface-variant/80 mt-0.5 truncate max-w-[280px]">${item.desc}</div>
+                <td data-label="Nama" class="primary-cell px-4 py-3 w-[40%]">
+                    <div class="flex flex-col items-end md:items-start text-right md:text-left ml-auto md:ml-0">
+                        <div class="font-bold text-primary group-hover:text-secondary transition-colors text-[12px] truncate max-w-[180px] sm:max-w-[240px] md:max-w-[280px]">${item.name}</div>
+                        <div class="text-[10px] text-on-surface-variant/80 mt-0.5 truncate max-w-[180px] sm:max-w-[240px] md:max-w-[280px]">${item.desc}</div>
+                    </div>
                 </td>
                 <td data-label="Kategori" class="px-4 py-3 w-[15%]">
-                    ${getCategoryBadge(item.category)}
+                    <div class="flex justify-end md:justify-start">
+                        ${getCategoryBadge(item.category)}
+                    </div>
                 </td>
-                <td data-label="Tanggal" class="px-4 py-3 text-on-surface-variant text-[11px] font-medium w-[15%]">${item.dateStr}</td>
+                <td data-label="Tanggal" class="px-4 py-3 text-on-surface-variant text-[11px] font-medium w-[15%] text-right md:text-left">${item.dateStr}</td>
                 <td data-label="Skor" class="px-4 py-3 w-[15%]">
-                    <div class="flex flex-col items-center">
+                    <div class="flex flex-col items-end md:items-center text-right md:text-center ml-auto md:ml-0">
                         <span class="text-lg font-bold text-primary leading-none" style="font-family: var(--font-serif)">${item.score}</span>
                         <span class="text-[9px] text-on-surface-variant/60 font-bold">/ 100</span>
                     </div>
                 </td>
-                <td data-label="Aksi" class="action-cell px-5 py-3 text-right w-[15%]">
-                    <button class="bg-secondary text-on-secondary px-3 py-1.5 rounded-lg font-bold text-[10px] hover:brightness-110 transform active:scale-95 transition-all" onclick="toggleFeedback(${item.id})">Feedback</button>
+                <td data-label="Aksi" class="action-cell px-4 py-3 text-right w-[15%]">
+                    <div class="flex justify-end ml-auto">
+                        <button class="bg-secondary text-on-secondary px-3 py-1.5 rounded-lg font-bold text-[10px] hover:brightness-110 transform active:scale-95 transition-all" onclick="toggleFeedback(${item.id})">Feedback</button>
+                    </div>
                 </td>
             `;
 
@@ -258,7 +267,7 @@
                             <p class="italic text-on-surface-variant text-[11px] leading-relaxed">"${item.feedback}"</p>
                             <p class="text-[9px] font-bold text-error flex items-center gap-1 mt-2 pt-2 border-t border-surface-variant/50">
                                 <span class="material-symbols-outlined text-[12px]">lock</span>
-                                Nilai ini dikunci permanen.
+                                Nilai ini dikunci.
                             </p>
                         </div>
                     </div>
