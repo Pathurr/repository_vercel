@@ -112,13 +112,13 @@
 
     {{-- Sidebar Siswa --}}
     <aside id="siswa-sidebar" class="flex bg-primary text-on-primary fixed left-0 top-0 h-full w-64 flex-col z-50 custom-scrollbar overflow-y-auto">
-        <div class="sidebar-logo p-6 flex items-center gap-3">
-            <div class="flex-shrink-0 w-10 h-10 flex items-center justify-center">
+        <div class="sidebar-logo px-4 py-5 flex items-center gap-3">
+            <div class="flex-shrink-0 w-9 h-9 flex items-center justify-center">
                 <img src="/logo.png" alt="Logo" class="max-w-full max-h-full object-contain">
             </div>
             <div class="sidebar-logo-text overflow-hidden">
-                <h1 class="font-bold text-xl text-secondary-fixed whitespace-nowrap" style="font-family: var(--font-serif)">SMK Mandalahayu 1</h1>
-                <p class="text-on-primary/70 text-xs whitespace-nowrap">Portal Siswa</p>
+                <h1 class="font-bold text-base text-secondary-fixed leading-tight whitespace-nowrap" style="font-family: var(--font-serif)">SMK Mandalahayu 1</h1>
+                <p class="text-on-primary/70 text-xs uppercase tracking-wider whitespace-nowrap">Portal Siswa</p>
             </div>
         </div>
         <nav class="flex flex-col gap-1.5 flex-grow mt-4 px-0">

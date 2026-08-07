@@ -9,6 +9,8 @@ use App\Models\Nilai;
 use App\Models\PengumpulanTugas;
 use App\Models\KelasSiswa;
 use App\Models\Tugas;
+use App\Models\Kuis;
+use App\Models\Ujian;
 
 class NilaiController extends Controller
 {
@@ -67,10 +69,9 @@ class NilaiController extends Controller
         $count = count($dataNilai);
         $rataRata = $count > 0 ? round(array_sum(array_column($dataNilai, 'score')) / $count, 1) : 0;
 
-        // Hitung tugas terkumpul vs total tugas (untuk user ini)
-        $kelasSiswaIds = KelasSiswa::where('siswa_id', $siswaId)->pluck('kelas_id');
-        $totalTugas = Tugas::whereIn('kelas_id', $kelasSiswaIds)->count();
-        $tugasSelesai = PengumpulanTugas::where('siswa_id', $siswaId)->count();
+        // Hitung total evaluasi untuk siswa ini berdasarkan daftar nilai & evaluasi
+        $totalTugas = count($dataNilai);
+        $tugasSelesai = count($dataNilai);
 
         // Urutkan default terbaru (berdasarkan timestamp descending)
         usort($dataNilai, function($a, $b) {

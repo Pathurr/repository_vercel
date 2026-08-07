@@ -91,7 +91,7 @@
             <div class="active-tab-indicator hidden" id="indicator-tugas"></div>
         </button>
         <button class="px-4 md:px-6 py-3 text-sm text-on-surface-variant hover:text-primary transition-all duration-300 relative whitespace-nowrap font-bold" id="tab-evaluasi" onclick="switchTab('evaluasi')">
-            Kuis & Evaluasi
+            Kuis & Ujian
             <div class="active-tab-indicator hidden" id="indicator-evaluasi"></div>
         </button>
         <button class="px-4 md:px-6 py-3 text-sm text-on-surface-variant hover:text-primary transition-all duration-300 relative whitespace-nowrap font-bold" id="tab-pengumuman" onclick="switchTab('pengumuman')">

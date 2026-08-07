@@ -2,6 +2,52 @@
 @section('title', 'Admin Dashboard - SMK Mandalahayu 1 Bekasi')
 
 @section('content')
+<style>
+    @media (max-width: 767px) {
+        .admin-dashboard-table thead { display: none; }
+        .admin-dashboard-table,
+        .admin-dashboard-table tbody,
+        .admin-dashboard-table tr,
+        .admin-dashboard-table td { display: block; width: 100%; box-sizing: border-box; }
+        .admin-dashboard-table tbody {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            padding: 0.75rem;
+        }
+        .admin-dashboard-table tr {
+            border: 1px solid rgba(132, 116, 107, 0.28);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            background: #ffffff;
+            margin: 0;
+        }
+        .admin-dashboard-table td {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 0.75rem 1rem;
+            text-align: right;
+            border-bottom: 1px solid rgba(214, 195, 184, 0.35);
+        }
+        .admin-dashboard-table td:last-child { border-bottom: 0; }
+        .admin-dashboard-table td::before {
+            content: attr(data-label);
+            color: #84746b;
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-align: left;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            flex-shrink: 0;
+        }
+        .admin-dashboard-table .action-cell {
+            justify-content: space-between !important;
+        }
+    }
+</style>
+
 <div class="max-w-[1200px] mx-auto flex flex-col gap-10">
     <!-- Header -->
     <div>
@@ -66,7 +112,7 @@
                     <h3 class="font-h3 text-[20px] text-primary">Akun Menunggu Tindakan</h3>
                 </div>
                 <div class="w-full overflow-x-auto">
-                    <table class="w-full table-fixed text-left border-collapse">
+                    <table class="admin-dashboard-table w-full table-fixed text-left border-collapse">
                         <thead>
                             <tr class="bg-surface-container-lowest border-b border-outline-variant font-label-sm text-[12px] leading-tight text-on-surface-variant">
                                 <th class="py-4 px-3 w-[18%] font-semibold">Nama Pengguna</th>
@@ -84,25 +130,27 @@
                                 $roleLabel = ucfirst($pu->role == 'murid' ? 'Siswa' : $pu->role);
                             @endphp
                             <tr class="border-b border-outline-variant hover:bg-surface-container-low transition-colors">
-                                <td class="py-4 px-3 font-medium text-primary">
-                                    <span class="block truncate" title="{{ $pu->name }}">{{ $pu->name }}</span>
+                                <td data-label="Nama Pengguna" class="py-4 px-3 font-medium text-primary">
+                                    <span class="block truncate text-right md:text-left ml-auto md:ml-0 max-w-[200px] md:max-w-none" title="{{ $pu->name }}">{{ $pu->name }}</span>
                                 </td>
-                                <td class="py-4 px-3 text-on-surface-variant">
-                                    <span class="block truncate" title="{{ $identity ?: '-' }}">{{ $identity ?: '-' }}</span>
+                                <td data-label="Identitas (NIS/NRG)" class="py-4 px-3 text-on-surface-variant">
+                                    <span class="block truncate text-right md:text-left ml-auto md:ml-0 max-w-[200px] md:max-w-none" title="{{ $identity ?: '-' }}">{{ $identity ?: '-' }}</span>
                                 </td>
-                                <td class="py-4 px-3 text-on-surface-variant">
-                                    <span class="block truncate" title="{{ $pu->email }}">{{ $pu->email }}</span>
+                                <td data-label="Email Utama" class="py-4 px-3 text-on-surface-variant">
+                                    <span class="block truncate text-right md:text-left ml-auto md:ml-0 max-w-[200px] md:max-w-none" title="{{ $pu->email }}">{{ $pu->email }}</span>
                                 </td>
-                                <td class="py-4 px-3">
-                                    <span class="inline-flex max-w-full px-2 py-1 rounded-md {{ $pu->role == 'guru' ? 'bg-primary-container text-on-primary-container' : 'bg-surface-variant text-on-surface-variant' }} text-[11px] font-label-sm">
-                                        <span class="truncate">{{ $roleLabel }}</span>
-                                    </span>
+                                <td data-label="Peran" class="py-4 px-3">
+                                    <div class="flex justify-end md:justify-start ml-auto md:ml-0">
+                                        <span class="inline-flex max-w-full px-2 py-1 rounded-md {{ $pu->role == 'guru' ? 'bg-primary-container text-on-primary-container' : 'bg-surface-variant text-on-surface-variant' }} text-[11px] font-label-sm">
+                                            <span class="truncate">{{ $roleLabel }}</span>
+                                        </span>
+                                    </div>
                                 </td>
-                                <td class="py-4 px-3 text-on-surface-variant">
-                                    <span class="block truncate" title="{{ $pu->created_at->format('d M Y, H:i') }}">{{ $pu->created_at->format('d M Y, H:i') }}</span>
+                                <td data-label="Waktu Pendaftaran" class="py-4 px-3 text-on-surface-variant">
+                                    <span class="block truncate text-right md:text-left ml-auto md:ml-0 max-w-[200px] md:max-w-none" title="{{ $pu->created_at->format('d M Y, H:i') }}">{{ $pu->created_at->format('d M Y, H:i') }}</span>
                                 </td>
-                                <td class="py-4 px-3">
-                                    <div class="flex flex-wrap justify-end gap-1.5">
+                                <td data-label="Otorisasi" class="action-cell py-4 px-3">
+                                    <div class="flex flex-wrap justify-end gap-1.5 ml-auto md:ml-0">
                                         <button onclick="showModalAktifkan({{ $pu->id }})" class="ui-btn ui-btn-primary px-2.5 py-1.5 text-xs shadow-sm whitespace-nowrap"><span class="material-symbols-outlined ui-icon-sm">check</span> Izinkan</button>
                                         <button onclick="showModalTolak({{ $pu->id }})" class="ui-btn ui-btn-secondary px-2.5 py-1.5 text-xs whitespace-nowrap"><span class="material-symbols-outlined ui-icon-sm">close</span> Tolak</button>
                                     </div>
