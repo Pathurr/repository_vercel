@@ -95,36 +95,89 @@
 </section>
 
 <!-- Summary Bento Grid -->
-<section class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-    <div class="bg-white p-4 rounded-xl shadow-sm border border-outline-variant/30 flex flex-col justify-center">
-        <p class="text-on-surface-variant text-xs mb-1">Total Siswa</p>
-        <div class="flex items-baseline gap-2">
-            <h3 class="font-bold text-3xl text-primary" style="font-family: var(--font-serif)">{{ $summary['total'] }}</h3>
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-8">
+    {{-- Card 1: Total Siswa --}}
+    <div class="bg-white rounded-xl p-4 lg:p-6 shadow-sm border border-outline-variant/30 flex flex-col justify-center">
+        {{-- Mobile/Tablet: horizontal layout --}}
+        <div class="flex items-center gap-4 lg:hidden">
+            <div class="p-2 bg-primary-fixed rounded-lg text-primary flex-shrink-0"><span class="material-symbols-outlined text-lg">groups</span></div>
+            <div>
+                <h3 class="text-on-surface-variant text-[10px] sm:text-xs mb-0.5" style="font-family: var(--font-serif)">Total Siswa</h3>
+                <p class="font-bold text-xl sm:text-2xl text-primary">{{ $summary['total'] }}</p>
+            </div>
+        </div>
+        {{-- Desktop: vertical layout --}}
+        <div class="hidden lg:block relative z-10">
+            <div class="flex justify-between items-start mb-4">
+                <div class="p-3 bg-surface-container-high rounded-lg text-primary"><span class="material-symbols-outlined">groups</span></div>
+            </div>
+            <p class="text-on-surface-variant text-xs font-bold uppercase tracking-wider mb-1">Total Siswa</p>
+            <h3 class="font-bold text-4xl text-primary" style="font-family: var(--font-serif)">{{ $summary['total'] }}</h3>
         </div>
     </div>
-    <div class="bg-white p-4 rounded-xl shadow-sm border border-outline-variant/30 flex flex-col justify-center">
-        <p class="text-on-surface-variant text-xs mb-1">Rata-rata Nilai</p>
-        <div class="flex items-baseline gap-2">
-            <h3 class="font-bold text-3xl text-secondary" style="font-family: var(--font-serif)">{{ $summary['average'] }}</h3>
-            <span class="text-xs text-on-surface-variant">/ 100</span>
+
+    {{-- Card 2: Rata-rata Nilai --}}
+    <div class="bg-white rounded-xl p-4 lg:p-6 shadow-sm border border-outline-variant/30 flex flex-col justify-center">
+        {{-- Mobile/Tablet: horizontal layout --}}
+        <div class="flex items-center gap-4 lg:hidden">
+            <div class="p-2 bg-secondary-fixed rounded-lg text-secondary flex-shrink-0"><span class="material-symbols-outlined text-lg">analytics</span></div>
+            <div>
+                <h3 class="text-on-surface-variant text-[10px] sm:text-xs mb-0.5" style="font-family: var(--font-serif)">Rata-rata Nilai</h3>
+                <p class="font-bold text-xl sm:text-2xl text-secondary">{{ $summary['average'] }}</p>
+            </div>
+        </div>
+        {{-- Desktop: vertical layout --}}
+        <div class="hidden lg:block relative z-10">
+            <div class="flex justify-between items-start mb-4">
+                <div class="p-3 bg-surface-container-high rounded-lg text-secondary"><span class="material-symbols-outlined">analytics</span></div>
+            </div>
+            <p class="text-on-surface-variant text-xs font-bold uppercase tracking-wider mb-1">Rata-rata Nilai</p>
+            <h3 class="font-bold text-4xl text-secondary" style="font-family: var(--font-serif)">{{ $summary['average'] }}<span class="text-lg text-on-surface-variant font-normal">/100</span></h3>
         </div>
     </div>
-    <div class="bg-white p-4 rounded-xl shadow-sm border border-outline-variant/30 flex flex-col justify-center">
-        <p class="text-on-surface-variant text-xs mb-1">Nilai Tertinggi</p>
-        <div class="flex items-baseline gap-2">
-            <h3 class="font-bold text-3xl text-outline" style="font-family: var(--font-serif)">{{ $summary['max'] }}</h3>
-            <span class="text-xs text-on-surface-variant">/ 100</span>
+
+    {{-- Card 3: Nilai Tertinggi --}}
+    <div class="bg-white rounded-xl p-4 lg:p-6 shadow-sm border border-outline-variant/30 flex flex-col justify-center">
+        {{-- Mobile/Tablet: horizontal layout --}}
+        <div class="flex items-center gap-4 lg:hidden">
+            <div class="p-2 bg-surface-container-high rounded-lg text-outline flex-shrink-0"><span class="material-symbols-outlined text-lg">star</span></div>
+            <div>
+                <h3 class="text-on-surface-variant text-[10px] sm:text-xs mb-0.5" style="font-family: var(--font-serif)">Nilai Tertinggi</h3>
+                <p class="font-bold text-xl sm:text-2xl text-outline">{{ $summary['max'] }}</p>
+            </div>
+        </div>
+        {{-- Desktop: vertical layout --}}
+        <div class="hidden lg:block relative z-10">
+            <div class="flex justify-between items-start mb-4">
+                <div class="p-3 bg-surface-container-high rounded-lg text-outline"><span class="material-symbols-outlined">star</span></div>
+            </div>
+            <p class="text-on-surface-variant text-xs font-bold uppercase tracking-wider mb-1">Nilai Tertinggi</p>
+            <h3 class="font-bold text-4xl text-outline" style="font-family: var(--font-serif)">{{ $summary['max'] }}<span class="text-lg text-on-surface-variant font-normal">/100</span></h3>
         </div>
     </div>
-    <div class="bg-primary text-on-primary p-4 rounded-xl shadow-sm flex flex-col justify-center relative overflow-hidden">
+
+    {{-- Card 4: Tingkat Kelulusan --}}
+    <div class="bg-primary text-on-primary rounded-xl p-4 lg:p-6 shadow-sm flex flex-col justify-center relative overflow-hidden">
         <div class="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white to-transparent"></div>
-        <p class="text-primary-fixed-dim text-xs mb-1 relative z-10">Tingkat Kelulusan</p>
-        <div class="flex items-baseline gap-2 relative z-10">
-            <h3 class="font-bold text-3xl" style="font-family: var(--font-serif)">{{ $summary['pass'] ? round($summary['pass'] / max(1, $summary['total']) * 100) : 0 }}%</h3>
-            <span class="text-xs text-tertiary-fixed-dim">{{ $summary['pass'] }}/{{ $summary['total'] }}</span>
+        {{-- Mobile/Tablet: horizontal layout --}}
+        <div class="flex items-center gap-4 lg:hidden relative z-10">
+            <div class="p-2 bg-white/20 rounded-lg text-white flex-shrink-0"><span class="material-symbols-outlined text-lg">workspace_premium</span></div>
+            <div>
+                <h3 class="text-primary-fixed-dim text-[10px] sm:text-xs mb-0.5" style="font-family: var(--font-serif)">Tingkat Kelulusan</h3>
+                <p class="font-bold text-xl sm:text-2xl text-white">{{ $summary['pass'] ? round($summary['pass'] / max(1, $summary['total']) * 100) : 0 }}%</p>
+            </div>
+        </div>
+        {{-- Desktop: vertical layout --}}
+        <div class="hidden lg:block relative z-10">
+            <div class="flex justify-between items-start mb-4">
+                <div class="p-3 bg-white/20 rounded-lg text-white"><span class="material-symbols-outlined">workspace_premium</span></div>
+            </div>
+            <p class="text-primary-fixed-dim text-xs font-bold uppercase tracking-wider mb-1">Tingkat Kelulusan</p>
+            <h3 class="font-bold text-4xl text-white" style="font-family: var(--font-serif)">{{ $summary['pass'] ? round($summary['pass'] / max(1, $summary['total']) * 100) : 0 }}%</h3>
+            <p class="text-sm text-tertiary-fixed-dim mt-2">{{ $summary['pass'] }}/{{ $summary['total'] }} Lulus</p>
         </div>
     </div>
-</section>
+</div>
 
 <!-- Master Grade Table -->
 <section class="bg-white rounded-xl shadow-sm border border-outline-variant/30 overflow-hidden">
@@ -163,7 +216,7 @@
                     <td data-label="Akhir" class="py-2 px-4 text-center font-bold">{{ $item['average'] }}</td>
                     <td data-label="Status" class="py-2 px-4 text-center">
                         <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold {{ $item['status'] === 'Lulus' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                            <span class="material-symbols-outlined text-[12px]">{{ $item['status'] === 'Lulus' ? 'check_circle' : 'cancel' }}</span> {{ $item['status'] }}
+                            <span class="material-symbols-outlined text-[12px]">{{ $item['status'] === 'Lulus' ? 'check_circle' : 'cancel' }}</span> <span class="hidden lg:inline">{{ $item['status'] }}</span>
                         </span>
                     </td>
                 </tr>

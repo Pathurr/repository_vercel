@@ -49,16 +49,6 @@
             text-transform: uppercase;
             letter-spacing: 0.04em;
         }
-
-        .dashboard-submission-table .submission-main-cell {
-            align-items: flex-start;
-            flex-direction: column;
-            text-align: left;
-        }
-
-        .dashboard-submission-table .submission-action-cell {
-            justify-content: flex-start;
-        }
     }
 </style>
 
@@ -191,10 +181,17 @@
                     <tbody class="divide-y divide-surface-variant">
                         @forelse($submissionsList as $s)
                         <tr class="submission-row hover:bg-surface-container transition-soft">
-                            <td data-label="Nama Tugas" class="submission-main-cell p-4"><p class="font-bold text-primary">{{ $s->tugas->judul ?? 'Tugas' }}</p><p class="text-sm text-on-surface-variant">Siswa: {{ $s->siswa->name ?? '-' }} | Disubmit: {{ \Carbon\Carbon::parse($s->dikumpulkan_at)->diffForHumans() }}</p></td>
+                            <td data-label="Nama Tugas" class="p-4">
+                                <div class="text-right md:text-left">
+                                    <p class="font-bold text-primary">{{ $s->tugas->judul ?? 'Tugas' }}</p>
+                                    <p class="text-sm text-on-surface-variant">Siswa: {{ $s->siswa->name ?? '-' }} | Disubmit: {{ \Carbon\Carbon::parse($s->dikumpulkan_at)->diffForHumans() }}</p>
+                                </div>
+                            </td>
                             <td data-label="Kelas" class="p-4 text-on-surface">{{ $s->tugas->kelas->nama_kelas ?? '-' }}</td>
                             <td data-label="Menunggu" class="p-4 text-center"><span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-error-container text-error font-bold">1</span></td>
-                            <td data-label="Aksi" class="submission-action-cell p-4 text-right"><a href="{{ route('guru.penilaian.tugas', ['id' => $s->id]) }}" class="px-4 py-2 border-2 border-secondary text-secondary text-xs font-bold rounded-lg hover:bg-secondary hover:text-on-secondary transition-soft">Nilai Sekarang</a></td>
+                            <td data-label="Aksi" class="p-4 text-right">
+                                <a href="{{ route('guru.penilaian.tugas', ['id' => $s->id]) }}" class="px-4 py-2 border-2 border-secondary text-secondary text-xs font-bold rounded-lg hover:bg-secondary hover:text-on-secondary transition-soft">Nilai Sekarang</a>
+                            </td>
                         </tr>
                         @empty
                         <tr>

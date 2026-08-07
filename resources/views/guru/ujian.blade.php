@@ -47,16 +47,6 @@
             text-transform: uppercase;
             letter-spacing: 0.04em;
         }
-
-        .exam-table .main-cell {
-            align-items: flex-start;
-            flex-direction: column;
-            text-align: left;
-        }
-
-        .exam-table .action-cell {
-            justify-content: flex-start;
-        }
     }
 </style>
 
@@ -140,13 +130,17 @@
                 $status = $u->selesai_at && $u->selesai_at->isPast() ? 'selesai' : ($u->mulai_at && $u->mulai_at->isFuture() ? 'terjadwal' : 'berlangsung');
             @endphp
             <tr class="hover:bg-surface-container transition-soft ujian-row" data-kelas="{{ $kelasNama }}" data-status="{{ $status }}">
-                <td data-label="Ujian & Kelas" class="main-cell p-4">
-                    <p class="font-bold text-on-surface">{{ $u->judul }}</p>
-                    <p class="text-xs text-on-surface-variant">{{ $kelasNama }}</p>
+                <td data-label="Ujian & Kelas" class="p-4">
+                    <div class="text-right md:text-left">
+                        <p class="font-bold text-on-surface">{{ $u->judul }}</p>
+                        <p class="text-xs text-on-surface-variant">{{ $kelasNama }}</p>
+                    </div>
                 </td>
-                <td data-label="Jadwal & Durasi" class="main-cell p-4">
-                    <p class="font-bold text-on-surface">{{ $tanggal }}</p>
-                    <p class="text-xs text-on-surface-variant">{{ $waktu }} • {{ $durasiText }}</p>
+                <td data-label="Jadwal & Durasi" class="p-4">
+                    <div class="text-right md:text-left">
+                        <p class="font-bold text-on-surface">{{ $tanggal }}</p>
+                        <p class="text-xs text-on-surface-variant">{{ $waktu }} • {{ $durasiText }}</p>
+                    </div>
                 </td>
                 <td data-label="Partisipasi" class="p-4 text-center font-bold text-primary">{{ $peserta }}</td>
                 <td data-label="Status" class="p-4 text-center">
@@ -154,8 +148,8 @@
                         {{ ucfirst($status) }}
                     </span>
                 </td>
-                <td data-label="Aksi" class="action-cell p-4 text-center">
-                    <div class="flex gap-2 justify-center">
+                <td data-label="Aksi" class="p-4 text-center">
+                    <div class="flex gap-2 justify-end lg:justify-center w-full">
                         <a href="{{ route('guru.ujian.buat', ['mode' => 'edit', 'id' => $u->id]) }}" class="p-2 rounded-lg text-secondary hover:bg-secondary-container/30 transition-soft"><span class="material-symbols-outlined text-base">edit</span></a>
                         <form action="{{ route('guru.ujian.destroy', $u->id) }}" method="POST" class="inline" onsubmit="event.preventDefault(); confirmDelete(this, 'ujian ini');">
                             @csrf

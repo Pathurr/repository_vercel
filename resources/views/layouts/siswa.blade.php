@@ -158,7 +158,7 @@
     </button>
 
     {{-- Main Content Wrapper --}}
-    <div id="siswa-content" class="flex-1 flex flex-col md:ml-64 overflow-hidden min-h-screen">
+    <div id="siswa-content" class="flex-1 flex flex-col md:ml-64 min-h-screen">
 
         {{-- Top Navbar --}}
         <header class="bg-primary text-on-primary sticky top-0 w-full z-40 border-b border-primary-container flex justify-between items-center px-4 md:px-6 py-2">
