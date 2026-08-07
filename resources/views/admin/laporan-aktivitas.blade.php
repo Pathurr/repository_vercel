@@ -8,28 +8,46 @@
         .responsive-activity-table,
         .responsive-activity-table tbody,
         .responsive-activity-table tr,
-        .responsive-activity-table td { display: block; width: 100%; }
+        .responsive-activity-table td { display: block; width: 100%; box-sizing: border-box; }
+        .responsive-activity-table tbody {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            padding: 0.75rem;
+        }
         .responsive-activity-table tr {
-            margin: 12px;
             border: 1px solid #d6c3b8;
-            border-radius: 12px;
+            border-radius: 0.75rem;
             overflow: hidden;
             background: #ffffff;
+            margin: 0;
         }
         .responsive-activity-table td {
-            padding: 10px 14px;
-            border-bottom: 1px solid rgba(214, 195, 184, 0.55);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 0.75rem 1rem;
+            text-align: right;
+            border-bottom: 1px solid rgba(214, 195, 184, 0.35);
+            word-break: break-word;
+            overflow-wrap: anywhere;
         }
         .responsive-activity-table td:last-child { border-bottom: 0; }
         .responsive-activity-table td::before {
             content: attr(data-label);
-            display: block;
-            margin-bottom: 4px;
-            font-size: 10px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: .04em;
             color: #84746b;
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-align: left;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            flex-shrink: 0;
+        }
+        .responsive-activity-table td > span,
+        .responsive-activity-table td > div {
+            min-width: 0;
+            text-align: right;
         }
     }
 </style>
@@ -83,8 +101,8 @@
 </div>
 
 <!-- Log Login Table Area -->
-<div class="bg-surface-container-lowest border border-outline-variant/30 rounded-xl shadow-sm shadow-primary/5 flex-1 flex flex-col">
-    <div class="w-full">
+<div class="bg-surface-container-lowest border border-outline-variant/30 rounded-xl shadow-sm shadow-primary/5 flex-1 flex flex-col overflow-hidden">
+    <div class="w-full overflow-x-auto">
         <table class="responsive-card-table responsive-activity-table w-full table-fixed text-left font-body-md text-[13px]">
             <thead class="bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm border-b border-outline-variant">
                 <tr>

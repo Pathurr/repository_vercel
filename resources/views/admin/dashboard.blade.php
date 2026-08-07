@@ -65,7 +65,7 @@
                 <div class="p-6 border-b border-outline-variant flex justify-between items-center bg-surface-container-low/50">
                     <h3 class="font-h3 text-[20px] text-primary">Akun Menunggu Tindakan</h3>
                 </div>
-                <div class="w-full">
+                <div class="w-full overflow-x-auto">
                     <table class="w-full table-fixed text-left border-collapse">
                         <thead>
                             <tr class="bg-surface-container-lowest border-b border-outline-variant font-label-sm text-[12px] leading-tight text-on-surface-variant">
