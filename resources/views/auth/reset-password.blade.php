@@ -35,15 +35,22 @@
                 
                 <input type="hidden" name="token" value="{{ $token }}">
 
-                {{-- Email --}}
-                <div>
-                    <label class="block text-sm font-semibold text-primary mb-2" for="email">Email</label>
-                    <div class="relative">
-                        <input class="w-full bg-surface-container-low border-0 border-b-2 border-primary/20 text-on-surface focus:ring-0 focus:border-secondary-container transition-soft py-2.5 px-3.5 text-sm"
-                               id="email" name="email" placeholder="Masukkan email Anda"
-                               type="email" value="{{ old('email') }}" autocomplete="email" required/>
+                @if (session('reset_email'))
+                    <input type="hidden" name="email" value="{{ session('reset_email') }}">
+                    <div class="mb-4 p-3 bg-secondary-fixed/20 rounded-lg text-sm text-on-surface-variant">
+                        Mereset password untuk: <strong>{{ session('reset_email') }}</strong>
                     </div>
-                </div>
+                @else
+                    {{-- Email --}}
+                    <div>
+                        <label class="block text-sm font-semibold text-primary mb-2" for="email">Email</label>
+                        <div class="relative">
+                            <input class="w-full bg-surface-container-low border-0 border-b-2 border-primary/20 text-on-surface focus:ring-0 focus:border-secondary-container transition-soft py-2.5 px-3.5 text-sm"
+                                   id="email" name="email" placeholder="Masukkan email Anda"
+                                   type="email" value="{{ old('email') }}" autocomplete="email" required/>
+                        </div>
+                    </div>
+                @endif
 
                 {{-- Password --}}
                 <div>

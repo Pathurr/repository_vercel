@@ -19,10 +19,18 @@
             </div>
 
             @if (session('status'))
-                <div class="mb-6 p-4 bg-secondary-fixed/30 text-on-secondary-fixed rounded-lg text-sm">{{ session('status') }}</div>
+                <div class="mb-6 p-4 bg-green-100 border border-green-400 rounded-lg text-sm">{{ session('status') }}</div>
+                <div id="resend-container" class="text-center">
+                    <p class="text-sm text-on-surface-variant mb-3">Belum menerima email? Periksa folder spam atau</p>
+                    <button id="resend-btn" type="button" disabled
+                            class="inline-flex items-center gap-2 bg-gray-300 text-gray-500 font-bold py-3 px-6 rounded-lg text-sm cursor-not-allowed">
+                        <span id="resend-text">Kirim Ulang (30)</span>
+                        <span class="material-symbols-outlined text-[18px]">send</span>
+                    </button>
+                </div>
             @endif
 
-            <form method="POST" action="{{ route('password.email') }}" class="space-y-6">
+            <form id="forgot-form" method="POST" action="{{ route('password.email') }}" class="space-y-6 @if (session('status')) hidden @endif">
                 @csrf
                 <div>
                     <label class="block text-sm font-semibold text-primary mb-2" for="email">Email</label>
@@ -48,3 +56,37 @@
     </div>
 </div>
 @endsection
+
+@if (session('status'))
+@push('scripts')
+<script>
+    (function() {
+        let countdown = 30;
+        const resendBtn = document.getElementById('resend-btn');
+        const resendText = document.getElementById('resend-text');
+        const forgotForm = document.getElementById('forgot-form');
+
+        function updateCountdown() {
+            countdown--;
+            if (countdown > 0) {
+                resendText.textContent = 'Kirim Ulang (' + countdown + ')';
+                setTimeout(updateCountdown, 1000);
+            } else {
+                resendBtn.disabled = false;
+                resendBtn.classList.remove('bg-gray-300', 'text-gray-500', 'cursor-not-allowed');
+                resendBtn.classList.add('bg-secondary-container', 'text-on-secondary-container', 'hover:bg-secondary-fixed');
+                resendText.textContent = 'Kirim Ulang Link';
+            }
+        }
+
+        resendBtn.addEventListener('click', function() {
+            if (!this.disabled) {
+                forgotForm.submit();
+            }
+        });
+
+        setTimeout(updateCountdown, 1000);
+    })();
+</script>
+@endpush
+@endif

@@ -21,12 +21,19 @@ class NewPasswordController extends Controller
     {
         $request->validate([
             'token' => ['required'],
-            'email' => ['required', 'email'],
+            'email' => ['nullable', 'email'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
+        $email = $request->filled('email') ? $request->input('email') : session('reset_email');
+
+        if (!$email) {
+            return back()->withInput($request->only('email'))
+                ->withErrors(['email' => __('Email harus diisi.')]);
+        }
+
         $status = Password::reset(
-            $request->only('email', 'password', 'password_confirmation', 'token'),
+            array_merge($request->only('password', 'password_confirmation', 'token'), ['email' => $email]),
             function ($user, string $password) {
                 $user->forceFill([
                     'password' => Hash::make($password),
@@ -34,6 +41,8 @@ class NewPasswordController extends Controller
                 ])->save();
             }
         );
+
+        session()->forget('reset_email');
 
         return $status == Password::PASSWORD_RESET
                     ? redirect()->route('login')->with('status', __($status))

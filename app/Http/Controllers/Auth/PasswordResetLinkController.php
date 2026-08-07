@@ -28,6 +28,7 @@ class PasswordResetLinkController extends Controller
             );
 
             if ($status === Password::RESET_LINK_SENT) {
+                session(['reset_email' => $request->email]);
                 return back()->with('status', __($status));
             }
 
