@@ -128,8 +128,8 @@
             <a class="nav-link text-white/90 border-b-2 border-transparent pb-1 hover:text-[#F5A623] transition-colors duration-300 font-['Noto_Serif'] font-bold text-sm tracking-wide" href="#kontak">Kontak</a>
         </nav>
         <div class="hidden md:flex items-center gap-4">
-            <a href="{{ route('login') }}" class="text-[#F5A623] border-2 border-[#F5A623] px-4 py-2 rounded font-['Noto_Serif'] font-bold text-sm tracking-wide hover:bg-[#F5A623]/10 transition-colors">Masuk E-Learning</a>
-            <a href="https://docs.google.com/forms/d/e/1FAIpQLSfmAHsIilHrKhDNi3vsA1ljb5L6AOV2li_SM7bsm01tFMolQA/viewform?usp=publish-editor" target="_blank" class="bg-[#F5A623] text-[#311300] px-4 py-2 rounded font-['Noto_Serif'] font-bold text-sm tracking-wide hover:bg-[#F5A623]/90 transition-colors">Daftar PPDB</a>
+            <a href="{{ route('login') }}" class="w-44 text-center justify-center flex items-center text-[#F5A623] border-2 border-[#F5A623] px-4 py-2 rounded font-['Noto_Serif'] font-bold text-sm tracking-wide hover:bg-[#F5A623]/10 transition-colors">Masuk E-Learning</a>
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSfmAHsIilHrKhDNi3vsA1ljb5L6AOV2li_SM7bsm01tFMolQA/viewform?usp=publish-editor" target="_blank" class="w-44 text-center justify-center flex items-center bg-[#F5A623] text-[#311300] border-2 border-[#F5A623] px-4 py-2 rounded font-['Noto_Serif'] font-bold text-sm tracking-wide hover:bg-[#F5A623]/90 transition-colors">Daftar PPDB</a>
         </div>
         <button type="button" onclick="toggleWelcomeMenu()" class="md:hidden w-10 h-10 inline-flex items-center justify-center rounded-lg border border-[#F5A623]/50 text-[#F5A623] hover:bg-[#F5A623]/10 transition-colors" aria-label="Buka menu">
             <span class="material-symbols-outlined" id="welcome-menu-icon">menu</span>
@@ -142,8 +142,8 @@
             <a onclick="closeWelcomeMenu()" class="text-white/90 rounded-lg px-3 py-2 font-['Noto_Serif'] font-bold text-sm hover:bg-white/10 transition-colors" href="#kegiatan">Kegiatan</a>
             <a onclick="closeWelcomeMenu()" class="text-white/90 rounded-lg px-3 py-2 font-['Noto_Serif'] font-bold text-sm hover:bg-white/10 transition-colors" href="#kontak">Kontak</a>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2">
-                <a onclick="closeWelcomeMenu()" href="{{ route('login') }}" class="text-center text-[#F5A623] border border-[#F5A623] px-4 py-2 rounded font-['Noto_Serif'] font-bold text-sm hover:bg-[#F5A623]/10 transition-colors">Masuk E-Learning</a>
-                <a onclick="closeWelcomeMenu()" href="https://docs.google.com/forms/d/e/1FAIpQLSfmAHsIilHrKhDNi3vsA1ljb5L6AOV2li_SM7bsm01tFMolQA/viewform?usp=publish-editor" target="_blank" class="text-center bg-[#F5A623] text-[#311300] px-4 py-2 rounded font-['Noto_Serif'] font-bold text-sm hover:bg-[#F5A623]/90 transition-colors">Daftar PPDB</a>
+                <a onclick="closeWelcomeMenu()" href="{{ route('login') }}" class="text-center flex justify-center items-center text-[#F5A623] border-2 border-[#F5A623] px-4 py-2 rounded font-['Noto_Serif'] font-bold text-sm hover:bg-[#F5A623]/10 transition-colors">Masuk E-Learning</a>
+                <a onclick="closeWelcomeMenu()" href="https://docs.google.com/forms/d/e/1FAIpQLSfmAHsIilHrKhDNi3vsA1ljb5L6AOV2li_SM7bsm01tFMolQA/viewform?usp=publish-editor" target="_blank" class="text-center flex justify-center items-center bg-[#F5A623] text-[#311300] border-2 border-[#F5A623] px-4 py-2 rounded font-['Noto_Serif'] font-bold text-sm hover:bg-[#F5A623]/90 transition-colors">Daftar PPDB</a>
             </div>
         </nav>
     </div>
@@ -158,8 +158,8 @@
         <h1 class="font-h1 text-h1 text-on-primary">Selamat Datang di<br/>SMK Mandalahayu 1 Bekasi</h1>
         <p class="font-body-lg text-body-lg text-secondary-fixed max-w-2xl mx-auto">Membentuk generasi unggul, profesional, dan berkarakter dengan fasilitas modern dan kurikulum yang relevan dengan industri.</p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <a href="https://docs.google.com/forms/d/e/1FAIpQLSfmAHsIilHrKhDNi3vsA1ljb5L6AOV2li_SM7bsm01tFMolQA/viewform?usp=publish-editor" target="_blank" class="bg-secondary-container text-on-primary-fixed font-label-sm text-label-sm px-8 py-3 rounded-full hover:bg-secondary-fixed transition-colors shadow-sm">Daftar Sekarang</a>
-            <a href="{{ route('login') }}" class="flex items-center gap-2 border-2 border-secondary-container text-secondary-container font-label-sm text-label-sm px-8 py-3 rounded-full hover:bg-secondary-container/10 transition-colors shadow-sm">
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSfmAHsIilHrKhDNi3vsA1ljb5L6AOV2li_SM7bsm01tFMolQA/viewform?usp=publish-editor" target="_blank" class="w-64 text-center justify-center flex items-center border-2 border-secondary-container bg-secondary-container text-on-primary-fixed font-label-sm text-label-sm px-8 py-3 rounded-full hover:bg-secondary-fixed transition-colors shadow-sm">Daftar Sekarang</a>
+            <a href="{{ route('login') }}" class="w-64 text-center justify-center flex items-center gap-2 border-2 border-secondary-container text-secondary-container font-label-sm text-label-sm px-8 py-3 rounded-full hover:bg-secondary-container/10 transition-colors shadow-sm">
                 <span class="material-symbols-outlined" style="font-size:18px">laptop_mac</span>
                 Masuk E-Learning
             </a>
@@ -191,7 +191,7 @@
             </div>
         </div>
         <div class="rounded-xl overflow-hidden shadow-lg h-[400px] relative bg-surface-variant">
-            <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCN19bXWgx-aJyvo7KjXanBMgJT6BHb9f4Y_YPwQx_tiJ0RLmu9jBNz0vSGprFI-4sdUzTG0ZLFw75baENdlmDsxioSJb6_A9Q2VcdIVqH9eS2lTnSS1X7P6WajEvvze3yB7zOHXJ0izaLnFx-zWIEW3FFftUiDwkERNee74ly2U4UDx3jkCBltggGXOgmmKSrTbowSYuRY4s_csnH2OQ7d5iaYKeIRudiICWBvdrOSGGEZFbJV1hoor1DE1Y42nCKoAOGqIAujK_ZQ')"></div>
+            <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://file.data.kemendikdasmen.go.id/sekolahkita/20/2025/20254041-7.jpg')"></div>
         </div>
     </section>
 
@@ -268,9 +268,11 @@
     <section id="ppdb" class="bg-[#6B3F1F] rounded-2xl p-10 md:p-16 text-center text-white shadow-xl">
         <h2 class="font-['Noto_Serif'] text-3xl md:text-4xl font-bold mb-4">Daftar PPDB 2025/2026</h2>
         <p class="text-white/80 max-w-xl mx-auto mb-8 font-['Manrope']">Bergabunglah bersama ribuan alumni sukses SMK Mandalahayu 1 Bekasi. Pendaftaran peserta didik baru kini dibuka!</p>
-        <div class="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="https://docs.google.com/forms/d/e/1FAIpQLSfmAHsIilHrKhDNi3vsA1ljb5L6AOV2li_SM7bsm01tFMolQA/viewform?usp=publish-editor" target="_blank" class="bg-[#F5A623] text-[#311300] px-8 py-3 rounded-full font-bold font-['Noto_Serif'] hover:bg-[#F5A623]/90 transition-colors shadow">Daftar Sekarang</a>
-            <a href="https://wa.me/6281234567890" target="_blank" class="border-2 border-white text-white px-8 py-3 rounded-full font-bold font-['Noto_Serif'] hover:bg-white/10 transition-colors">Hubungi Kami</a>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSfmAHsIilHrKhDNi3vsA1ljb5L6AOV2li_SM7bsm01tFMolQA/viewform?usp=publish-editor" target="_blank" class="w-64 text-center justify-center flex items-center bg-[#F5A623] text-[#311300] border-2 border-[#F5A623] px-8 py-3 rounded-full font-bold font-['Noto_Serif'] hover:bg-[#F5A623]/90 transition-colors shadow">Daftar Sekarang</a>
+            <a href="https://wa.me/6281234567890" target="_blank" class="w-64 text-center justify-center flex items-center gap-2 border-2 border-[#F5A623] text-[#F5A623] px-8 py-3 rounded-full font-bold font-['Noto_Serif'] hover:bg-[#F5A623]/10 transition-colors shadow">
+                Hubungi Kami
+            </a>
         </div>
     </section>
 
@@ -320,6 +322,7 @@
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const navLinks = document.querySelectorAll('#main-nav .nav-link');
+        const sections = document.querySelectorAll('section[id], footer[id]');
         
         navLinks.forEach(link => {
             link.addEventListener('click', function() {
@@ -332,6 +335,31 @@
                 // Add active classes to the clicked link
                 this.classList.remove('text-white/90', 'border-transparent');
                 this.classList.add('text-[#F5A623]', 'border-[#F5A623]');
+            });
+        });
+
+        window.addEventListener('scroll', () => {
+            let current = '#tentang';
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (window.scrollY >= (sectionTop - 150)) {
+                    current = '#' + section.getAttribute('id');
+                }
+            });
+
+            // Jika sudah mencapai bagian paling bawah (mendekati footer)
+            if ((window.innerHeight + window.scrollY) >= document.documentElement.scrollHeight - 100) {
+                current = '#kontak';
+            }
+
+            navLinks.forEach(link => {
+                link.classList.remove('text-[#F5A623]', 'border-[#F5A623]');
+                link.classList.add('text-white/90', 'border-transparent');
+                if (link.getAttribute('href') === current) {
+                    link.classList.remove('text-white/90', 'border-transparent');
+                    link.classList.add('text-[#F5A623]', 'border-[#F5A623]');
+                }
             });
         });
     });

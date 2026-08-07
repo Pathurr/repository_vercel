@@ -187,16 +187,8 @@
             </div>
             
             <!-- Footer pagination info -->
-            <div class="px-5 py-3 bg-surface-container flex justify-between items-center text-[11px] font-bold text-on-surface-variant border-t border-outline-variant/30">
-                <p id="table-info">Menampilkan 10 entri</p>
-                <div class="flex gap-1">
-                    <button class="w-7 h-7 flex items-center justify-center rounded bg-surface-container-lowest border border-outline-variant/30 text-primary hover:bg-secondary hover:text-white transition-all shadow-sm">1</button>
-                    <button class="w-7 h-7 flex items-center justify-center rounded border border-outline-variant/30 text-primary hover:bg-secondary hover:text-white transition-all">2</button>
-                    <button class="w-7 h-7 flex items-center justify-center rounded border border-outline-variant/30 text-primary hover:bg-secondary hover:text-white transition-all">3</button>
-                    <button class="w-7 h-7 flex items-center justify-center rounded border border-outline-variant/30 text-primary hover:bg-secondary hover:text-white transition-all">
-                        <span class="material-symbols-outlined text-[16px]">chevron_right</span>
-                    </button>
-                </div>
+            <div id="pagination-container" class="bg-surface-container-low border-t border-surface-variant p-4 flex flex-col sm:flex-row items-center justify-between gap-3 rounded-b-xl">
+                <!-- Will be populated by JS -->
             </div>
         </div>
     </section>
@@ -205,6 +197,9 @@
 @push('scripts')
 <script>
     const dataNilai = @json($dataNilai);
+    let currentPage = 1;
+    const itemsPerPage = 10;
+    let currentFilteredData = [];
 
     function getCategoryBadge(cat) {
         if (cat === 'ujian') return '<span class="px-2 py-0.5 bg-primary-fixed text-on-primary-fixed text-[9px] font-bold rounded-full uppercase tracking-wider">Ujian</span>';
@@ -213,17 +208,22 @@
         return '';
     }
 
-    function renderTable(data) {
+    function renderTable() {
         const tbody = document.getElementById('table-body');
         tbody.innerHTML = '';
+        const data = currentFilteredData;
         
         if (data.length === 0) {
             tbody.innerHTML = `<tr><td colspan="5" class="px-5 py-8 text-center text-on-surface-variant font-bold text-xs">Tidak ada data untuk filter ini.</td></tr>`;
-            document.getElementById('table-info').innerText = 'Menampilkan 0 entri';
+            renderPagination();
             return;
         }
 
-        data.forEach(item => {
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = Math.min(startIndex + itemsPerPage, data.length);
+        const pageData = data.slice(startIndex, endIndex);
+
+        pageData.forEach(item => {
             const tr = document.createElement('tr');
             tr.className = 'hover:bg-surface-container-low transition-colors group';
             tr.innerHTML = `
@@ -269,7 +269,52 @@
             tbody.appendChild(trFb);
         });
 
-        document.getElementById('table-info').innerText = `Menampilkan ${data.length} entri`;
+        renderPagination();
+    }
+
+    function renderPagination() {
+        const totalRows = currentFilteredData.length;
+        const totalPages = Math.ceil(totalRows / itemsPerPage) || 1;
+        const container = document.getElementById('pagination-container');
+        if (!container) return;
+
+        const start = (currentPage - 1) * itemsPerPage;
+        const end = Math.min(start + itemsPerPage, totalRows);
+        const startText = totalRows === 0 ? 0 : start + 1;
+
+        let html = `<span class="text-on-surface-variant text-sm text-center sm:text-left">Menampilkan ${startText}-${end} dari ${totalRows} data (Maksimal ${itemsPerPage} per halaman)</span>`;
+        html += `<div class="flex flex-wrap items-center justify-center gap-1">`;
+
+        // Prev
+        if (currentPage === 1) {
+            html += `<button class="p-1 rounded text-outline hover:bg-surface-container opacity-50 cursor-not-allowed"><span class="material-symbols-outlined" style="font-size:20px">chevron_left</span></button>`;
+        } else {
+            html += `<button onclick="goToPage(${currentPage - 1})" class="p-1 rounded text-on-surface-variant hover:text-primary hover:bg-surface-container"><span class="material-symbols-outlined" style="font-size:20px">chevron_left</span></button>`;
+        }
+
+        // Numbers
+        for (let i = 1; i <= totalPages; i++) {
+            if (i === currentPage) {
+                html += `<button class="w-8 h-8 rounded bg-primary text-on-primary font-bold text-sm flex items-center justify-center">${i}</button>`;
+            } else {
+                html += `<button onclick="goToPage(${i})" class="w-8 h-8 rounded text-on-surface-variant hover:bg-surface-container font-bold text-sm flex items-center justify-center">${i}</button>`;
+            }
+        }
+
+        // Next
+        if (currentPage === totalPages) {
+            html += `<button class="p-1 rounded text-outline hover:bg-surface-container opacity-50 cursor-not-allowed"><span class="material-symbols-outlined" style="font-size:20px">chevron_right</span></button>`;
+        } else {
+            html += `<button onclick="goToPage(${currentPage + 1})" class="p-1 rounded text-on-surface-variant hover:text-primary hover:bg-surface-container"><span class="material-symbols-outlined" style="font-size:20px">chevron_right</span></button>`;
+        }
+
+        html += `</div>`;
+        container.innerHTML = html;
+    }
+
+    function goToPage(page) {
+        currentPage = page;
+        renderTable();
     }
 
     function applyFilters() {
@@ -290,7 +335,9 @@
             filtered.sort((a, b) => a.score - b.score);
         }
 
-        renderTable(filtered);
+        currentFilteredData = filtered;
+        currentPage = 1;
+        renderTable();
     }
 
     function toggleFeedback(id) {
