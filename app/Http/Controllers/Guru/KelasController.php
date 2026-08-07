@@ -63,7 +63,7 @@ class KelasController extends Controller
             'kode_kelas' => $request->kode_kelas,
             'deskripsi' => $request->deskripsi,
             'guru_id' => Auth::id(),
-            'aktif' => true,
+            'aktif' => 'true',
         ]);
 
         return redirect()->route('guru.kelas')->with('success', 'Kelas berhasil dibuat!');

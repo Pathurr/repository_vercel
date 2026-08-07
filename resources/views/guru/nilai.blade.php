@@ -175,18 +175,8 @@
             </tbody>
         </table>
     </div>
-    <div class="p-3 border-t border-surface-variant flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-surface-container-low">
-        <span class="text-xs text-on-surface-variant">Menampilkan {{ min($students->count(), 10) }} dari {{ $students->count() }} siswa</span>
-        <div class="flex gap-1">
-            <button class="p-1 rounded bg-white border border-surface-variant text-on-surface-variant hover:bg-surface-container transition-colors disabled:opacity-50" disabled>
-                <span class="material-symbols-outlined text-[16px]">chevron_left</span>
-            </button>
-            <button class="p-1 rounded bg-primary text-on-primary font-bold text-xs px-2 hover:bg-tertiary-container transition-colors">1</button>
-            <button class="p-1 rounded bg-white border border-surface-variant text-on-surface hover:bg-surface-container transition-colors text-xs px-2">2</button>
-            <button class="p-1 rounded bg-white border border-surface-variant text-on-surface-variant hover:bg-surface-container transition-colors">
-                <span class="material-symbols-outlined text-[16px]">chevron_right</span>
-            </button>
-        </div>
+    <div id="pagination-container" class="bg-surface-container-low border-t border-surface-variant p-4 flex flex-col sm:flex-row items-center justify-between gap-3 rounded-b-xl">
+        <!-- Will be populated by JS -->
     </div>
 </section>
 
@@ -197,10 +187,15 @@
         const filterMapel = document.getElementById('filterMapel');
         const rows = document.querySelectorAll('.grade-row');
 
+        let currentPage = 1;
+        const rowsPerPage = 10;
+
         function applyFilters() {
             const query = searchInput.value.toLowerCase();
             const kelasVal = filterKelas.value;
             const mapelVal = filterMapel.value;
+
+            let visibleRows = [];
 
             rows.forEach(row => {
                 const name = (row.querySelector('.student-name')?.textContent || '').toLowerCase();
@@ -212,14 +207,79 @@
                 const matchMapel = mapelVal === '' || mapel === mapelVal;
 
                 if (matchName && matchKelas && matchMapel) {
+                    visibleRows.push(row);
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            // Pagination logic
+            const totalRows = visibleRows.length;
+            const totalPages = Math.ceil(totalRows / rowsPerPage) || 1;
+            
+            if (currentPage > totalPages) currentPage = totalPages;
+            
+            const start = (currentPage - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+            
+            visibleRows.forEach((row, index) => {
+                if (index >= start && index < end) {
                     row.style.display = '';
                 } else {
                     row.style.display = 'none';
                 }
             });
+
+            renderPagination(totalRows, totalPages, start, end);
         }
 
-        searchInput.addEventListener('keyup', applyFilters);
+        window.changePage = function(page) {
+            currentPage = page;
+            applyFilters();
+        };
+
+        function renderPagination(totalRows, totalPages, start, end) {
+            const container = document.getElementById('pagination-container');
+            if (!container) return;
+
+            const startText = totalRows === 0 ? 0 : start + 1;
+            const endText = Math.min(end, totalRows);
+
+            let html = `<span class="text-on-surface-variant text-sm text-center sm:text-left">Menampilkan ${startText}-${endText} dari ${totalRows} data (Maksimal 10 per halaman)</span>`;
+            html += `<div class="flex flex-wrap items-center justify-center gap-1">`;
+
+            // Prev
+            if (currentPage === 1) {
+                html += `<button class="p-1 rounded text-outline hover:bg-surface-container opacity-50 cursor-not-allowed"><span class="material-symbols-outlined" style="font-size:20px">chevron_left</span></button>`;
+            } else {
+                html += `<button onclick="changePage(${currentPage - 1})" class="p-1 rounded text-on-surface-variant hover:text-primary hover:bg-surface-container"><span class="material-symbols-outlined" style="font-size:20px">chevron_left</span></button>`;
+            }
+
+            // Numbers
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === currentPage) {
+                    html += `<button class="w-8 h-8 rounded bg-primary text-on-primary font-bold text-sm flex items-center justify-center">${i}</button>`;
+                } else {
+                    html += `<button onclick="changePage(${i})" class="w-8 h-8 rounded text-on-surface-variant hover:bg-surface-container font-bold text-sm flex items-center justify-center">${i}</button>`;
+                }
+            }
+
+            // Next
+            if (currentPage === totalPages) {
+                html += `<button class="p-1 rounded text-outline hover:bg-surface-container opacity-50 cursor-not-allowed"><span class="material-symbols-outlined" style="font-size:20px">chevron_right</span></button>`;
+            } else {
+                html += `<button onclick="changePage(${currentPage + 1})" class="p-1 rounded text-on-surface-variant hover:text-primary hover:bg-surface-container"><span class="material-symbols-outlined" style="font-size:20px">chevron_right</span></button>`;
+            }
+
+            html += `</div>`;
+            container.innerHTML = html;
+        }
+
+        searchInput.addEventListener('keyup', () => {
+            currentPage = 1;
+            applyFilters();
+        });
+
         window.toggleDropdown = function(type) {
             const targetId = type === 'kelas' ? 'dropdownKelas' : 'dropdownMapel';
             const target = document.getElementById(targetId);
@@ -241,8 +301,12 @@
                 document.getElementById('filterMapelLabel').textContent = label;
                 document.getElementById('dropdownMapel').classList.add('hidden');
             }
+            currentPage = 1;
             applyFilters();
         };
+
+        // Initialize table
+        applyFilters();
     });
 </script>
 @endsection

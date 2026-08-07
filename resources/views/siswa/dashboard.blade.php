@@ -17,7 +17,7 @@
 </section>
 
 {{-- Quick Stats --}}
-<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+<section class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
     <div class="bg-surface-container-lowest rounded-xl p-4 border border-outline-variant/30 shadow-sm hover:shadow-md transition-soft flex items-center gap-4">
         <div class="p-2 bg-primary-fixed rounded-lg text-primary"><span class="material-symbols-outlined text-lg">menu_book</span></div>
         <div>

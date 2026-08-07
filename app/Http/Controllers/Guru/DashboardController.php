@@ -46,8 +46,7 @@ class DashboardController extends Controller
             ->get();
 
         $belumDinilaiCount = $submissionsBelumDinilai->count();
-        
-        $submissionsList = $submissionsBelumDinilai->take(10); // Menampilkan max 10 submission di dashboard
+        $submissionsList = $submissionsBelumDinilai;
 
         return view('guru.dashboard', compact(
             'kelasAktif',
