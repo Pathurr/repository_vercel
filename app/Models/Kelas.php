@@ -12,7 +12,6 @@ class Kelas extends Model
     protected $casts = [
         'aktif' => 'boolean',
     ];
-
     public function guru()
     {
         return $this->belongsTo(User::class, 'guru_id');

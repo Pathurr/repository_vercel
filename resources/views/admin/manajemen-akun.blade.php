@@ -8,38 +8,48 @@
         .account-table,
         .account-table tbody,
         .account-table tr,
-        .account-table td { display: block; width: 100%; }
+        .account-table td { display: block; width: 100%; box-sizing: border-box; }
+        .account-table tbody {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            padding: 0.75rem;
+        }
         .account-table tr {
-            margin: 12px;
             border: 1px solid #d6c3b8;
-            border-radius: 12px;
-            background: #ffffff;
+            border-radius: 0.75rem;
             overflow: visible;
+            position: relative;
+            background: #ffffff;
+            margin: 0;
         }
         .account-table td {
-            padding: 10px 14px;
-            border-bottom: 1px solid rgba(214, 195, 184, 0.55);
-            text-align: left;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 0.75rem 1rem;
+            text-align: right;
+            border-bottom: 1px solid rgba(214, 195, 184, 0.35);
+            word-break: break-word;
+            overflow-wrap: anywhere;
         }
         .account-table td:last-child { border-bottom: 0; }
         .account-table td::before {
             content: attr(data-label);
-            display: block;
-            margin-bottom: 4px;
-            font-size: 10px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: .04em;
             color: #84746b;
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-align: left;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            flex-shrink: 0;
         }
-        .account-table td[data-label="Pilih"] {
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        .account-table td > span,
+        .account-table td > div {
+            min-width: 0;
+            text-align: right;
         }
-        .account-table td[data-label="Pilih"]::before { margin-bottom: 0; }
-        .account-table .mobile-action-cell { text-align: left; }
-        .account-table .mobile-action-cell > div { justify-content: flex-start; }
     }
 </style>
 <!-- Page Header & Primary Action -->
@@ -120,8 +130,8 @@
 </div>
 
 <!-- Data Table Card -->
-<div class="bg-surface-container-lowest border border-outline-variant/30 rounded-xl shadow-sm shadow-primary/5 flex-1 flex flex-col">
-    <div class="w-full">
+<div class="bg-surface-container-lowest border border-outline-variant/30 rounded-xl shadow-sm shadow-primary/5 flex-1 flex flex-col overflow-hidden">
+    <div class="w-full overflow-x-auto">
         <table class="responsive-card-table account-table w-full table-fixed text-left">
             <thead class="bg-surface-container-low text-on-surface-variant font-label-sm text-[12px] leading-tight border-b border-outline-variant break-words">
                 <tr>
@@ -191,10 +201,10 @@
                         @endphp
                         @if($hasActions)
                         <div class="relative inline-flex">
-                            <button type="button" data-action-toggle="{{ $u->id }}" onclick="toggleActionMenu(event, {{ $u->id }})" aria-label="Aksi {{ $u->name }}" class="w-8 h-8 inline-flex items-center justify-center text-on-surface-variant hover:text-primary rounded-full hover:bg-surface-container transition-colors">
-                                <span class="material-symbols-outlined text-[20px]" data-icon="more_vert">more_vert</span>
+                            <button type="button" data-action-toggle="{{ $u->id }}" onclick="toggleActionMenu(event, {{ $u->id }})" aria-label="Aksi {{ $u->name }}" class="w-9 h-9 inline-flex items-center justify-center text-on-surface-variant hover:text-primary rounded-full hover:bg-surface-container transition-colors touch-manipulation cursor-pointer">
+                                <span class="material-symbols-outlined text-[22px] pointer-events-none" data-icon="more_vert">more_vert</span>
                             </button>
-                            <div id="actionMenu{{ $u->id }}" class="hidden absolute right-0 top-full mt-1 w-44 bg-surface-container-lowest rounded-lg border border-outline-variant/30 shadow-xl py-1 z-[80] text-left overflow-hidden">
+                            <div id="actionMenu{{ $u->id }}" class="hidden absolute left-0 md:left-auto md:right-0 top-full mt-1 w-44 bg-surface-container-lowest rounded-lg border border-outline-variant/30 shadow-xl py-1 z-[80] text-left overflow-hidden">
                             @if($u->status != 'active')
                             <button type="button" onclick="showActionModal('aktifkan', {{ $u->id }})" class="w-full text-left px-4 py-2 text-sm hover:bg-green-50 text-green-600 transition-colors whitespace-nowrap">Aktifkan</button>
                             @endif
@@ -420,7 +430,7 @@
             if(menu.id !== 'actionMenu'+id) {
                 menu.classList.add('hidden');
                 const row = menu.closest('tr');
-                if (row) row.classList.remove('relative', 'z-30');
+                if (row) row.classList.remove('relative', 'z-40');
             }
         });
         const target = document.getElementById('actionMenu'+id);
@@ -430,7 +440,7 @@
         target.classList.toggle('hidden');
         if (row) {
             row.classList.toggle('relative', willOpen);
-            row.classList.toggle('z-30', willOpen);
+            row.classList.toggle('z-40', willOpen);
         }
     }
 

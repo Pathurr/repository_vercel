@@ -2,7 +2,6 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 
 class UserSeeder extends Seeder
@@ -46,32 +45,38 @@ class UserSeeder extends Seeder
         ]);
 
         // Guru
-        User::create([
-            'name' => 'Still Goodman',
-            'email' => 'stillgoodman466@gmail.com',
-            'password' => 'goodman46',
-            'role' => 'guru',
-            'nrg' => '1122334455',
-            'status' => 'active',
-        ]);
+        User::firstOrCreate(
+            ['email' => 'stillgoodman466@gmail.com'],
+            [
+                'name' => 'Still Goodman',
+                'password' => 'goodman46',
+                'role' => 'guru',
+                'nrg' => '1122334455',
+                'status' => 'active',
+            ]
+        );
 
-        User::create([
-            'name' => 'Budi Santoso',
-            'email' => 'guru1@lms.com',
-            'password' => 'password',
-            'role' => 'guru',
-            'nrg' => '198501012010011001',
-            'status' => 'active',
-        ]);
+        User::firstOrCreate(
+            ['email' => 'guru1@lms.com'],
+            [
+                'name' => 'Budi Santoso',
+                'password' => 'password',
+                'role' => 'guru',
+                'nrg' => '198501012010011001',
+                'status' => 'active',
+            ]
+        );
 
-        User::create([
-            'name' => 'Siti Rahayu',
-            'email' => 'guru2@lms.com',
-            'password' => 'password',
-            'role' => 'guru',
-            'nrg' => '198701012010012002',
-            'status' => 'active',
-        ]);
+        User::firstOrCreate(
+            ['email' => 'guru2@lms.com'],
+            [
+                'name' => 'Siti Rahayu',
+                'password' => 'password',
+                'role' => 'guru',
+                'nrg' => '198701012010012002',
+                'status' => 'active',
+            ]
+        );
 
         // Siswa
         $siswa = [
@@ -84,14 +89,16 @@ class UserSeeder extends Seeder
         ];
 
         foreach ($siswa as $s) {
-            User::create([
-                'name' => $s['name'],
-                'email' => $s['email'],
-                'password' => $s['password'],
-                'role' => 'murid',
-                'nis' => $s['nis'],
-                'status' => 'active',
-            ]);
+            User::firstOrCreate(
+                ['email' => $s['email']],
+                [
+                    'name' => $s['name'],
+                    'password' => $s['password'],
+                    'role' => 'murid',
+                    'nis' => $s['nis'],
+                    'status' => 'active',
+                ]
+            );
         }
     }
 }

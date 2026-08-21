@@ -12,6 +12,14 @@
             "dest": "/public/build/$1"
         },
         {
+            "src": "/logo.png",
+            "dest": "/public/logo.png"
+        },
+        {
+            "src": "/favicon.png",
+            "dest": "/public/favicon.png"
+        },
+        {
             "src": "/favicon.ico",
             "dest": "/public/favicon.ico"
         },

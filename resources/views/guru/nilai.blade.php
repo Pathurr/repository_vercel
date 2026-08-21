@@ -95,36 +95,89 @@
 </section>
 
 <!-- Summary Bento Grid -->
-<section class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-    <div class="bg-white p-4 rounded-xl shadow-sm border border-outline-variant/30 flex flex-col justify-center">
-        <p class="text-on-surface-variant text-xs mb-1">Total Siswa</p>
-        <div class="flex items-baseline gap-2">
-            <h3 class="font-bold text-3xl text-primary" style="font-family: var(--font-serif)">{{ $summary['total'] }}</h3>
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-8">
+    {{-- Card 1: Total Siswa --}}
+    <div class="bg-white rounded-xl p-4 lg:p-6 shadow-sm border border-outline-variant/30 flex flex-col justify-center">
+        {{-- Mobile/Tablet: horizontal layout --}}
+        <div class="flex items-center gap-4 lg:hidden">
+            <div class="p-2 bg-primary-fixed rounded-lg text-primary flex-shrink-0"><span class="material-symbols-outlined text-lg">groups</span></div>
+            <div>
+                <h3 class="text-on-surface-variant text-[10px] sm:text-xs mb-0.5" style="font-family: var(--font-serif)">Total Siswa</h3>
+                <p class="font-bold text-xl sm:text-2xl text-primary">{{ $summary['total'] }}</p>
+            </div>
+        </div>
+        {{-- Desktop: vertical layout --}}
+        <div class="hidden lg:block relative z-10">
+            <div class="flex justify-between items-start mb-4">
+                <div class="p-3 bg-surface-container-high rounded-lg text-primary"><span class="material-symbols-outlined">groups</span></div>
+            </div>
+            <p class="text-on-surface-variant text-xs font-bold uppercase tracking-wider mb-1">Total Siswa</p>
+            <h3 class="font-bold text-4xl text-primary" style="font-family: var(--font-serif)">{{ $summary['total'] }}</h3>
         </div>
     </div>
-    <div class="bg-white p-4 rounded-xl shadow-sm border border-outline-variant/30 flex flex-col justify-center">
-        <p class="text-on-surface-variant text-xs mb-1">Rata-rata Nilai</p>
-        <div class="flex items-baseline gap-2">
-            <h3 class="font-bold text-3xl text-secondary" style="font-family: var(--font-serif)">{{ $summary['average'] }}</h3>
-            <span class="text-xs text-on-surface-variant">/ 100</span>
+
+    {{-- Card 2: Rata-rata Nilai --}}
+    <div class="bg-white rounded-xl p-4 lg:p-6 shadow-sm border border-outline-variant/30 flex flex-col justify-center">
+        {{-- Mobile/Tablet: horizontal layout --}}
+        <div class="flex items-center gap-4 lg:hidden">
+            <div class="p-2 bg-secondary-fixed rounded-lg text-secondary flex-shrink-0"><span class="material-symbols-outlined text-lg">analytics</span></div>
+            <div>
+                <h3 class="text-on-surface-variant text-[10px] sm:text-xs mb-0.5" style="font-family: var(--font-serif)">Rata-rata Nilai</h3>
+                <p class="font-bold text-xl sm:text-2xl text-secondary">{{ $summary['average'] }}</p>
+            </div>
+        </div>
+        {{-- Desktop: vertical layout --}}
+        <div class="hidden lg:block relative z-10">
+            <div class="flex justify-between items-start mb-4">
+                <div class="p-3 bg-surface-container-high rounded-lg text-secondary"><span class="material-symbols-outlined">analytics</span></div>
+            </div>
+            <p class="text-on-surface-variant text-xs font-bold uppercase tracking-wider mb-1">Rata-rata Nilai</p>
+            <h3 class="font-bold text-4xl text-secondary" style="font-family: var(--font-serif)">{{ $summary['average'] }}<span class="text-lg text-on-surface-variant font-normal">/100</span></h3>
         </div>
     </div>
-    <div class="bg-white p-4 rounded-xl shadow-sm border border-outline-variant/30 flex flex-col justify-center">
-        <p class="text-on-surface-variant text-xs mb-1">Nilai Tertinggi</p>
-        <div class="flex items-baseline gap-2">
-            <h3 class="font-bold text-3xl text-outline" style="font-family: var(--font-serif)">{{ $summary['max'] }}</h3>
-            <span class="text-xs text-on-surface-variant">/ 100</span>
+
+    {{-- Card 3: Nilai Tertinggi --}}
+    <div class="bg-white rounded-xl p-4 lg:p-6 shadow-sm border border-outline-variant/30 flex flex-col justify-center">
+        {{-- Mobile/Tablet: horizontal layout --}}
+        <div class="flex items-center gap-4 lg:hidden">
+            <div class="p-2 bg-surface-container-high rounded-lg text-outline flex-shrink-0"><span class="material-symbols-outlined text-lg">star</span></div>
+            <div>
+                <h3 class="text-on-surface-variant text-[10px] sm:text-xs mb-0.5" style="font-family: var(--font-serif)">Nilai Tertinggi</h3>
+                <p class="font-bold text-xl sm:text-2xl text-outline">{{ $summary['max'] }}</p>
+            </div>
+        </div>
+        {{-- Desktop: vertical layout --}}
+        <div class="hidden lg:block relative z-10">
+            <div class="flex justify-between items-start mb-4">
+                <div class="p-3 bg-surface-container-high rounded-lg text-outline"><span class="material-symbols-outlined">star</span></div>
+            </div>
+            <p class="text-on-surface-variant text-xs font-bold uppercase tracking-wider mb-1">Nilai Tertinggi</p>
+            <h3 class="font-bold text-4xl text-outline" style="font-family: var(--font-serif)">{{ $summary['max'] }}<span class="text-lg text-on-surface-variant font-normal">/100</span></h3>
         </div>
     </div>
-    <div class="bg-primary text-on-primary p-4 rounded-xl shadow-sm flex flex-col justify-center relative overflow-hidden">
+
+    {{-- Card 4: Tingkat Kelulusan --}}
+    <div class="bg-primary text-on-primary rounded-xl p-4 lg:p-6 shadow-sm flex flex-col justify-center relative overflow-hidden">
         <div class="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white to-transparent"></div>
-        <p class="text-primary-fixed-dim text-xs mb-1 relative z-10">Tingkat Kelulusan</p>
-        <div class="flex items-baseline gap-2 relative z-10">
-            <h3 class="font-bold text-3xl" style="font-family: var(--font-serif)">{{ $summary['pass'] ? round($summary['pass'] / max(1, $summary['total']) * 100) : 0 }}%</h3>
-            <span class="text-xs text-tertiary-fixed-dim">{{ $summary['pass'] }}/{{ $summary['total'] }}</span>
+        {{-- Mobile/Tablet: horizontal layout --}}
+        <div class="flex items-center gap-4 lg:hidden relative z-10">
+            <div class="p-2 bg-white/20 rounded-lg text-white flex-shrink-0"><span class="material-symbols-outlined text-lg">workspace_premium</span></div>
+            <div>
+                <h3 class="text-primary-fixed-dim text-[10px] sm:text-xs mb-0.5" style="font-family: var(--font-serif)">Tingkat Kelulusan</h3>
+                <p class="font-bold text-xl sm:text-2xl text-white">{{ $summary['pass'] ? round($summary['pass'] / max(1, $summary['total']) * 100) : 0 }}%</p>
+            </div>
+        </div>
+        {{-- Desktop: vertical layout --}}
+        <div class="hidden lg:block relative z-10">
+            <div class="flex justify-between items-start mb-4">
+                <div class="p-3 bg-white/20 rounded-lg text-white"><span class="material-symbols-outlined">workspace_premium</span></div>
+            </div>
+            <p class="text-primary-fixed-dim text-xs font-bold uppercase tracking-wider mb-1">Tingkat Kelulusan</p>
+            <h3 class="font-bold text-4xl text-white" style="font-family: var(--font-serif)">{{ $summary['pass'] ? round($summary['pass'] / max(1, $summary['total']) * 100) : 0 }}%</h3>
+            <p class="text-sm text-tertiary-fixed-dim mt-2">{{ $summary['pass'] }}/{{ $summary['total'] }} Lulus</p>
         </div>
     </div>
-</section>
+</div>
 
 <!-- Master Grade Table -->
 <section class="bg-white rounded-xl shadow-sm border border-outline-variant/30 overflow-hidden">
@@ -163,7 +216,7 @@
                     <td data-label="Akhir" class="py-2 px-4 text-center font-bold">{{ $item['average'] }}</td>
                     <td data-label="Status" class="py-2 px-4 text-center">
                         <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold {{ $item['status'] === 'Lulus' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                            <span class="material-symbols-outlined text-[12px]">{{ $item['status'] === 'Lulus' ? 'check_circle' : 'cancel' }}</span> {{ $item['status'] }}
+                            <span class="material-symbols-outlined text-[12px]">{{ $item['status'] === 'Lulus' ? 'check_circle' : 'cancel' }}</span> <span class="hidden lg:inline">{{ $item['status'] }}</span>
                         </span>
                     </td>
                 </tr>
@@ -175,18 +228,8 @@
             </tbody>
         </table>
     </div>
-    <div class="p-3 border-t border-surface-variant flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-surface-container-low">
-        <span class="text-xs text-on-surface-variant">Menampilkan {{ min($students->count(), 10) }} dari {{ $students->count() }} siswa</span>
-        <div class="flex gap-1">
-            <button class="p-1 rounded bg-white border border-surface-variant text-on-surface-variant hover:bg-surface-container transition-colors disabled:opacity-50" disabled>
-                <span class="material-symbols-outlined text-[16px]">chevron_left</span>
-            </button>
-            <button class="p-1 rounded bg-primary text-on-primary font-bold text-xs px-2 hover:bg-tertiary-container transition-colors">1</button>
-            <button class="p-1 rounded bg-white border border-surface-variant text-on-surface hover:bg-surface-container transition-colors text-xs px-2">2</button>
-            <button class="p-1 rounded bg-white border border-surface-variant text-on-surface-variant hover:bg-surface-container transition-colors">
-                <span class="material-symbols-outlined text-[16px]">chevron_right</span>
-            </button>
-        </div>
+    <div id="pagination-container" class="bg-surface-container-low border-t border-surface-variant p-4 flex flex-col sm:flex-row items-center justify-between gap-3 rounded-b-xl">
+        <!-- Will be populated by JS -->
     </div>
 </section>
 
@@ -197,10 +240,15 @@
         const filterMapel = document.getElementById('filterMapel');
         const rows = document.querySelectorAll('.grade-row');
 
+        let currentPage = 1;
+        const rowsPerPage = 10;
+
         function applyFilters() {
             const query = searchInput.value.toLowerCase();
             const kelasVal = filterKelas.value;
             const mapelVal = filterMapel.value;
+
+            let visibleRows = [];
 
             rows.forEach(row => {
                 const name = (row.querySelector('.student-name')?.textContent || '').toLowerCase();
@@ -212,14 +260,79 @@
                 const matchMapel = mapelVal === '' || mapel === mapelVal;
 
                 if (matchName && matchKelas && matchMapel) {
+                    visibleRows.push(row);
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            // Pagination logic
+            const totalRows = visibleRows.length;
+            const totalPages = Math.ceil(totalRows / rowsPerPage) || 1;
+            
+            if (currentPage > totalPages) currentPage = totalPages;
+            
+            const start = (currentPage - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+            
+            visibleRows.forEach((row, index) => {
+                if (index >= start && index < end) {
                     row.style.display = '';
                 } else {
                     row.style.display = 'none';
                 }
             });
+
+            renderPagination(totalRows, totalPages, start, end);
         }
 
-        searchInput.addEventListener('keyup', applyFilters);
+        window.changePage = function(page) {
+            currentPage = page;
+            applyFilters();
+        };
+
+        function renderPagination(totalRows, totalPages, start, end) {
+            const container = document.getElementById('pagination-container');
+            if (!container) return;
+
+            const startText = totalRows === 0 ? 0 : start + 1;
+            const endText = Math.min(end, totalRows);
+
+            let html = `<span class="text-on-surface-variant text-sm text-center sm:text-left">Menampilkan ${startText}-${endText} dari ${totalRows} data (Maksimal 10 per halaman)</span>`;
+            html += `<div class="flex flex-wrap items-center justify-center gap-1">`;
+
+            // Prev
+            if (currentPage === 1) {
+                html += `<button class="p-1 rounded text-outline hover:bg-surface-container opacity-50 cursor-not-allowed"><span class="material-symbols-outlined" style="font-size:20px">chevron_left</span></button>`;
+            } else {
+                html += `<button onclick="changePage(${currentPage - 1})" class="p-1 rounded text-on-surface-variant hover:text-primary hover:bg-surface-container"><span class="material-symbols-outlined" style="font-size:20px">chevron_left</span></button>`;
+            }
+
+            // Numbers
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === currentPage) {
+                    html += `<button class="w-8 h-8 rounded bg-primary text-on-primary font-bold text-sm flex items-center justify-center">${i}</button>`;
+                } else {
+                    html += `<button onclick="changePage(${i})" class="w-8 h-8 rounded text-on-surface-variant hover:bg-surface-container font-bold text-sm flex items-center justify-center">${i}</button>`;
+                }
+            }
+
+            // Next
+            if (currentPage === totalPages) {
+                html += `<button class="p-1 rounded text-outline hover:bg-surface-container opacity-50 cursor-not-allowed"><span class="material-symbols-outlined" style="font-size:20px">chevron_right</span></button>`;
+            } else {
+                html += `<button onclick="changePage(${currentPage + 1})" class="p-1 rounded text-on-surface-variant hover:text-primary hover:bg-surface-container"><span class="material-symbols-outlined" style="font-size:20px">chevron_right</span></button>`;
+            }
+
+            html += `</div>`;
+            container.innerHTML = html;
+        }
+
+        searchInput.addEventListener('keyup', () => {
+            currentPage = 1;
+            applyFilters();
+        });
+
         window.toggleDropdown = function(type) {
             const targetId = type === 'kelas' ? 'dropdownKelas' : 'dropdownMapel';
             const target = document.getElementById(targetId);
@@ -241,8 +354,12 @@
                 document.getElementById('filterMapelLabel').textContent = label;
                 document.getElementById('dropdownMapel').classList.add('hidden');
             }
+            currentPage = 1;
             applyFilters();
         };
+
+        // Initialize table
+        applyFilters();
     });
 </script>
 @endsection

@@ -15,10 +15,7 @@
     {{-- Logo (absolute top-left) --}}
     <div class="absolute top-0 left-0 z-10 p-8">
         <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl flex items-center justify-center"
-                 style="background: #feae2c;">
-                <span class="material-symbols-outlined text-[22px]" style="color:#311300;">school</span>
-            </div>
+            <img src="/logo.png" alt="Logo SMK Mandalahayu" class="h-10 w-auto object-contain">
             <span class="font-bold text-white text-lg" style="font-family: 'Noto Serif', serif;">
                 SMK Mandalahayu 1
             </span>

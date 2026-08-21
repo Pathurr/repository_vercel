@@ -465,9 +465,9 @@
                     Hapus
                 </button>
             </div>
+        </div>
     </div>
 </div>
-
 <!-- Modal Konfirmasi Hapus Data (Materi, Tugas, Kuis, Ujian) -->
 <div id="modal-confirm-hapus" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm transition-opacity">
     <div class="bg-red-50 border border-red-200 rounded-2xl w-full max-w-md shadow-xl overflow-hidden transform scale-95 transition-transform" id="modalConfirmHapusContent">
@@ -497,7 +497,7 @@
 
 <!-- Toast Success (Popup Hijau) -->
 <div id="toast-success" class="fixed top-5 left-1/2 -translate-x-1/2 z-[100] flex items-center gap-3 bg-green-100 border border-green-300 text-green-800 px-6 py-3 rounded-lg shadow-lg opacity-0 invisible transition-all duration-300 transform -translate-y-4">
-    <span class="material-symbols-outlined">check_circle</span>
+    <span class="material-symbols-outlined text-white" id="toast-success-icon" style="font-size: 20px">check_circle</span>
     <span class="font-bold text-sm" id="toast-success-text">Berhasil!</span>
 </div>
 

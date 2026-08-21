@@ -113,18 +113,20 @@
             #sidebar-toggle-btn { display: none; }
         }
     </style>
+    <link rel="shortcut icon" href="/favicon.png?v=4" type="image/x-icon">
+    <link rel="icon" href="/favicon.png?v=4" type="image/png">
 </head>
 <body class="text-on-surface bg-surface">
 
 {{-- Sidebar Guru --}}
 <aside id="guru-sidebar" class="fixed left-0 top-0 h-full w-64 flex flex-col overflow-y-auto bg-primary text-on-primary z-40 custom-scrollbar">
     {{-- Logo --}}
-    <div class="sidebar-logo p-6 flex items-center gap-3">
-        <div class="w-10 h-10 rounded-lg bg-on-primary/10 flex items-center justify-center flex-shrink-0">
-            <span class="material-symbols-outlined text-secondary-fixed text-2xl">school</span>
+    <div class="sidebar-logo px-4 py-5 flex items-center gap-3">
+        <div class="w-9 h-9 flex items-center justify-center flex-shrink-0">
+            <img src="/logo.png" alt="Logo" class="max-w-full max-h-full object-contain">
         </div>
         <div class="sidebar-logo-text overflow-hidden">
-            <h2 class="font-bold text-xl text-secondary-fixed leading-tight whitespace-nowrap" style="font-family: var(--font-serif)">Teacher Portal</h2>
+            <h2 class="font-bold text-base text-secondary-fixed leading-tight whitespace-nowrap" style="font-family: var(--font-serif)">Teacher Portal</h2>
             <p class="text-xs text-on-primary/70 uppercase tracking-wider whitespace-nowrap">SMK Mandalahayu 1</p>
         </div>
     </div>
@@ -222,48 +224,50 @@
 </button>
 
 {{-- Main Content Area --}}
-<main id="main-content" class="ml-0 md:ml-64 flex-1 min-h-screen flex flex-col overflow-hidden">
+<main id="main-content" class="ml-0 md:ml-64 flex-1 min-h-screen flex flex-col">
 
     {{-- Top Navbar --}}
-    <header class="bg-primary text-on-primary sticky top-0 w-full z-40 border-b border-primary-container flex justify-between items-center px-6 py-2">
-        {{-- Mobile menu button --}}
-        <button type="button" onclick="openMobileSidebar()" class="md:hidden text-on-primary p-2 -ml-2">
-            <span class="material-symbols-outlined">menu</span>
-        </button>
-        {{-- Page Title --}}
-        <div class="hidden md:block font-bold text-xl text-on-primary" style="font-family: var(--font-serif)">
-            @hasSection('page-title')
-                @yield('page-title')
-            @else
-                @if(request()->routeIs('guru.dashboard'))
-                    Dashboard
-                @elseif(request()->routeIs('guru.kelas*'))
-                    Kelas Saya
-                @elseif(request()->routeIs('guru.materi*'))
-                    Materi Pelajaran
-                @elseif(request()->routeIs('guru.tugas*'))
-                    Tugas
-                @elseif(request()->routeIs('guru.kuis*'))
-                    Kuis
-                @elseif(request()->routeIs('guru.ujian*'))
-                    Ujian
-                @elseif(request()->routeIs('guru.nilai*'))
-                    Nilai & Rekap
-                @elseif(request()->routeIs('guru.monitor*'))
-                    Monitor Siswa
+    <header class="bg-primary text-on-primary sticky top-0 w-full z-40 border-b border-primary-container flex justify-between items-center px-4 md:px-6 py-2">
+        {{-- Left: Mobile menu button + Page Title --}}
+        <div class="flex items-center gap-2">
+            {{-- Mobile menu button --}}
+            <button type="button" onclick="openMobileSidebar()" class="md:hidden text-on-primary p-2 -ml-2">
+                <span class="material-symbols-outlined">menu</span>
+            </button>
+            {{-- Page Title (visible on all sizes) --}}
+            <div class="font-bold text-lg md:text-xl text-on-primary" style="font-family: var(--font-serif)">
+                @hasSection('page-title')
+                    @yield('page-title')
                 @else
-                    Dashboard
+                    @if(request()->routeIs('guru.dashboard'))
+                        Dashboard
+                    @elseif(request()->routeIs('guru.kelas*'))
+                        Kelas Saya
+                    @elseif(request()->routeIs('guru.materi*'))
+                        Materi Pelajaran
+                    @elseif(request()->routeIs('guru.tugas*'))
+                        Tugas
+                    @elseif(request()->routeIs('guru.kuis*'))
+                        Kuis
+                    @elseif(request()->routeIs('guru.ujian*'))
+                        Ujian
+                    @elseif(request()->routeIs('guru.nilai*'))
+                        Nilai & Rekap
+                    @elseif(request()->routeIs('guru.monitor*'))
+                        Monitor Siswa
+                    @else
+                        Dashboard
+                    @endif
                 @endif
-            @endif
+            </div>
         </div>
-        <div class="md:hidden font-bold text-lg text-on-primary">SMK MH 1</div>
 
         {{-- Right: User --}}
         <div class="flex items-center">
             {{-- User Dropdown --}}
             <div class="relative" id="user-menu-wrapper">
                 <button id="user-menu-btn" onclick="toggleUserMenu()" class="flex items-center gap-3 text-left cursor-pointer transition-soft hover:bg-primary-container/50 rounded-lg py-1 px-2">
-                    <div class="text-right hidden lg:block">
+                    <div class="text-right">
                         <p class="text-xs font-bold text-on-primary">{{ Auth::user()->name ?? 'Bpk. Ahmad Suherman' }}</p>
                         <p class="text-[10px] text-on-primary/70 uppercase">Guru Produktif TKJ</p>
                     </div>
@@ -274,7 +278,7 @@
 
                 {{-- Dropdown Menu --}}
                 <div id="user-dropdown"
-                    class="hidden absolute left-0 right-0 top-full mt-0 bg-primary z-50 border-b border-primary-container rounded-b-lg animate-dropdown">
+                    class="hidden absolute right-0 top-full mt-0 bg-primary z-50 border-b border-primary-container rounded-b-lg animate-dropdown min-w-full">
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit"
