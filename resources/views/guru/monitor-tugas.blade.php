@@ -61,7 +61,7 @@
 
         .monitor-table td {
             display: flex;
-            align-items: flex-start;
+            align-items: center;
             justify-content: space-between;
             gap: 1rem;
             padding: 0.75rem 1rem;
@@ -76,15 +76,6 @@
             text-align: left;
             text-transform: uppercase;
             letter-spacing: 0.04em;
-        }
-
-        .monitor-table .main-cell {
-            flex-direction: column;
-            text-align: left;
-        }
-
-        .monitor-table .action-cell {
-            justify-content: flex-start;
         }
     }
 </style>
@@ -174,30 +165,36 @@
                     $scoreText = $submission->nilai !== null ? $submission->nilai : '-';
                 @endphp
                 <tr class="hover:bg-surface-container-lowest transition-colors" data-name="{{ strtolower($submission->siswa->name) }}" data-type="{{ $submission->type }}" data-status="{{ $status }}" data-grade="{{ $gradeStatus }}">
-                    <td data-label="Nama Siswa" class="main-cell px-3 py-2.5">
-                        <div class="flex items-center gap-2">
+                    <td data-label="Nama Siswa" class="px-3 py-2.5">
+                        <div class="flex items-center justify-end md:justify-start gap-2">
                             <div class="w-7 h-7 flex-shrink-0 bg-primary-fixed flex items-center justify-center rounded-full text-primary font-bold text-[10px]">{{ strtoupper(substr($submission->siswa->name, 0, 1)) }}</div>
                             <span class="font-semibold text-xs leading-tight">{{ $submission->siswa->name }}</span>
                         </div>
                     </td>
-                    <td data-label="Kelas & Mapel" class="main-cell px-3 py-2.5">
-                        <p class="text-xs font-semibold text-on-surface leading-tight">{{ $submission->kelas?->nama_kelas ?? 'Kelas tidak tersedia' }} <span class="text-[10px] text-on-surface-variant font-normal">· {{ $submission->kelas?->mata_pelajaran ?? 'Mata Pelajaran belum ditentukan' }}</span></p>
-                        <p class="text-[10px] text-on-surface-variant mt-0.5">{{ $submission->judul }}</p>
+                    <td data-label="Kelas & Mapel" class="px-3 py-2.5">
+                        <div class="text-right md:text-left">
+                            <p class="text-xs font-semibold text-on-surface leading-tight">{{ $submission->kelas?->nama_kelas ?? 'Kelas tidak tersedia' }} <span class="text-[10px] text-on-surface-variant font-normal">· {{ $submission->kelas?->mata_pelajaran ?? 'Mata Pelajaran belum ditentukan' }}</span></p>
+                            <p class="text-[10px] text-on-surface-variant mt-0.5">{{ $submission->judul }}</p>
+                        </div>
                     </td>
-                    <td data-label="Judul & Tipe" class="main-cell px-3 py-2.5">
-                        <p class="text-xs font-semibold text-on-surface leading-tight truncate">{{ $submission->judul }}</p>
-                        <span class="text-[10px] px-1.5 py-0.5 bg-surface-variant rounded text-on-surface-variant">{{ ucfirst($submission->type) }}</span>
+                    <td data-label="Judul & Tipe" class="px-3 py-2.5">
+                        <div class="text-right md:text-left">
+                            <p class="text-xs font-semibold text-on-surface leading-tight truncate">{{ $submission->judul }}</p>
+                            <span class="text-[10px] px-1.5 py-0.5 bg-surface-variant rounded text-on-surface-variant inline-block mt-1">{{ ucfirst($submission->type) }}</span>
+                        </div>
                     </td>
                     <td data-label="Status" class="px-3 py-2.5 text-center">
                         <span class="px-2 py-0.5 rounded-full text-[10px] font-bold inline-flex items-center gap-1 {{ $badgeClass }}">
                             <span class="w-1.5 h-1.5 {{ $dotClass }} rounded-full flex-shrink-0"></span>{{ $statusText }}
                         </span>
                     </td>
-                    <td data-label="Pengumpulan & Nilai" class="main-cell px-3 py-2.5 text-center">
-                        <p class="text-[10px] text-on-surface-variant">{{ $submission->dikumpulkan_at?->format('d M Y') ?? '-' }}</p>
-                        <p class="text-xs font-bold text-on-surface-variant">{{ $scoreText }}</p>
+                    <td data-label="Pengumpulan & Nilai" class="px-3 py-2.5 text-center">
+                        <div class="text-right md:text-center">
+                            <p class="text-[10px] text-on-surface-variant">{{ $submission->dikumpulkan_at?->format('d M Y') ?? '-' }}</p>
+                            <p class="text-xs font-bold text-on-surface-variant">{{ $scoreText }}</p>
+                        </div>
                     </td>
-                    <td data-label="Aksi" class="action-cell px-3 py-2.5 text-right">
+                    <td data-label="Aksi" class="px-3 py-2.5 text-right">
                         <a href="{{ $submission->link }}" class="btn-nilai">{{ $submission->nilai !== null ? 'Edit Nilai' : 'Nilai' }}</a>
                     </td>
                 </tr>
@@ -209,19 +206,7 @@
         </tbody>
     </table>
     <!-- Pagination -->
-    <div class="px-4 py-3 bg-surface-container-low border-t border-outline-variant flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-        <p class="text-on-surface-variant text-xs font-bold">Menampilkan 1-3 dari 32 siswa</p>
-        <div class="flex items-center gap-1">
-            <button class="w-7 h-7 flex items-center justify-center rounded border border-outline hover:bg-surface-variant transition-colors disabled:opacity-50" disabled>
-                <span class="material-symbols-outlined" style="font-size:16px">chevron_left</span>
-            </button>
-            <button class="w-7 h-7 flex items-center justify-center rounded bg-primary text-on-primary text-xs font-bold shadow-sm">1</button>
-            <button class="w-7 h-7 flex items-center justify-center rounded border border-outline hover:bg-surface-variant transition-colors text-xs font-bold text-on-surface-variant">2</button>
-            <button class="w-7 h-7 flex items-center justify-center rounded border border-outline hover:bg-surface-variant transition-colors text-xs font-bold text-on-surface-variant">3</button>
-            <button class="w-7 h-7 flex items-center justify-center rounded border border-outline hover:bg-surface-variant transition-colors">
-                <span class="material-symbols-outlined" style="font-size:16px">chevron_right</span>
-            </button>
-        </div>
+    <div id="pagination-container" class="bg-surface-container-low border-t border-surface-variant p-4 flex flex-col sm:flex-row items-center justify-between gap-3 rounded-b-xl">
     </div>
 </div>
 
@@ -233,30 +218,31 @@
         const searchInput = document.getElementById('searchName');
         const filterType = document.getElementById('filterType');
         const filterGrade = document.getElementById('filterGrade');
-        const rows = document.querySelectorAll('#studentTableBody tr');
+        const rows = document.querySelectorAll('#studentTableBody tr[data-name]');
         let currentStatus = 'all';
+        let currentPage = 1;
+        const rowsPerPage = 10;
 
         // Filter tab switching logic
         filterTabs.forEach(btn => {
             btn.addEventListener('click', () => {
-                // visual update
                 filterTabs.forEach(b => {
-                    b.classList.remove('bg-primary', 'text-on-primary', 'shadow-md');
-                    b.classList.add('bg-surface-container-high', 'text-on-surface-variant');
+                    b.classList.remove('bg-primary', 'text-on-primary', 'shadow-md', 'font-bold');
+                    b.classList.add('bg-surface-container-high', 'text-on-surface-variant', 'font-semibold', 'hover:bg-surface-variant');
                 });
-                btn.classList.add('bg-primary', 'text-on-primary', 'shadow-md');
-                btn.classList.remove('bg-surface-container-high', 'text-on-surface-variant');
-                
-                // state update
+                btn.classList.add('bg-primary', 'text-on-primary', 'shadow-md', 'font-bold');
+                btn.classList.remove('bg-surface-container-high', 'text-on-surface-variant', 'font-semibold', 'hover:bg-surface-variant');
                 currentStatus = btn.dataset.status;
+                currentPage = 1;
                 applyFilters();
             });
         });
 
-        // Event listeners for other filters
-        searchInput.addEventListener('input', applyFilters);
+        searchInput.addEventListener('input', () => {
+            currentPage = 1;
+            applyFilters();
+        });
 
-        // Make functions globally available
         window.toggleDropdown = function(type) {
             const targetId = type === 'type' ? 'dropdownType' : 'dropdownGrade';
             const target = document.getElementById(targetId);
@@ -278,6 +264,12 @@
                 document.getElementById('filterGradeLabel').textContent = label;
                 document.getElementById('dropdownGrade').classList.add('hidden');
             }
+            currentPage = 1;
+            applyFilters();
+        };
+
+        window.changePage = function(page) {
+            currentPage = page;
             applyFilters();
         };
 
@@ -296,9 +288,10 @@
             const searchVal = searchInput.value.toLowerCase();
             const typeVal = filterType.value;
             const gradeVal = filterGrade.value;
+            let visibleRows = [];
 
             rows.forEach(row => {
-                const rowName = row.dataset.name.toLowerCase();
+                const rowName = (row.dataset.name || '').toLowerCase();
                 const rowType = row.dataset.type;
                 const rowStatus = row.dataset.status;
                 const rowGrade = row.dataset.grade;
@@ -306,15 +299,66 @@
                 const matchSearch = rowName.includes(searchVal);
                 const matchType = (typeVal === 'all' || rowType === typeVal);
                 const matchGrade = (gradeVal === 'all' || rowGrade === gradeVal);
-                const matchStatus = (currentStatus === 'all' || rowStatus === currentStatus);
+                
+                let matchStatus = false;
+                if (currentStatus === 'all') {
+                    matchStatus = true;
+                } else if (currentStatus === 'terkumpul') {
+                    matchStatus = (rowStatus === 'terkumpul' || rowStatus === 'tepat_waktu');
+                } else {
+                    matchStatus = (rowStatus === currentStatus);
+                }
 
                 if (matchSearch && matchType && matchGrade && matchStatus) {
-                    row.style.display = '';
+                    visibleRows.push(row);
                 } else {
                     row.style.display = 'none';
                 }
             });
+
+            const totalRows = visibleRows.length;
+            const totalPages = Math.ceil(totalRows / rowsPerPage) || 1;
+            if (currentPage > totalPages) currentPage = totalPages;
+            const start = (currentPage - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+
+            visibleRows.forEach((row, index) => {
+                row.style.display = (index >= start && index < end) ? '' : 'none';
+            });
+
+            renderPagination(totalRows, totalPages, start, end);
         }
+
+        function renderPagination(totalRows, totalPages, start, end) {
+            const container = document.getElementById('pagination-container');
+            if (!container) return;
+            const startText = totalRows === 0 ? 0 : start + 1;
+            const endText = Math.min(end, totalRows);
+
+            let html = `<span class="text-on-surface-variant text-sm text-center sm:text-left">Menampilkan ${startText}-${endText} dari ${totalRows} data (Maksimal 10 per halaman)</span>`;
+            html += `<div class="flex flex-wrap items-center justify-center gap-1">`;
+            if (currentPage === 1) {
+                html += `<button class="p-1 rounded text-outline hover:bg-surface-container opacity-50 cursor-not-allowed"><span class="material-symbols-outlined" style="font-size:20px">chevron_left</span></button>`;
+            } else {
+                html += `<button onclick="changePage(${currentPage - 1})" class="p-1 rounded text-on-surface-variant hover:text-primary hover:bg-surface-container"><span class="material-symbols-outlined" style="font-size:20px">chevron_left</span></button>`;
+            }
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === currentPage) {
+                    html += `<button class="w-8 h-8 rounded bg-primary text-on-primary font-bold text-sm flex items-center justify-center">${i}</button>`;
+                } else {
+                    html += `<button onclick="changePage(${i})" class="w-8 h-8 rounded text-on-surface-variant hover:bg-surface-container font-bold text-sm flex items-center justify-center">${i}</button>`;
+                }
+            }
+            if (currentPage === totalPages) {
+                html += `<button class="p-1 rounded text-outline hover:bg-surface-container opacity-50 cursor-not-allowed"><span class="material-symbols-outlined" style="font-size:20px">chevron_right</span></button>`;
+            } else {
+                html += `<button onclick="changePage(${currentPage + 1})" class="p-1 rounded text-on-surface-variant hover:text-primary hover:bg-surface-container"><span class="material-symbols-outlined" style="font-size:20px">chevron_right</span></button>`;
+            }
+            html += `</div>`;
+            container.innerHTML = html;
+        }
+
+        applyFilters();
     });
 </script>
 @endpush

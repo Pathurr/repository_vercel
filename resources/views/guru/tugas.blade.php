@@ -47,10 +47,6 @@
             text-transform: uppercase;
             letter-spacing: 0.04em;
         }
-
-        .task-table .action-cell {
-            justify-content: flex-start;
-        }
     }
 </style>
 
@@ -143,20 +139,38 @@
                     </span>
                 </td>
                 <td data-label="Aksi" class="action-cell p-4 text-center">
-                    <div class="flex gap-2 justify-center">
+                    <!-- Mobile & Desktop Actions (Inline) -->
+                    <div class="flex md:hidden lg:flex gap-2 justify-end lg:justify-center w-full">
                         <a href="{{ route('guru.tugas.buat', ['mode' => 'edit', 'id' => $t->id]) }}" class="p-2 rounded-lg text-secondary hover:bg-secondary-container/30 transition-soft"><span class="material-symbols-outlined text-base">edit</span></a>
                         <form action="{{ route('guru.tugas.destroy', $t->id) }}" method="POST" class="inline" onsubmit="event.preventDefault(); confirmDelete(this, 'tugas ini');">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="p-2 rounded-lg text-error hover:bg-error-container/30 transition-soft" title="Hapus"><span class="material-symbols-outlined text-base">delete</span></button>
                         </form>
-                        <a href="{{ route('guru.monitor.tugas', ['tugas_id' => $t->id]) }}" class="px-3 py-2 rounded-lg text-primary border border-primary/20 hover:bg-primary-container/30 transition-soft text-xs font-bold">Nilai</a>
+                        <a href="{{ route('guru.monitor.tugas', ['tugas_id' => $t->id]) }}" class="px-3 py-2 rounded-lg text-primary border border-primary/20 hover:bg-primary-container/30 transition-soft text-xs font-bold flex-shrink-0">Nilai</a>
+                    </div>
+                    <!-- Tablet Actions (Dropdown) -->
+                    <div class="hidden md:flex lg:hidden relative justify-center w-full">
+                        <button type="button" onclick="toggleActionDropdown(this, event)" class="p-2 rounded-lg text-on-surface-variant hover:bg-surface-variant/50 transition-soft">
+                            <span class="material-symbols-outlined">more_vert</span>
+                        </button>
+                        <div class="action-dropdown hidden absolute right-0 top-full mt-2 w-36 bg-surface border border-outline-variant/30 rounded-xl shadow-lg overflow-hidden z-50 text-left">
+                            <a href="{{ route('guru.tugas.buat', ['mode' => 'edit', 'id' => $t->id]) }}" class="w-full text-left px-4 py-3 text-sm text-secondary hover:bg-surface-variant/60 transition-soft flex items-center gap-3"><span class="material-symbols-outlined text-[18px]">edit</span> Edit</a>
+                            <form action="{{ route('guru.tugas.destroy', $t->id) }}" method="POST" class="w-full m-0" onsubmit="event.preventDefault(); confirmDelete(this, 'tugas ini');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="w-full text-left px-4 py-3 text-sm text-error hover:bg-surface-variant/60 transition-soft flex items-center gap-3"><span class="material-symbols-outlined text-[18px]">delete</span> Hapus</button>
+                            </form>
+                            <a href="{{ route('guru.monitor.tugas', ['tugas_id' => $t->id]) }}" class="w-full text-left px-4 py-3 text-sm text-primary hover:bg-surface-variant/60 transition-soft flex items-center gap-3 border-t border-outline-variant/30"><span class="material-symbols-outlined text-[18px]">fact_check</span> Nilai</a>
+                        </div>
                     </div>
                 </td>
             </tr>
             @endforeach
         </tbody>
     </table>
+    <div id="pagination-container" class="bg-surface-container-low border-t border-surface-variant p-4 flex flex-col sm:flex-row items-center justify-between gap-3 rounded-b-xl">
+    </div>
 </div>
 
 <!-- Modal Konfirmasi Hapus -->
@@ -184,18 +198,71 @@
     const filterStatusInput = document.getElementById('filterStatus');
     const filterKelasInput = document.getElementById('filterKelas');
     const rows = document.querySelectorAll('tbody tr[data-status]');
+    let currentPage = 1;
+    const rowsPerPage = 10;
 
     function filterTugas() {
         const status = filterStatusInput.value;
         const kelas = filterKelasInput.value;
+        let visibleRows = [];
 
         rows.forEach(row => {
             const rowStatus = row.getAttribute('data-status');
             const rowKelas = row.getAttribute('data-kelas');
             const statusMatch = status === 'Semua' || rowStatus === status;
             const kelasMatch = kelas === 'Semua' || rowKelas === kelas;
-            row.classList.toggle('hidden', !(statusMatch && kelasMatch));
+            if (statusMatch && kelasMatch) {
+                visibleRows.push(row);
+            } else {
+                row.style.display = 'none';
+            }
         });
+
+        const totalRows = visibleRows.length;
+        const totalPages = Math.ceil(totalRows / rowsPerPage) || 1;
+        if (currentPage > totalPages) currentPage = totalPages;
+        const start = (currentPage - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+
+        visibleRows.forEach((row, index) => {
+            row.style.display = (index >= start && index < end) ? '' : 'none';
+        });
+
+        renderPagination(totalRows, totalPages, start, end);
+    }
+
+    function changePage(page) {
+        currentPage = page;
+        filterTugas();
+    }
+
+    function renderPagination(totalRows, totalPages, start, end) {
+        const container = document.getElementById('pagination-container');
+        if (!container) return;
+        const startText = totalRows === 0 ? 0 : start + 1;
+        const endText = Math.min(end, totalRows);
+
+        let html = `<span class="text-on-surface-variant text-sm text-center sm:text-left">Menampilkan ${startText}-${endText} dari ${totalRows} data (Maksimal 10 per halaman)</span>`;
+        html += `<div class="flex flex-wrap items-center justify-center gap-1">`;
+        if (currentPage === 1) {
+            html += `<button class="p-1 rounded text-outline hover:bg-surface-container opacity-50 cursor-not-allowed"><span class="material-symbols-outlined" style="font-size:20px">chevron_left</span></button>`;
+        } else {
+            html += `<button onclick="changePage(${currentPage - 1})" class="p-1 rounded text-on-surface-variant hover:text-primary hover:bg-surface-container"><span class="material-symbols-outlined" style="font-size:20px">chevron_left</span></button>`;
+        }
+        for (let i = 1; i <= totalPages; i++) {
+            if (i === currentPage) {
+                html += `<button class="w-8 h-8 rounded bg-primary text-on-primary font-bold text-sm flex items-center justify-center">${i}</button>`;
+            } else {
+                html += `<button onclick="changePage(${i})" class="w-8 h-8 rounded text-on-surface-variant hover:bg-surface-container font-bold text-sm flex items-center justify-center">${i}</button>`;
+            }
+        }
+        if (currentPage === totalPages) {
+            html += `<button class="p-1 rounded text-outline hover:bg-surface-container opacity-50 cursor-not-allowed"><span class="material-symbols-outlined" style="font-size:20px">chevron_right</span></button>`;
+        } else {
+            html += `<button onclick="changePage(${currentPage + 1})" class="p-1 rounded text-on-surface-variant hover:text-primary hover:bg-surface-container"><span class="material-symbols-outlined" style="font-size:20px">chevron_right</span></button>`;
+        }
+        html += `</div>`;
+        container.innerHTML = html;
     }
 
     function toggleDropdown(type) {
@@ -219,6 +286,7 @@
             document.getElementById('filterStatusLabel').textContent = label;
             document.getElementById('dropdownStatus').classList.add('hidden');
         }
+        currentPage = 1;
         filterTugas();
     }
 
@@ -231,7 +299,29 @@
         if (!event.target.closest('[onclick="toggleDropdown(\'status\')"]') && statusWrapper && !statusWrapper.classList.contains('hidden')) {
             statusWrapper.classList.add('hidden');
         }
+
+        // Close action dropdowns
+        if (!event.target.closest('.action-dropdown') && !event.target.closest('[onclick^="toggleActionDropdown"]')) {
+            document.querySelectorAll('.action-dropdown').forEach(d => {
+                d.classList.add('hidden');
+            });
+        }
     });
+
+    function toggleActionDropdown(btn, event) {
+        event.stopPropagation();
+        const dropdown = btn.nextElementSibling;
+        const isHidden = dropdown.classList.contains('hidden');
+        
+        // Hide all other dropdowns
+        document.querySelectorAll('.action-dropdown').forEach(d => {
+            d.classList.add('hidden');
+        });
+
+        if (isHidden) {
+            dropdown.classList.remove('hidden');
+        }
+    }
 
     filterTugas();
 

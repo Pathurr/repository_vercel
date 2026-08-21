@@ -17,7 +17,7 @@
 </section>
 
 {{-- Quick Stats --}}
-<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+<section class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
     <div class="bg-surface-container-lowest rounded-xl p-4 border border-outline-variant/30 shadow-sm hover:shadow-md transition-soft flex items-center gap-4">
         <div class="p-2 bg-primary-fixed rounded-lg text-primary"><span class="material-symbols-outlined text-lg">menu_book</span></div>
         <div>
@@ -62,22 +62,22 @@
             </div>
             <div class="space-y-3">
                 @forelse($aktivitasMendatang as $a)
-                <div class="bg-surface-container-lowest p-3 rounded-lg border border-outline-variant/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 group hover:border-secondary transition-soft">
-                    <div class="flex items-start gap-3">
-                        <div class="bg-surface-container-high p-2 rounded-lg text-primary">
+                <div class="bg-surface-container-lowest p-3.5 rounded-lg border border-outline-variant/30 flex items-center justify-between gap-3 group hover:border-secondary transition-soft">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div class="bg-surface-container-high p-2 rounded-lg text-primary flex-shrink-0">
                             <span class="material-symbols-outlined text-sm">
                                 {{ $a->tipe === 'Ujian' ? 'school' : ($a->tipe === 'Kuis' ? 'quiz' : 'assignment') }}
                             </span>
                         </div>
-                        <div>
-                            <div class="flex items-center gap-2 mb-0.5">
-                                <span class="bg-tertiary-fixed text-on-tertiary-fixed px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider">{{ $a->tipe }}</span>
-                                <h4 class="font-bold text-sm text-on-surface">{{ $a->judul }}</h4>
+                        <div class="min-w-0">
+                            <div class="flex items-center gap-1.5 mb-0.5">
+                                <span class="bg-tertiary-fixed text-on-tertiary-fixed px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider flex-shrink-0">{{ $a->tipe }}</span>
+                                <h4 class="font-bold text-sm text-on-surface truncate">{{ $a->judul }}</h4>
                             </div>
-                            <p class="text-on-surface-variant text-xs">{{ $a->mata_pelajaran }}</p>
+                            <p class="text-on-surface-variant text-xs truncate">{{ $a->mata_pelajaran }}</p>
                         </div>
                     </div>
-                    <div class="flex sm:flex-col items-center sm:items-end gap-3 sm:gap-1">
+                    <div class="flex flex-col items-end gap-1.5 flex-shrink-0 ml-auto">
                         @php
                             $btnText = 'Kerjakan';
                             $isActive = false;
@@ -100,17 +100,17 @@
                             }
                         @endphp
                         @if($isActive)
-                        <div class="text-error font-bold text-[10px] flex items-center gap-1 px-2 py-0.5 rounded bg-error-container/30 border border-error/20">
+                        <div class="text-error font-bold text-[10px] flex items-center gap-1 px-2 py-0.5 rounded bg-error-container/30 border border-error/20 whitespace-nowrap">
                             <span class="material-symbols-outlined text-xs animate-pulse">hourglass_bottom</span>
                             <span>Sisa: {{ $remainingMinutes }} Menit</span>
                         </div>
                         @else
-                        <div class="{{ $a->deadline && \Carbon\Carbon::parse($a->deadline)->isPast() ? 'text-error bg-error-container/30' : 'text-secondary bg-secondary-container/30' }} font-semibold text-[10px] flex items-center gap-1 px-1.5 py-0.5 rounded">
+                        <div class="{{ $a->deadline && \Carbon\Carbon::parse($a->deadline)->isPast() ? 'text-error bg-error-container/30' : 'text-secondary bg-secondary-container/30' }} font-semibold text-[10px] flex items-center gap-1 px-1.5 py-0.5 rounded whitespace-nowrap">
                             <span class="material-symbols-outlined text-xs">timer</span>
                             <span>{{ $a->deadline ? \Carbon\Carbon::parse($a->deadline)->diffForHumans() : 'Tanpa Tenggat' }}</span>
                         </div>
                         @endif
-                        <a href="{{ $a->route }}" class="bg-secondary-container hover:bg-secondary text-on-secondary-container hover:text-white font-semibold px-4 py-1.5 rounded transition-soft text-xs">{{ $btnText }}</a>
+                        <a href="{{ $a->route }}" class="bg-secondary-container hover:bg-secondary text-on-secondary-container hover:text-white font-semibold px-3 py-1.5 rounded transition-soft text-xs whitespace-nowrap">{{ $btnText }}</a>
                     </div>
                 </div>
                 @empty

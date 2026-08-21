@@ -14,38 +14,52 @@ class KelasSeeder extends Seeder
         $guru_baru = User::where('email', 'stillgoodman466@gmail.com')->first();
         $siswaList = User::where('role', 'murid')->get();
 
-        $kelas1 = Kelas::create([
-            'nama_kelas'     => 'X IPA 1',
-            'mata_pelajaran' => 'Matematika',
-            'guru_id'        => $guru1->id,
-            'kode_kelas'     => 'MTK-001',
-            'deskripsi'      => 'Kelas Matematika untuk siswa X IPA 1',
-            'aktif'          => 'true',
-        ]);
+        if ($guru1) {
+            $kelas1 = Kelas::firstOrCreate(
+                ['kode_kelas' => 'MTK-001'],
+                [
+                    'nama_kelas'     => 'X IPA 1',
+                    'mata_pelajaran' => 'Matematika',
+                    'guru_id'        => $guru1->id,
+                    'deskripsi'      => 'Kelas Matematika untuk siswa X IPA 1',
+                    'aktif'          => true,
+                ]
+            );
+            foreach ($siswaList as $siswa) {
+                $kelas1->siswa()->syncWithoutDetaching([$siswa->id]);
+            }
+        }
 
-        $kelas2 = Kelas::create([
-            'nama_kelas'     => 'X IPA 2',
-            'mata_pelajaran' => 'Bahasa Indonesia',
-            'guru_id'        => $guru2->id,
-            'kode_kelas'     => 'BIN-001',
-            'deskripsi'      => 'Kelas Bahasa Indonesia untuk siswa X IPA 2',
-            'aktif'          => 'true',
-        ]);
+        if ($guru2) {
+            $kelas2 = Kelas::firstOrCreate(
+                ['kode_kelas' => 'BIN-001'],
+                [
+                    'nama_kelas'     => 'X IPA 2',
+                    'mata_pelajaran' => 'Bahasa Indonesia',
+                    'guru_id'        => $guru2->id,
+                    'deskripsi'      => 'Kelas Bahasa Indonesia untuk siswa X IPA 2',
+                    'aktif'          => true,
+                ]
+            );
+            foreach ($siswaList as $siswa) {
+                $kelas2->siswa()->syncWithoutDetaching([$siswa->id]);
+            }
+        }
 
-        $kelas3 = Kelas::create([
-            'nama_kelas'     => 'X IPS 1',
-            'mata_pelajaran' => 'Sejarah',
-            'guru_id'        => $guru_baru->id,
-            'kode_kelas'     => 'SJH-001',
-            'deskripsi'      => 'Kelas Sejarah untuk siswa X IPS 1',
-            'aktif'          => 'true',
-        ]);
-
-        // Daftarkan semua siswa ke semua kelas
-        foreach ($siswaList as $siswa) {
-            $kelas1->siswa()->attach($siswa->id);
-            $kelas2->siswa()->attach($siswa->id);
-            $kelas3->siswa()->attach($siswa->id);
+        if ($guru_baru) {
+            $kelas3 = Kelas::firstOrCreate(
+                ['kode_kelas' => 'SJH-001'],
+                [
+                    'nama_kelas'     => 'X IPS 1',
+                    'mata_pelajaran' => 'Sejarah',
+                    'guru_id'        => $guru_baru->id,
+                    'deskripsi'      => 'Kelas Sejarah untuk siswa X IPS 1',
+                    'aktif'          => true,
+                ]
+            );
+            foreach ($siswaList as $siswa) {
+                $kelas3->siswa()->syncWithoutDetaching([$siswa->id]);
+            }
         }
     }
 }

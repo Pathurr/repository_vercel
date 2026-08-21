@@ -47,16 +47,6 @@
             text-transform: uppercase;
             letter-spacing: 0.04em;
         }
-
-        .exam-table .main-cell {
-            align-items: flex-start;
-            flex-direction: column;
-            text-align: left;
-        }
-
-        .exam-table .action-cell {
-            justify-content: flex-start;
-        }
     }
 </style>
 
@@ -140,13 +130,17 @@
                 $status = $u->selesai_at && $u->selesai_at->isPast() ? 'selesai' : ($u->mulai_at && $u->mulai_at->isFuture() ? 'terjadwal' : 'berlangsung');
             @endphp
             <tr class="hover:bg-surface-container transition-soft ujian-row" data-kelas="{{ $kelasNama }}" data-status="{{ $status }}">
-                <td data-label="Ujian & Kelas" class="main-cell p-4">
-                    <p class="font-bold text-on-surface">{{ $u->judul }}</p>
-                    <p class="text-xs text-on-surface-variant">{{ $kelasNama }}</p>
+                <td data-label="Ujian & Kelas" class="p-4">
+                    <div class="text-right md:text-left">
+                        <p class="font-bold text-on-surface">{{ $u->judul }}</p>
+                        <p class="text-xs text-on-surface-variant">{{ $kelasNama }}</p>
+                    </div>
                 </td>
-                <td data-label="Jadwal & Durasi" class="main-cell p-4">
-                    <p class="font-bold text-on-surface">{{ $tanggal }}</p>
-                    <p class="text-xs text-on-surface-variant">{{ $waktu }} • {{ $durasiText }}</p>
+                <td data-label="Jadwal & Durasi" class="p-4">
+                    <div class="text-right md:text-left">
+                        <p class="font-bold text-on-surface">{{ $tanggal }}</p>
+                        <p class="text-xs text-on-surface-variant">{{ $waktu }} • {{ $durasiText }}</p>
+                    </div>
                 </td>
                 <td data-label="Partisipasi" class="p-4 text-center font-bold text-primary">{{ $peserta }}</td>
                 <td data-label="Status" class="p-4 text-center">
@@ -154,8 +148,8 @@
                         {{ ucfirst($status) }}
                     </span>
                 </td>
-                <td data-label="Aksi" class="action-cell p-4 text-center">
-                    <div class="flex gap-2 justify-center">
+                <td data-label="Aksi" class="p-4 text-center">
+                    <div class="flex gap-2 justify-end lg:justify-center w-full">
                         <a href="{{ route('guru.ujian.buat', ['mode' => 'edit', 'id' => $u->id]) }}" class="p-2 rounded-lg text-secondary hover:bg-secondary-container/30 transition-soft"><span class="material-symbols-outlined text-base">edit</span></a>
                         <form action="{{ route('guru.ujian.destroy', $u->id) }}" method="POST" class="inline" onsubmit="event.preventDefault(); confirmDelete(this, 'ujian ini');">
                             @csrf
@@ -168,6 +162,8 @@
             @endforeach
         </tbody>
     </table>
+    <div id="pagination-container" class="bg-surface-container-low border-t border-surface-variant p-4 flex flex-col sm:flex-row items-center justify-between gap-3 rounded-b-xl">
+    </div>
 </div>
 
 <!-- Modal Konfirmasi Hapus -->
@@ -196,18 +192,71 @@
     const filterStatusInput = document.getElementById('filterStatus');
     const filterKelasInput = document.getElementById('filterKelas');
     const rows = document.querySelectorAll('tr.ujian-row');
+    let currentPage = 1;
+    const rowsPerPage = 10;
 
     function filterUjian() {
         const status = filterStatusInput.value;
         const kelas = filterKelasInput.value;
+        let visibleRows = [];
 
         rows.forEach(row => {
             const rowStatus = row.getAttribute('data-status');
             const rowKelas = row.getAttribute('data-kelas');
             const statusMatch = status === 'Semua' || rowStatus === status;
             const kelasMatch = kelas === 'Semua' || rowKelas === kelas;
-            row.style.display = (statusMatch && kelasMatch) ? '' : 'none';
+            if (statusMatch && kelasMatch) {
+                visibleRows.push(row);
+            } else {
+                row.style.display = 'none';
+            }
         });
+
+        const totalRows = visibleRows.length;
+        const totalPages = Math.ceil(totalRows / rowsPerPage) || 1;
+        if (currentPage > totalPages) currentPage = totalPages;
+        const start = (currentPage - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+
+        visibleRows.forEach((row, index) => {
+            row.style.display = (index >= start && index < end) ? '' : 'none';
+        });
+
+        renderPagination(totalRows, totalPages, start, end);
+    }
+
+    function changePage(page) {
+        currentPage = page;
+        filterUjian();
+    }
+
+    function renderPagination(totalRows, totalPages, start, end) {
+        const container = document.getElementById('pagination-container');
+        if (!container) return;
+        const startText = totalRows === 0 ? 0 : start + 1;
+        const endText = Math.min(end, totalRows);
+
+        let html = `<span class="text-on-surface-variant text-sm text-center sm:text-left">Menampilkan ${startText}-${endText} dari ${totalRows} data (Maksimal 10 per halaman)</span>`;
+        html += `<div class="flex flex-wrap items-center justify-center gap-1">`;
+        if (currentPage === 1) {
+            html += `<button class="p-1 rounded text-outline hover:bg-surface-container opacity-50 cursor-not-allowed"><span class="material-symbols-outlined" style="font-size:20px">chevron_left</span></button>`;
+        } else {
+            html += `<button onclick="changePage(${currentPage - 1})" class="p-1 rounded text-on-surface-variant hover:text-primary hover:bg-surface-container"><span class="material-symbols-outlined" style="font-size:20px">chevron_left</span></button>`;
+        }
+        for (let i = 1; i <= totalPages; i++) {
+            if (i === currentPage) {
+                html += `<button class="w-8 h-8 rounded bg-primary text-on-primary font-bold text-sm flex items-center justify-center">${i}</button>`;
+            } else {
+                html += `<button onclick="changePage(${i})" class="w-8 h-8 rounded text-on-surface-variant hover:bg-surface-container font-bold text-sm flex items-center justify-center">${i}</button>`;
+            }
+        }
+        if (currentPage === totalPages) {
+            html += `<button class="p-1 rounded text-outline hover:bg-surface-container opacity-50 cursor-not-allowed"><span class="material-symbols-outlined" style="font-size:20px">chevron_right</span></button>`;
+        } else {
+            html += `<button onclick="changePage(${currentPage + 1})" class="p-1 rounded text-on-surface-variant hover:text-primary hover:bg-surface-container"><span class="material-symbols-outlined" style="font-size:20px">chevron_right</span></button>`;
+        }
+        html += `</div>`;
+        container.innerHTML = html;
     }
 
     function toggleDropdown(type) {
@@ -231,6 +280,7 @@
             document.getElementById('filterStatusLabel').textContent = label;
             document.getElementById('dropdownStatus').classList.add('hidden');
         }
+        currentPage = 1;
         filterUjian();
     }
 

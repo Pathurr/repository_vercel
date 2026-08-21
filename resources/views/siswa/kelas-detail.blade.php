@@ -13,21 +13,17 @@
     left: 0;
     border-radius: 4px 4px 0 0;
 }
-.batik-overlay {
-    background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD3cnn9KQW8AvbB_SLOab0Wa4tzABThbgbiGAIRbz8vYqoI05HFRDZcgv3USFXNjOC7MU6D2YRIZn-JncIoOIolm-pCA_EEkzr8ZlOQUXBLDZvApGbskAnB-51YHb2jU1deDpp2hfIBddb7IqKqL1Rm1RBiDVq4joArfF9wNQiKnpy63G9jpF8j4Gbp1TQzvLSgUVK7P85iTVLEDeXgb2DKdcX1Xc_pPwcygxAFCngWgjSEact4KY-1In3I0DuO2_axHqHSqh5-dUxB');
-    opacity: 0.05;
-}
 </style>
 
 <!-- Hero Section -->
 <section class="relative bg-primary overflow-hidden py-12 px-8 -mx-4 md:-mx-6 -mt-8 mb-10 md:rounded-b-3xl shadow-md">
-    <div class="absolute inset-0 batik-overlay"></div>
+
     <div class="relative z-10 max-w-container-max mx-auto mb-6">
         <a href="{{ route('siswa.dashboard') }}" class="inline-flex items-center gap-2 text-sm text-on-primary/80 hover:text-on-primary transition-colors font-bold">
             <span class="material-symbols-outlined text-[18px]">arrow_back</span> Kembali ke Dashboard
         </a>
     </div>
-    <div class="relative z-10 max-w-container-max mx-auto flex flex-col md:flex-row items-end justify-between gap-8">
+    <div class="relative z-10 max-w-container-max mx-auto flex flex-col md:flex-row items-start md:items-end justify-between gap-8">
         <div class="flex-1">
             <div class="flex items-center gap-3 mb-4">
                 <span class="px-3 py-1 bg-secondary-container text-on-secondary-container font-bold text-xs rounded-full">{{ $kelas->nama_kelas }}</span>
@@ -43,19 +39,38 @@
                 </div>
             </div>
         </div>
-        <div class="hidden lg:block w-64 bg-on-primary/5 p-4 rounded-xl border border-on-primary/10 backdrop-blur-sm">
-            <p class="text-on-primary/80 italic text-xs mb-3">"{{ $kelas->deskripsi ?? 'Mempelajari dasar-dasar mata pelajaran ini.' }}"</p>
+        @php
+            $totalMateri = $kelas->materi->count();
+            $materiSelesai = count($materiReadIds);
+
+            $totalTugas = $kelas->tugas->count();
+            $tugasSelesai = $kelas->tugas->filter(fn($t) => $t->pengumpulan->isNotEmpty())->count();
+
+            $totalKuis = $kelas->kuis->count();
+            $kuisSelesai = $kelas->kuis->filter(fn($k) => $k->nilai_siswa->isNotEmpty())->count();
+
+            $totalUjian = $kelas->ujian->count();
+            $ujianSelesai = $kelas->ujian->filter(fn($u) => $u->nilai_siswa->isNotEmpty())->count();
+
+            $totalItem = $totalMateri + $totalTugas + $totalKuis + $totalUjian;
+            $selesaiItem = $materiSelesai + $tugasSelesai + $kuisSelesai + $ujianSelesai;
+            $progres = $totalItem > 0 ? round(($selesaiItem / $totalItem) * 100) : 0;
+        @endphp
+        <div class="hidden md:block w-64 bg-on-primary/5 p-4 rounded-xl border border-on-primary/10 backdrop-blur-sm">
+            @if($kelas->deskripsi)
+            <p class="text-on-primary/80 italic text-xs mb-3">"{{ $kelas->deskripsi }}"</p>
+            @endif
             <div class="flex justify-between items-center text-on-primary">
                 <div class="text-center">
-                    <p class="font-bold text-lg">{{ $kelas->materi->count() }}</p>
+                    <p class="font-bold text-lg">{{ $totalMateri }}</p>
                     <p class="text-[10px] opacity-60 font-bold">Modul</p>
                 </div>
                 <div class="text-center">
-                    <p class="font-bold text-lg">{{ $kelas->tugas->count() }}</p>
-                    <p class="text-[10px] opacity-60 font-bold">Tugas Aktif</p>
+                    <p class="font-bold text-lg">{{ $totalTugas }}</p>
+                    <p class="text-[10px] opacity-60 font-bold">Tugas</p>
                 </div>
                 <div class="text-center">
-                    <p class="font-bold text-lg">100%</p>
+                    <p class="font-bold text-lg">{{ $progres }}%</p>
                     <p class="text-[10px] opacity-60 font-bold">Progres</p>
                 </div>
             </div>
@@ -76,7 +91,7 @@
             <div class="active-tab-indicator hidden" id="indicator-tugas"></div>
         </button>
         <button class="px-4 md:px-6 py-3 text-sm text-on-surface-variant hover:text-primary transition-all duration-300 relative whitespace-nowrap font-bold" id="tab-evaluasi" onclick="switchTab('evaluasi')">
-            Kuis & Evaluasi
+            Kuis & Ujian
             <div class="active-tab-indicator hidden" id="indicator-evaluasi"></div>
         </button>
         <button class="px-4 md:px-6 py-3 text-sm text-on-surface-variant hover:text-primary transition-all duration-300 relative whitespace-nowrap font-bold" id="tab-pengumuman" onclick="switchTab('pengumuman')">

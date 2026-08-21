@@ -67,10 +67,10 @@
         $palette = $colorPalettes[$loop->index % count($colorPalettes)];
         $progress = min(100, $k->materi_count * 20);
     @endphp
-    <div class="bg-surface rounded-2xl border border-outline-variant/30 shadow-sm hover:shadow-md transition-soft overflow-hidden group">
+    <div class="bg-surface rounded-2xl border border-outline-variant/30 shadow-sm hover:shadow-md transition-soft overflow-hidden group flex flex-col h-full">
 
         {{-- Card Header --}}
-        <a href="{{ route('guru.kelas.detail', ['id' => $k->id]) }}" class="block {{ $palette['warna'] }} p-6 flex justify-between items-start relative overflow-hidden group-hover:brightness-95 transition-soft">
+        <a href="{{ route('guru.kelas.detail', ['id' => $k->id]) }}" class="flex-1 {{ $palette['warna'] }} p-6 flex justify-between items-start relative overflow-hidden group-hover:brightness-95 transition-soft">
             <div>
                 <h3 class="font-bold text-xl {{ $palette['teks'] }} leading-tight" style="font-family: var(--font-serif)">{{ $k->nama_kelas }}</h3>
                 <h4 class="font-bold text-lg {{ $palette['teks'] }} opacity-90 mt-1">{{ $k->mata_pelajaran }}</h4>
@@ -87,7 +87,7 @@
         </a>
 
         {{-- Jadwal --}}
-        <div class="px-6 py-3 bg-surface-container-low border-b border-outline-variant/20 flex items-center gap-2">
+        <div class="px-6 py-3 bg-surface-container-low border-b border-outline-variant/20 flex items-center gap-2 mt-auto">
             <span class="material-symbols-outlined text-on-surface-variant" style="font-size:16px">schedule</span>
             <span class="text-xs text-on-surface-variant">{{ $k->created_at?->format('d M Y') ?? 'Belum ada jadwal' }}</span>
         </div>
