@@ -27,9 +27,14 @@ class RoleMiddleware
             $userRole = 'siswa';
         }
 
+        // Superadmin bisa akses semua route admin
+        if ($role === 'admin' && $userRole === 'superadmin') {
+            return $next($request);
+        }
+
         if ($userRole !== $role) {
             // Jika role tidak sesuai, redirect ke dashboard masing-masing
-            if ($userRole === 'admin') {
+            if ($userRole === 'superadmin' || $userRole === 'admin') {
                 return redirect()->route('admin.dashboard');
             } elseif ($userRole === 'murid' || $userRole === 'siswa') {
                 return redirect()->route('siswa.dashboard');

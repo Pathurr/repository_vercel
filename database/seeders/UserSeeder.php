@@ -8,16 +8,41 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        // Admin
-        User::firstOrCreate(
-            ['email' => 'admin@admin.com'],
-            [
-                'name' => 'Admin Utama',
-                'password' => 'password',
-                'role' => 'admin',
-                'status' => 'active',
-            ]
-        );
+        // Superadmin (akses penuh)
+        User::create([
+            'name' => 'Super Admin',
+            'email' => 'superadmin@admin.com',
+            'password' => 'superadmin123',
+            'role' => 'superadmin',
+            'status' => 'active',
+        ]);
+
+        // Admin 1
+        User::create([
+            'name' => 'Admin Satu',
+            'email' => 'admin1@admin.com',
+            'password' => 'admin123',
+            'role' => 'admin',
+            'status' => 'active',
+        ]);
+
+        // Admin 2
+        User::create([
+            'name' => 'Admin Dua',
+            'email' => 'admin2@admin.com',
+            'password' => 'admin123',
+            'role' => 'admin',
+            'status' => 'active',
+        ]);
+
+        // Admin 3
+        User::create([
+            'name' => 'Admin Tiga',
+            'email' => 'admin3@admin.com',
+            'password' => 'admin123',
+            'role' => 'admin',
+            'status' => 'active',
+        ]);
 
         // Guru
         User::firstOrCreate(

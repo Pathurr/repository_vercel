@@ -80,6 +80,9 @@
                 <button type="button" onclick="selectDropdown('role','Semua','Semua Role')" class="w-full text-left px-4 py-2.5 text-sm text-on-surface hover:bg-surface-variant/60 transition-soft">Semua Role</button>
                 <button type="button" onclick="selectDropdown('role','Siswa','Siswa')" class="w-full text-left px-4 py-2.5 text-sm text-on-surface hover:bg-surface-variant/60 transition-soft">Siswa</button>
                 <button type="button" onclick="selectDropdown('role','Guru','Guru')" class="w-full text-left px-4 py-2.5 text-sm text-on-surface hover:bg-surface-variant/60 transition-soft">Guru</button>
+                @if(Auth::user()->isSuperAdmin())
+                <button type="button" onclick="selectDropdown('role','Admin','Admin')" class="w-full text-left px-4 py-2.5 text-sm text-on-surface hover:bg-surface-variant/60 transition-soft">Admin</button>
+                @endif
             </div>
         </div>
         <!-- Filter Status -->
@@ -110,8 +113,10 @@
             </button>
             <div id="dropdownBulk" class="hidden absolute right-0 z-20 mt-2 w-full bg-surface rounded-xl border border-outline-variant/30 shadow-xl overflow-hidden">
                 <button type="button" onclick="executeBulkAction('aktifkan')" class="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-green-600 hover:bg-green-50 transition-soft font-bold"><span class="material-symbols-outlined text-[18px]">check_circle</span> Aktifkan</button>
+                @if(Auth::user()->isSuperAdmin())
                 <button type="button" onclick="executeBulkAction('suspend')" class="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-orange-600 hover:bg-orange-50 transition-soft font-bold"><span class="material-symbols-outlined text-[18px]">block</span> Suspend</button>
                 <button type="button" onclick="executeBulkAction('hapus')" class="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-soft font-bold border-t border-outline-variant/30"><span class="material-symbols-outlined text-[18px]">delete</span> Hapus Permanen</button>
+                @endif
             </div>
         </div>
         
@@ -147,7 +152,8 @@
                 @php
                     $roleLabel = ucfirst($u->role);
                     if($u->role == 'murid') $roleLabel = 'Siswa';
-                    $identity = $u->role == 'guru' ? $u->nrg : $u->nis;
+                    if($u->role == 'admin') $roleLabel = 'Admin';
+                    $identity = $u->role == 'guru' ? $u->nrg : ($u->role == 'admin' ? '-' : $u->nis);
                     
                     $statusConfig = [
                         'active' => ['bg' => 'bg-green-100', 'text' => 'text-green-600', 'border' => 'border-green-200', 'label' => 'Active'],
@@ -197,11 +203,13 @@
                             @if($u->status == 'pending')
                             <button type="button" onclick="showActionModal('tolak', {{ $u->id }})" class="w-full text-left px-4 py-2 text-sm hover:bg-red-50 text-red-600 transition-colors whitespace-nowrap">Tolak</button>
                             @endif
+                            @if(Auth::user()->isSuperAdmin())
                             @if($u->status == 'active')
                             <button type="button" onclick="showActionModal('nonaktif', {{ $u->id }})" class="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 text-gray-700 transition-colors whitespace-nowrap">Nonaktif</button>
                             <button type="button" onclick="showActionModal('suspend', {{ $u->id }})" class="w-full text-left px-4 py-2 text-sm hover:bg-orange-50 text-orange-600 transition-colors whitespace-nowrap">Suspend (Block)</button>
                             @endif
                             <button type="button" onclick="showActionModal('hapus', {{ $u->id }})" class="w-full text-left px-4 py-2 text-sm hover:bg-red-50 text-red-600 transition-colors whitespace-nowrap">Hapus Akun</button>
+                            @endif
                             </div>
                         </div>
                     </td>

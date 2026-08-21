@@ -22,7 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // redirect ke dashboard sesuai role
         $middleware->redirectUsersTo(function () {
             $role = auth()->user()->role ?? '';
-            if ($role === 'admin') {
+            if ($role === 'superadmin' || $role === 'admin') {
                 return route('admin.dashboard');
             } elseif ($role === 'murid' || $role === 'siswa') {
                 return route('siswa.dashboard');
