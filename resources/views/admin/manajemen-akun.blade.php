@@ -192,6 +192,14 @@
                     </td>
                     <td data-label="Login Terakhir" class="px-2 py-3 text-on-surface-variant">-</td>
                     <td data-label="Aksi" class="mobile-action-cell px-2 py-3 text-right relative">
+                        @php
+                            // Cek apakah ada aksi yang bisa dilakukan untuk user ini
+                            $hasActions = false;
+                            if ($u->status != 'active') $hasActions = true; // bisa aktifkan
+                            if ($u->status == 'pending') $hasActions = true; // bisa tolak
+                            if (Auth::user()->isSuperAdmin()) $hasActions = true; // superadmin selalu punya aksi
+                        @endphp
+                        @if($hasActions)
                         <div class="relative inline-flex">
                             <button type="button" data-action-toggle="{{ $u->id }}" onclick="toggleActionMenu(event, {{ $u->id }})" aria-label="Aksi {{ $u->name }}" class="w-9 h-9 inline-flex items-center justify-center text-on-surface-variant hover:text-primary rounded-full hover:bg-surface-container transition-colors touch-manipulation cursor-pointer">
                                 <span class="material-symbols-outlined text-[22px] pointer-events-none" data-icon="more_vert">more_vert</span>
@@ -212,6 +220,9 @@
                             @endif
                             </div>
                         </div>
+                        @else
+                        <span class="text-on-surface-variant/40 text-xs">—</span>
+                        @endif
                     </td>
                 </tr>
                 @endforeach
