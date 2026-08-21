@@ -10,8 +10,8 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // Hitung total akun aktif
-        $totalAktif = User::where('status', 'active')->count();
+        // Hitung total akun aktif (exclude superadmin)
+        $totalAktif = User::where('status', 'active')->where('role', '!=', 'superadmin')->count();
 
         // Ambil data akun yang masih pending (butuh persetujuan)
         $pendingUsers = User::where('status', 'pending')

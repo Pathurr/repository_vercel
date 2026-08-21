@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password', 'role', 'nis', 'nrg'])]
+#[Fillable(['name', 'email', 'password', 'role', 'nis', 'nrg', 'status'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -29,6 +29,31 @@ class User extends Authenticatable implements MustVerifyEmail
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * Cek apakah user adalah Superadmin.
+     */
+    public function isSuperAdmin(): bool
+    {
+        return $this->role === 'superadmin';
+    }
+
+    /**
+     * Cek apakah user adalah Admin biasa.
+     */
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    /**
+     * Cek apakah user level admin (superadmin ATAU admin).
+     */
+    public function isAdminLevel(): bool
+    {
+        return in_array($this->role, ['superadmin', 'admin']);
+    }
+
     /**
      * Get the classes the student is enrolled in.
      */

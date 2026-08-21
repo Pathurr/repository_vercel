@@ -31,8 +31,8 @@ class AuthenticatedSessionController extends Controller
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $user = Auth::user();
             
-            // Bypass status check for admin, or if status is not active, deny login
-            if ($user->role !== 'admin' && $user->status !== 'active') {
+            // Bypass status check for superadmin & admin, or if status is not active, deny login
+            if (!in_array($user->role, ['superadmin', 'admin']) && $user->status !== 'active') {
                 Auth::logout();
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();
@@ -68,7 +68,7 @@ class AuthenticatedSessionController extends Controller
 
             // Redirect ke dashboard sesuai role
             $role = $user->role;
-            if ($role === 'admin') {
+            if ($role === 'superadmin' || $role === 'admin') {
                 return redirect()->intended(route('admin.dashboard'));
             } elseif ($role === 'murid' || $role === 'siswa') {
                 return redirect()->intended(route('siswa.dashboard'));

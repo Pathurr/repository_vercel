@@ -200,7 +200,7 @@
                 <button id="user-menu-btn" onclick="toggleUserMenu()" class="flex items-center gap-3 text-left cursor-pointer transition-soft hover:bg-primary-container/50 rounded-lg py-1 px-2">
                     <div class="text-right hidden lg:block">
                         <p class="text-xs font-bold text-on-primary">{{ Auth::user()->name ?? 'Administrator' }}</p>
-                        <p class="text-[10px] text-on-primary/70 uppercase">Admin Sistem</p>
+                        <p class="text-[10px] text-on-primary/70 uppercase">{{ Auth::user()->role === 'superadmin' ? 'Superadmin' : 'Admin' }}</p>
                     </div>
                     <div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center text-primary font-bold">
                         {{ strtoupper(substr(Auth::user()->name ?? 'A', 0, 1)) }}
